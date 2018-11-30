@@ -20,7 +20,8 @@ script: tox
 # $ travis encrypt --add deploy.password
 deploy:
   provider: pypi
-  distributions: sdist bdist_wheel
+  distributions: sdist bdist_wheel xenial
+  sudo: yes
   user: horsewithnoname1985
   password:
     secure: PLEASE_REPLACE_ME
