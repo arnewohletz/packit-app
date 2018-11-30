@@ -14,6 +14,9 @@ matrix:
 # Command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 install: pip install -U tox-travis
 
+before_script:
+    python -m pip install requirements_dev.txt
+
 # Command to run tests, e.g. python setup.py test
 script:
     - tox
