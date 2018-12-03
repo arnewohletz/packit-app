@@ -1,0 +1,4 @@
+# Requirements needed when generating releases.
+behave >= 1.2.6
+pytest >= 3.8.2
+pytest-runner==4.2
