@@ -4,20 +4,19 @@
 """Tests for `packit_app` package."""
 
 import pytest
-from packit_app import packit_app
+import os
+from packit_app.database import Database
 
 
-@pytest.fixture
-def response():
-    """Sample pytest fixture.
-
-    See more at: http://doc.pytest.org/en/latest/fixture.html
-    """
-    # import requests
-    # return requests.get('https://github.com/audreyr/cookiecutter-pypackage')
+def test_database_connection():
+    db = Database()
+    assert type(db.cur) == "sqlite3.Cursor"
+    assert type(db.connection) == "sqlite3.Connection"
+    assert os.path.exists(Database.db_location) == True
 
 
-def test_content(response):
-    """Sample pytest test function with the pytest fixture as an argument."""
-    # from bs4 import BeautifulSoup
-    # assert 'GitHub' in BeautifulSoup(response.content).title.string
+def test_database_disconnects():
+    db = Database()
+    db.close_connection()
+    assert db.cur.execute(
+        "") == "sqlite3.ProgrammingError: Cannot operate on a closed database."
