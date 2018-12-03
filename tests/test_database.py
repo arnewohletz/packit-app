@@ -4,8 +4,6 @@
 """Tests for `packit_app` package."""
 
 import pytest
-
-
 from packit_app import packit_app
 
 
