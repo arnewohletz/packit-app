@@ -1,3 +1,7 @@
+Feature: When a new user is created the quantity for a default set of clothes
+    that depends on the chosen gender must
+
+
 Feature: Application of a default clothes set for male and female users. When a
   new user is created, the user must define quantities for at least these
   clothing types. The set of default clothes depends on the user's gender.

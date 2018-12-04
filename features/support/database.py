@@ -20,6 +20,8 @@ class DatabaseHelper:
         if content == ():
             print('<user table empty>')
 
+
+
 #
 # class UserTableHelper:
 #

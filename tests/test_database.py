@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""Tests for `packit_app` package."""
+"""Tests for `database` package."""
 
 import pytest
 import os

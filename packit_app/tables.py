@@ -137,7 +137,7 @@ class ConcreteTableFactory(TableFactory):
         elif isinstance(element, Trip):
             return TripTable(self.column_types)
         elif isinstance(element, DefaultClothingItem):
-            return DefaultClothesTable(self.column_types)
+            return UserSettingsTable(self.column_types)
         else:
             pass
 
@@ -156,6 +156,9 @@ class UserTable(Table):
         self.db.cur.execute(command)
         self.db.connection.commit()
 
+    def add_element(self, element: User):
+        super(UserTable, self).add_element(element=element)
+
 
 class GenderDefaultClothesTable(Table):
     table_name = 'gender_default_clothes'
@@ -165,6 +168,10 @@ class GenderDefaultClothesTable(Table):
                                                                columns)
         self.db.cur.execute(command)
         self.db.connection.commit()
+
+
+    def get_default_clothes(self, gender):
+        command = SQLCommandGenerator.get_return_element_from_table_command()
 
 
 class TripTable(Table):
@@ -177,11 +184,26 @@ class TripTable(Table):
         self.db.connection.commit()
 
 
-class DefaultClothesTable(Table):
-    table_name = 'gender_default_clothes'
+class UserSettingsTable(Table):
+    """
+    UserSettingsTable contains the individual settings of each user. It
+    implements the TableStrategy interface.
+    """
+    table_name = 'user_{0}_default_clothes'
+    default_clothes = None
 
-    def __init__(self, columns: collections.OrderedDict):
+    def __init__(self, user_id: int, gender: str,
+                 columns: collections.OrderedDict):
+        self.table_name.format(str(user_id))
         command = SQLCommandGenerator.get_create_table_command(self.table_name,
                                                                columns)
         self.db.cur.execute(command)
         self.db.connection.commit()
+
+        self.add_default_clothes(gender)
+
+    def add_default_clothes(self, gender: str) -> None:
+        pass
+
+    def get_default_clothes(self, gender: Gender) -> list:
+        pass

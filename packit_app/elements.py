@@ -24,6 +24,6 @@ class DefaultClothingItem(TableElement):
 
 class Trip(TableElement):
     def __init__(self, destination="", start_date="", end_date=""):
-        self.column_types['destinatin'] = destination
+        self.column_types['destination'] = destination
         self.column_types['start_date'] = start_date
         self.column_types['end_date'] = end_date

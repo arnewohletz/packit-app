@@ -11,3 +11,8 @@ def before_all(context):
 def after_all(context):
     context.db.close_connection()
     os.remove('./packit.db')
+
+
+def after_scenario(context, scenario):
+    if 'clear_user_table_after' in scenario.tags:
+        context.user_table.clean_all_content()
