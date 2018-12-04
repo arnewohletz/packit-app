@@ -2,7 +2,52 @@ import collections
 from abc import ABC
 
 
-class TableElement(ABC):
+class Element(ABC):
+    def __init__(self):
+        pass
+
+
+class QueryElement(ABC, Element):
+    """Query object to use for database searches"""
+    queries = []
+
+    def __init__(self, *args, **kwargs):
+        for arg in args:
+            if type(arg) is Gender:
+                self.queries.append(dict({'gender':arg.gender}))
+
+    def get_query(self):
+        """Returns element queries as list of tuples"""
+        # for query in self.queries:
+        #     column = query.keys()
+        # query = []
+        # for item in l:
+        #     self.queries.append(dict({'gender': 'male'}))
+        #     queries.append("".join(x for x in item.keys()))
+        return self.queries
+
+
+class Gender(QueryElement):
+    def __init__(self):
+        if type(gender) == Female or type(gender) == Male:
+            self.queries['gender'] = gender.gender
+        if gender.lower() == "male" or gender.lower() == "female":
+            self.queries['gender'] = gender
+        else:
+            raise ValueError("Gender must be either 'male' or 'female")
+
+
+class Female(Gender):
+    def __init__(self):
+        self.gender = "female"
+
+
+class Male(Gender):
+    def __init__(self):
+        self.gender = "male"
+
+
+class TableElement(ABC, Element):
     column_types = collections.OrderedDict()
 
     def get_default_values(self) -> collections.OrderedDict:
