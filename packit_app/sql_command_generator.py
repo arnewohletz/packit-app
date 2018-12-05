@@ -1,4 +1,4 @@
-from .elements import TableElement, QueryElement
+from .elements import TableElement, QueryItem
 import collections
 
 
@@ -74,5 +74,30 @@ class SQLCommandGenerator:
         return command
 
     @staticmethod
-    def get_return_all_matching_elements_from_table_command(table_name, element: QueryElement):
-        element.queries
+    def get_return_matching_elements_command(table_name, conditions=None):
+        command = "SELECT * FROM " + table_name
+        counter = {}
+
+        if conditions:
+            for query in conditions:
+                for column, value in query.items():
+                    if column not in counter:
+                        counter[column] = 1
+                    else:
+                        counter[column] += 1
+        else:
+            return command
+
+        command = command + " WHERE ("
+
+        for query in conditions:
+            for column, value in query.items():
+                if counter[column] > 1:
+                    command += column + " = '" + value + "' OR "
+                    counter[column] -= 1
+                elif counter[column] == 1:
+                    command += column + " = '" + value + "' AND "
+
+        command = command[:-5] + ")"
+
+        return command

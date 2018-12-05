@@ -6,7 +6,7 @@ class TableHelper:
     def __init__(self):
         pass
 
-    def get_table_content_as_list_of_dictionary(self, curs) -> dict:
+    def get_cursor_data_as_list_of_dictionaries(self, curs) -> dict:
         """
         Converts cursor data of a table into dictionaries
         (From Python Essential Reference by David Beazley)

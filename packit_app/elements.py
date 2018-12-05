@@ -1,6 +1,6 @@
 import collections
 from abc import ABC
-from packit_app.tables import Table
+# from packit_app.tables import Table
 
 
 class Element(ABC):
@@ -8,57 +8,39 @@ class Element(ABC):
         pass
 
 
-class QueryElement(ABC, Element):
+class QueryItem(Element):
     """Query object to use for database searches"""
-    queries = []
-    element = None
+    column_name = ""
+    value = ""
 
-    def __init__(self, table_element: Element, *args, **kwargs):
-        # self.element = table_element
-        # self.element.column_types
-        for arg in args:
-            if type(arg) is Gender:
-                self.queries.append(dict({Gender.column_name: arg.gender}))
-
-    def get_query(self):
+    @classmethod
+    def get_query(cls):
         """Returns element queries as list of tuples"""
-        # for query in self.queries:
-        #     column = query.keys()
-        # query = []
-        # for item in l:
-        #     self.queries.append(dict({'gender': 'male'}))
-        #     queries.append("".join(x for x in item.keys()))
-        return self.queries
+        return dict({cls.column_name: cls.value})
 
 
-class Name(QueryElement):
+class Username(QueryItem):
     column_name = 'name'
 
+    @classmethod
+    def get_query(cls, name):
+        cls.value = name
+        return super(Username, cls).get_query()
 
-class Gender(ABC, QueryElement):
-    gender = ""
+
+class Gender(QueryItem):
     column_name = "gender"
-
-    # def __init__(self):
-    #     if type(gender) == Female or type(gender) == Male:
-    #         self.queries['gender'] = gender.gender
-    #     if gender.lower() == "male" or gender.lower() == "female":
-    #         self.queries['gender'] = gender
-    #     else:
-    #         raise ValueError("Gender must be either 'male' or 'female")
 
 
 class Female(Gender):
-    def __init__(self):
-        self.gender = "female"
+    value = "female"
 
 
 class Male(Gender):
-    def __init__(self):
-        self.gender = "male"
+    value = "male"
 
 
-class TableElement(ABC, Element):
+class TableElement(Element):
     column_types = collections.OrderedDict()
 
     def get_default_values(self) -> collections.OrderedDict:

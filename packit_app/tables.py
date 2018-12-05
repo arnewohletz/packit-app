@@ -1,5 +1,5 @@
 from .elements import User, TableElement, Trip, \
-    DefaultClothingItem
+    DefaultClothingItem, QueryItem
 from .database import Database
 from .sql_command_generator import SQLCommandGenerator
 from .table_helper import TableHelper
@@ -46,6 +46,10 @@ class Table:
         else:
             raise ElementAlreadyExistsError
 
+    def _execute_command(self, command):
+        self.db.cur.execute(command)
+        self.db.connection.commit()
+
     def add_element(self, element: TableElement):
 
         try:
@@ -86,6 +90,26 @@ class Table:
 
         return result
 
+    def get_elements(self, *query_items: QueryItem) -> dict:
+        """
+        Returns the content of the table matching the passed :param:query_items.
+
+        :param: query_items is a list of :type:QueryItem objects.
+        If no :param:query_item is passed, the complete table content is
+        returned.
+
+        :param query_items:
+        :return: str
+        """
+
+        command = SQLCommandGenerator.get_return_matching_elements_command(
+            self.table_name, conditions=query_items)
+
+        result = self.helper.get_query_data_as_list_of_dictionaries(
+            self.db.cur.execute(command))
+
+        return result
+
     def get_all_elements(self) -> list:
         """
         Returns the complete content of the table as a list of dictionaries,
@@ -93,10 +117,10 @@ class Table:
         :return: list
         """
 
-        command = SQLCommandGenerator.get_return_all_elements_from_table_command(
+        command = SQLCommandGenerator.get_return_matching_elements_command(
             self.table_name)
         result = [r for r in
-                  self.helper.get_table_content_as_list_of_dictionary(
+                  self.helper.get_query_data_as_list_of_dictionaries(
                       self.db.cur.execute(command))]
         return result
 
@@ -168,7 +192,6 @@ class GenderDefaultClothesTable(Table):
                                                                columns)
         self.db.cur.execute(command)
         self.db.connection.commit()
-
 
     def get_default_clothes(self, gender):
         command = SQLCommandGenerator.get_return_element_from_table_command()
