@@ -19,13 +19,13 @@ class QueryItem(Element):
         return dict({cls.column_name: cls.value})
 
 
-class Username(QueryItem):
+class Name(QueryItem):
     column_name = 'name'
 
     @classmethod
     def get_query(cls, name):
         cls.value = name
-        return super(Username, cls).get_query()
+        return super(Name, cls).get_query()
 
 
 class Gender(QueryItem):

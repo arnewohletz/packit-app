@@ -3,7 +3,7 @@ import random
 import string
 
 from features.support import database as database_helper
-from packit_app.elements import User
+from packit_app.elements import User, Name, Male
 
 helper = database_helper.DatabaseHelper()
 
@@ -40,7 +40,7 @@ def create_new_user(context, gender, name):
     added_new_user = context.user_table.add_element(context.user)
     if not added_new_user:
         context.user_table.raised_errors.append('UserAlreadyExisting')
-    context.user_settings_table = create_user_settings_table(context.user)
+    # context.user_settings_table = create_user_settings_table(context.user)
 
 
 @when(u'{amount:d} individual new users are created')
@@ -66,8 +66,12 @@ def set_all_default_clothes_quantity(context, quantity: float):
 
 @then(u'the application contains a {gender} user named {name}')
 def user_does_exist(context, gender, name):
-    user_data = context.user_table.get_single_element(
-        User(name=name, gender=gender))
+    # user_data = context.user_table.get_single_element(
+    #     User(name=name, gender=gender))
+    # user_data = context.user_table.get_elements(
+    #     Name.get_query(name), Male.get_query())
+    user_data = context.user_table.get_elements(
+        name=name, gender=gender)
     assert user_data != {}, "User does not exist in users table"
     helper.print_table(context.user_table.table_name)
 

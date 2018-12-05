@@ -74,12 +74,12 @@ class SQLCommandGenerator:
         return command
 
     @staticmethod
-    def get_return_matching_elements_command(table_name, conditions=None):
+    def get_return_matching_elements_command(table_name, query_items=None):
         command = "SELECT * FROM " + table_name
         counter = {}
 
-        if conditions:
-            for query in conditions:
+        if query_items:
+            for query in query_items:
                 for column, value in query.items():
                     if column not in counter:
                         counter[column] = 1
@@ -90,7 +90,7 @@ class SQLCommandGenerator:
 
         command = command + " WHERE ("
 
-        for query in conditions:
+        for query in query_items:
             for column, value in query.items():
                 if counter[column] > 1:
                     command += column + " = '" + value + "' OR "

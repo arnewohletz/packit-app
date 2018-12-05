@@ -103,9 +103,9 @@ class Table:
         """
 
         command = SQLCommandGenerator.get_return_matching_elements_command(
-            self.table_name, conditions=query_items)
+            self.table_name, query_items=query_items)
 
-        result = self.helper.get_query_data_as_list_of_dictionaries(
+        result = self.helper.get_cursor_data_as_list_of_dictionaries(
             self.db.cur.execute(command))
 
         return result
@@ -120,7 +120,7 @@ class Table:
         command = SQLCommandGenerator.get_return_matching_elements_command(
             self.table_name)
         result = [r for r in
-                  self.helper.get_query_data_as_list_of_dictionaries(
+                  self.helper.get_cursor_data_as_list_of_dictionaries(
                       self.db.cur.execute(command))]
         return result
 
@@ -228,5 +228,5 @@ class UserSettingsTable(Table):
     def add_default_clothes(self, gender: str) -> None:
         pass
 
-    def get_default_clothes(self, gender: Gender) -> list:
-        pass
+    # def get_default_clothes(self, gender: Gender) -> list:
+    #     pass
