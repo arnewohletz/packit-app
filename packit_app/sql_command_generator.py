@@ -1,4 +1,4 @@
-from .elements import TableElement
+from .elements import TableElement, QueryElement
 import collections
 
 
@@ -72,3 +72,7 @@ class SQLCommandGenerator:
         command = "SELECT * FROM " + table_name
 
         return command
+
+    @staticmethod
+    def get_return_all_matching_elements_from_table_command(table_name, element: QueryElement):
+        element.queries

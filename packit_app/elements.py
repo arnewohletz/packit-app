@@ -1,5 +1,6 @@
 import collections
 from abc import ABC
+from packit_app.tables import Table
 
 
 class Element(ABC):
@@ -10,11 +11,14 @@ class Element(ABC):
 class QueryElement(ABC, Element):
     """Query object to use for database searches"""
     queries = []
+    element = None
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, table_element: Element, *args, **kwargs):
+        # self.element = table_element
+        # self.element.column_types
         for arg in args:
             if type(arg) is Gender:
-                self.queries.append(dict({'gender':arg.gender}))
+                self.queries.append(dict({Gender.column_name: arg.gender}))
 
     def get_query(self):
         """Returns element queries as list of tuples"""
@@ -27,14 +31,21 @@ class QueryElement(ABC, Element):
         return self.queries
 
 
-class Gender(QueryElement):
-    def __init__(self):
-        if type(gender) == Female or type(gender) == Male:
-            self.queries['gender'] = gender.gender
-        if gender.lower() == "male" or gender.lower() == "female":
-            self.queries['gender'] = gender
-        else:
-            raise ValueError("Gender must be either 'male' or 'female")
+class Name(QueryElement):
+    column_name = 'name'
+
+
+class Gender(ABC, QueryElement):
+    gender = ""
+    column_name = "gender"
+
+    # def __init__(self):
+    #     if type(gender) == Female or type(gender) == Male:
+    #         self.queries['gender'] = gender.gender
+    #     if gender.lower() == "male" or gender.lower() == "female":
+    #         self.queries['gender'] = gender
+    #     else:
+    #         raise ValueError("Gender must be either 'male' or 'female")
 
 
 class Female(Gender):
@@ -57,8 +68,10 @@ class TableElement(ABC, Element):
 
 class User(TableElement):
     def __init__(self, name="", gender=""):
-        self.column_types['name'] = name
-        self.column_types['gender'] = gender
+        self.column_types[Name.column_name] = name
+        self.column_types[Gender.column_name] = gender
+        # self.column_types['name'] = name
+        # self.column_types['gender'] = gender
 
 
 class DefaultClothingItem(TableElement):
