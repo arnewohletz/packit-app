@@ -9,7 +9,7 @@ Feature: Different users are supposed to use a single software installation to
     defined during user creation
     (MANY, List<T>)
 
-    Scenario Outline: Create new user
+    Scenario Outline: Create user
         Given the application contains no users
         When a new <gender> user named <name> is created
         Then the application contains a <gender> user named <name>
@@ -18,15 +18,6 @@ Feature: Different users are supposed to use a single software installation to
             | gender | name  |
             | male   | Harry |
             | female | Susan |
-
-
-    Scenario: Create new user
-        Given the application contains no users
-        When a new <gender> user named <name> is created
-        And a quantity of <quantity> is assigned to all predefined clothes and conditions
-        Then the application contains a <gender> user named <name>
-        And a quantity of <quantity> is assigned for all default clothes of the <gender> user named <name>
-
 
     @clear_user_table_after
     Scenario Outline: Create various amount of new users

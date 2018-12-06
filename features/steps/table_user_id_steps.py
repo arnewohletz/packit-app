@@ -6,9 +6,9 @@ from packit_app.elements import User
 
 @when(u'{clothing_type} is added to {gender} user {name}')
 def add_singular_clothing_piece_to_user(context, clothing_type, gender, name):
-    content = context.user_table.get_single_element(
+    content = context.user_table.get_element(
         User(name=name, gender=gender))
-    content
+    # content
 
     raise NotImplementedError(u'STEP: When scarf is added to user <name>')
     # print("adding new clothing piece to user...")

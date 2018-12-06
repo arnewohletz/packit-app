@@ -3,7 +3,7 @@ import random
 import string
 
 from features.support import database as database_helper
-from packit_app.elements import User, Name, Male
+from packit_app.elements import User
 
 helper = database_helper.DatabaseHelper()
 
@@ -13,7 +13,7 @@ helper = database_helper.DatabaseHelper()
 @given(u'the application contains no users')
 def clear_users_table(context):
     context.user_table.clean_all_content()
-    content = context.user_table.get_all_elements()
+    content = context.user_table.get_matching_elements()
     assert content == []
     print(str(content))
 
@@ -55,9 +55,8 @@ def create_multiple_random_users(context, amount: int):
 
 
 @when(
-    u'a quantity of {quantity:f} is assigned to all predefined clothes and conditions')
-def set_all_default_clothes_quantity(context, quantity: float):
-
+    u'a quantity of <quantity> is assigned to all predefined clothes and conditions')
+def step_impl(context):
     raise NotImplementedError(
         u'STEP: When a quantity of <quantity> is assigned to all predefined clothes and conditions')
 
@@ -66,21 +65,15 @@ def set_all_default_clothes_quantity(context, quantity: float):
 
 @then(u'the application contains a {gender} user named {name}')
 def user_does_exist(context, gender, name):
-    # user_data = context.user_table.get_single_element(
-    #     User(name=name, gender=gender))
-    # user_data = context.user_table.get_elements(
-    #     Name.get_query(name), Male.get_query())
-    # user_data = context.user_table.get_elements(
-    #     name=name, gender=gender)
-    user_data = context.user_table.get_elements(User(name=name, gender=gender)
-                                                .get_default_values())
+    user_data = context.user_table.get_element(
+        User(name=name, gender=gender))
     assert user_data != {}, "User does not exist in users table"
     helper.print_table(context.user_table.table_name)
 
 
 @then(u'there is no {gender} user named {name} in the application')
 def user_does_not_exist(context, gender, name):
-    user_data = context.user_table.get_single_element(
+    user_data = context.user_table.get_element(
         User(name=name, gender=gender))
     assert user_data == {}, "User is not suppose to exist in users table"
     helper.print_table(context.user_table.table_name)
@@ -92,13 +85,13 @@ def user_does_exist_once(context, gender, name):
 
 
 @then(u'the application contains {amount:d} users')
-def step_impl(context, amount):
-    user_data = context.user_table.get_all_elements()
+def proper_amount_of_users_exists(context, amount):
+    user_data = context.user_table.get_matching_elements()
     assert len(user_data) == amount
 
 
 @then(
-    u'a quantity of {quantity:f} is assigned for all default clothes of the {gender] user named {name}')
-def step_impl(context, gender, name):
+    u'a quantity of {quantity:d} is assigned for all default clothes of the {gender} user named {name}')
+def step_impl(context):
     raise NotImplementedError(
         u'STEP: Then a quantity of <quantity> is assigned for all default clothes of the <gender> user named <name>')
