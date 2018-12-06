@@ -90,7 +90,7 @@ class Table:
 
         return result
 
-    def get_elements(self, *query_items: QueryItem) -> dict:
+    def get_elements(self, **query_items: QueryItem) -> dict:
         """
         Returns the content of the table matching the passed :param:query_items.
 
@@ -98,9 +98,11 @@ class Table:
         If no :param:query_item is passed, the complete table content is
         returned.
 
-        :param query_items:
+        :param: query_items: dict
         :return: str
         """
+
+        # for column, value in query_items.items():
 
         command = SQLCommandGenerator.get_return_matching_elements_command(
             self.table_name, query_items=query_items)

@@ -70,8 +70,10 @@ def user_does_exist(context, gender, name):
     #     User(name=name, gender=gender))
     # user_data = context.user_table.get_elements(
     #     Name.get_query(name), Male.get_query())
-    user_data = context.user_table.get_elements(
-        name=name, gender=gender)
+    # user_data = context.user_table.get_elements(
+    #     name=name, gender=gender)
+    user_data = context.user_table.get_elements(User(name=name, gender=gender)
+                                                .get_default_values())
     assert user_data != {}, "User does not exist in users table"
     helper.print_table(context.user_table.table_name)
 

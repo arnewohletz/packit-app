@@ -47,13 +47,17 @@ class TableElement(Element):
         """Returns default table column names and value type as OrderedDict"""
         return self.column_types
 
+    # @staticmethod
+    # def as_dict() -> dict:
+
+
 
 class User(TableElement):
     def __init__(self, name="", gender=""):
-        self.column_types[Name.column_name] = name
-        self.column_types[Gender.column_name] = gender
-        # self.column_types['name'] = name
-        # self.column_types['gender'] = gender
+        # self.column_types[Name.column_name] = name
+        # self.column_types[Gender.column_name] = gender
+        self.column_types['name'] = name
+        self.column_types['gender'] = gender
 
 
 class DefaultClothingItem(TableElement):
