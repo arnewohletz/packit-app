@@ -1,4 +1,5 @@
 from packit_app import database as db, tables, elements
+from packit_app import constants
 import os
 
 
@@ -10,7 +11,8 @@ def before_all(context):
 
 def after_all(context):
     context.db.close_connection()
-    os.remove('./packit.db')
+    os.remove(constants.DB_LOCATION)
+    # os.remove('./packit.db')
 
 
 def after_scenario(context, scenario):

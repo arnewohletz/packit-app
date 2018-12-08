@@ -54,8 +54,8 @@ class SQLCommandGenerator:
         return command
 
     @staticmethod
-    def get_return_element_from_table_command(table_name,
-                                              element: TableElement):
+    def get_return_element_command(table_name,
+                                   element: TableElement):
         columns = list(element.column_types.keys())
 
         command = "SELECT * FROM " + table_name + " WHERE "

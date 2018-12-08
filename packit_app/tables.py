@@ -1,5 +1,4 @@
-from .elements import User, TableElement, Trip, \
-    DefaultClothingItem, QueryItem
+from .elements import User, TableElement, QueryItem
 from .database import Database
 from .sql_command_generator import SQLCommandGenerator
 from .table_helper import TableHelper
@@ -35,7 +34,7 @@ class Table:
         """Checks whether the table already contains a entry with the same
         data"""
 
-        command = SQLCommandGenerator.get_return_element_from_table_command(
+        command = SQLCommandGenerator.get_return_element_command(
             self.table_name, element)
         self.db.cur.execute(command)
         self.db.connection.commit()
@@ -80,17 +79,46 @@ class Table:
         self.db.cur.execute(command)
         self.db.connection.commit()
 
-    def get_single_element(self, element: TableElement):
+    def get_element(self, *queries):
+        """
+        The function returns all matching elements from the table
 
-        command = SQLCommandGenerator.get_return_element_from_table_command(
-            self.table_name, element)
+
+        :param queries:
+        :return:
+        """
+        if len(queries) > 1:
+            query_list = []
+            for query in queries:
+                query_list.append(query.as_dict())
+            command = SQLCommandGenerator.get_return_matching_elements_command(
+                self.table_name, query_list)
+        else:
+            command = SQLCommandGenerator.get_return_element_command(
+                self.table_name, queries[0])
 
         result = self.helper.get_row_content_as_dictionary(
             self.db.cur.execute(command))
 
         return result
 
-    def get_elements(self, *query_items: QueryItem) -> dict:
+
+    # def get_element(self, element: TableElement) -> dict:
+    #     """
+    #     Returns a single table element as dictionary
+    #     :param element:
+    #     :return:
+    #     """
+    #
+    #     command = SQLCommandGenerator.get_return_element_from_table_command(
+    #         self.table_name, element)
+    #
+    #     result = self.helper.get_row_content_as_dictionary(
+    #         self.db.cur.execute(command))
+    #
+    #     return result
+
+    def get_matching_elements(self, **query_items: QueryItem) -> list:
         """
         Returns the content of the table matching the passed :param:query_items.
 
@@ -98,31 +126,34 @@ class Table:
         If no :param:query_item is passed, the complete table content is
         returned.
 
-        :param query_items:
+        :param: query_items: dict
         :return: str
         """
 
         command = SQLCommandGenerator.get_return_matching_elements_command(
             self.table_name, query_items=query_items)
 
-        result = self.helper.get_cursor_data_as_list_of_dictionaries(
-            self.db.cur.execute(command))
-
-        return result
-
-    def get_all_elements(self) -> list:
-        """
-        Returns the complete content of the table as a list of dictionaries,
-        each dictionary representing one row of data.
-        :return: list
-        """
-
-        command = SQLCommandGenerator.get_return_matching_elements_command(
-            self.table_name)
+        # result = self.helper.get_cursor_data_as_list_of_dictionaries(
+        #     self.db.cur.execute(command))
         result = [r for r in
                   self.helper.get_cursor_data_as_list_of_dictionaries(
                       self.db.cur.execute(command))]
+
         return result
+
+    # def get_all_elements(self) -> list:
+    #     """
+    #     Returns the complete content of the table as a list of dictionaries,
+    #     each dictionary representing one row of data.
+    #     :return: list
+    #     """
+    #
+    #     command = SQLCommandGenerator.get_return_matching_elements_command(
+    #         self.table_name)
+    #     result = [r for r in
+    #               self.helper.get_cursor_data_as_list_of_dictionaries(
+    #                   self.db.cur.execute(command))]
+    #     return result
 
     def clean_all_content(self):
         """
@@ -146,9 +177,9 @@ class ConcreteTableFactory(TableFactory):
 
     def create_table(self, element: TableElement) -> Table:
         self.column_types['id'] = 'INTEGER NOT NULL PRIMARY KEY ASC'
-        column_default_values = element.get_default_values()
+        table_layout_values = element.as_dict()
 
-        for column in column_default_values:
+        for column in table_layout_values:
             if type(column) == str:
                 self.column_types[column] = 'TEXT'
             elif type(column) == int:
@@ -194,7 +225,7 @@ class GenderDefaultClothesTable(Table):
         self.db.connection.commit()
 
     def get_default_clothes(self, gender):
-        command = SQLCommandGenerator.get_return_element_from_table_command()
+        command = SQLCommandGenerator.get_return_element_command()
 
 
 class TripTable(Table):

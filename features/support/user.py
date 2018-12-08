@@ -9,7 +9,7 @@ def get_user_id(self, user_table: UserTable, user: User) -> int:
     user_id = 0
     helper = TableHelper()
     generator = SQLCommandGenerator()
-    command = generator.get_return_element_from_table_command(table_name=user_table, element=User)
+    command = generator.get_return_element_command(table_name=user_table, element=User)
     helper.get_row_content_as_dictionary()
 
 
