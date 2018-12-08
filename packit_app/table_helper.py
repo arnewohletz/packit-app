@@ -30,7 +30,7 @@ class TableHelper:
         field_names = [d[0].lower() for d in curs.description]
         while True:
             row = curs.fetchone()
-            if row == None:
+            if row is None:
                 result = {}
                 return result
             return dict(itertools.zip_longest(field_names, row))
