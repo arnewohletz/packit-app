@@ -25,10 +25,6 @@ class TableElement(Element):
 class Gender(QueryItem):
     column_name = "gender"
 
-    def __init__(self, gender):
-        super(Gender, self).__init__()
-        self.value = gender.value
-
 
 class Female(Gender):
     value = "female"
@@ -47,20 +43,24 @@ class Name(QueryItem):
 
 
 class User(TableElement):
-    def __init__(self, name="", gender=""):
+    def __init__(self, name="", gender=Gender()):
         super(User, self).__init__()
         self.column_types[Name.column_name] = name
-        self.column_types[Gender.column_name] = gender
+        self.column_types[Gender.column_name] = gender.value
 
 
-# class DefaultClothingItem(TableElement):
-#     def __init__(self, gender="", clothing_item=""):
-#         self.column_types['gender'] = gender
-#         self.column_types['clothing_item'] = clothing_item
+# TODO: Update column_types
+class DefaultClothingItem(TableElement):
+    def __init__(self, gender="", clothing_item=""):
+        super(DefaultClothingItem, self).__init__()
+        self.column_types['gender'] = gender
+        self.column_types['clothing_item'] = clothing_item
 
 
-# class Trip(TableElement):
-#     def __init__(self, destination="", start_date="", end_date=""):
-#         self.column_types['destination'] = destination
-#         self.column_types['start_date'] = start_date
-#         self.column_types['end_date'] = end_date
+# TODO: Update column_types
+class Trip(TableElement):
+    def __init__(self, destination="", start_date="", end_date=""):
+        super(Trip, self).__init__()
+        self.column_types['destination'] = destination
+        self.column_types['start_date'] = start_date
+        self.column_types['end_date'] = end_date

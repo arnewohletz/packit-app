@@ -15,7 +15,6 @@ class SQLCommandGenerator:
             command += "'" + element.column_types[key] + "',"
 
         command = command[:-1] + ")"
-        print(command)
 
         return command
 
@@ -53,6 +52,7 @@ class SQLCommandGenerator:
 
         return command
 
+    # TODO: Check if method is still required
     @staticmethod
     def get_return_element_command(table_name,
                                    element: TableElement):

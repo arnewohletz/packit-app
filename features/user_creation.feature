@@ -1,4 +1,3 @@
-@run
 Feature: Different users are supposed to use a single software installation to
     calculate the amount of clothes required for a trip. For this purpose the
     application needs to support the creation and management of multiple users.
@@ -30,6 +29,7 @@ Feature: Different users are supposed to use a single software installation to
             | 10     |
             | 50     |
 
+    @run
     Scenario Outline: Cannot create second user with same name and gender
         Given the application contains a <gender> user named <name>
         When a new <gender> user named <name> is created

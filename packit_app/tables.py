@@ -1,6 +1,6 @@
-from .elements import User, TableElement, QueryItem
+from .elements import User, DefaultClothingItem, Trip, TableElement, QueryItem
 from .database import Database
-from .sql_command_generator import SQLCommandGenerator
+from .sql_command_generator import SQLCommandGenerator as Cmd
 from .table_helper import TableHelper
 from .errors import *
 import collections
@@ -23,159 +23,9 @@ class TableFactory(ABC):
         pass
 
 
-class Table:
-    db = Database()
-    helper = TableHelper()
-    table_name = ""
-    id = 1
-    raised_errors = []
-
-    def _element_already_exists(self, element: TableElement):
-        """Checks whether the table already contains a entry with the same
-        data"""
-
-        command = SQLCommandGenerator.get_return_element_command(
-            self.table_name, element)
-        self.db.cur.execute(command)
-        self.db.connection.commit()
-
-        data = self.db.cur.fetchall()
-        if len(data) == 0:
-            return False
-        else:
-            raise ElementAlreadyExistsError
-
-    def _execute_command(self, command):
-        self.db.cur.execute(command)
-        self.db.connection.commit()
-
-    def add_element(self, element: TableElement):
-
-        try:
-            if not self._element_already_exists(element):
-                command = SQLCommandGenerator.get_add_element_to_table_command(
-                    self.table_name,
-                    self.id,
-                    element)
-                self.db.cur.execute(command)
-                self.db.connection.commit()
-                self.id += 1
-
-        # TODO: Don't like the error handling. How else to make sure Behave notices them?
-        except ElementAlreadyExistsError as error:
-            print("Error: The user already exists")
-            self.raised_errors.append(error)
-            pass
-
-    def delete_element(self, element: TableElement):
-        """
-        Removes a single username entry from the table.
-        :param :username, :gender
-        :return: None
-        """
-
-        command = SQLCommandGenerator.get_remove_element_command(
-            self.table_name, element)
-        self.db.cur.execute(command)
-        self.db.connection.commit()
-
-    def get_element(self, *queries):
-        """
-        The function returns all matching elements from the table
-
-
-        :param queries:
-        :return:
-        """
-        if len(queries) > 1:
-            query_list = []
-            for query in queries:
-                query_list.append(query.as_dict())
-            command = SQLCommandGenerator.get_return_matching_elements_command(
-                self.table_name, query_list)
-        else:
-            command = SQLCommandGenerator.get_return_element_command(
-                self.table_name, queries[0])
-
-        result = self.helper.get_row_content_as_dictionary(
-            self.db.cur.execute(command))
-
-        return result
-
-
-    # def get_element(self, element: TableElement) -> dict:
-    #     """
-    #     Returns a single table element as dictionary
-    #     :param element:
-    #     :return:
-    #     """
-    #
-    #     command = SQLCommandGenerator.get_return_element_from_table_command(
-    #         self.table_name, element)
-    #
-    #     result = self.helper.get_row_content_as_dictionary(
-    #         self.db.cur.execute(command))
-    #
-    #     return result
-
-    def get_matching_elements(self, **query_items: QueryItem) -> list:
-        """
-        Returns the content of the table matching the passed :param:query_items.
-
-        :param: query_items is a list of :type:QueryItem objects.
-        If no :param:query_item is passed, the complete table content is
-        returned.
-
-        :param: query_items: dict
-        :return: str
-        """
-
-        command = SQLCommandGenerator.get_return_matching_elements_command(
-            self.table_name, query_items=query_items)
-
-        # result = self.helper.get_cursor_data_as_list_of_dictionaries(
-        #     self.db.cur.execute(command))
-        result = [r for r in
-                  self.helper.get_cursor_data_as_list_of_dictionaries(
-                      self.db.cur.execute(command))]
-
-        return result
-
-    # def get_all_elements(self) -> list:
-    #     """
-    #     Returns the complete content of the table as a list of dictionaries,
-    #     each dictionary representing one row of data.
-    #     :return: list
-    #     """
-    #
-    #     command = SQLCommandGenerator.get_return_matching_elements_command(
-    #         self.table_name)
-    #     result = [r for r in
-    #               self.helper.get_cursor_data_as_list_of_dictionaries(
-    #                   self.db.cur.execute(command))]
-    #     return result
-
-    def clean_all_content(self):
-        """
-        Removes all data from the table.
-        :return: None
-        """
-        command = SQLCommandGenerator.get_clean_all_content_command(
-            self.table_name)
-        self.db.cur.execute(command)
-        self.id = 1
-
-    def get_errors(self) -> list:
-        """
-        Returns a list of all errors that have been raised inside the table
-        :return:
-        """
-        return self.raised_errors
-
-
 class ConcreteTableFactory(TableFactory):
 
-    def create_table(self, element: TableElement) -> Table:
+    def create_table(self, element: TableElement):
         self.column_types['id'] = 'INTEGER NOT NULL PRIMARY KEY ASC'
         table_layout_values = element.as_dict()
 
@@ -192,9 +42,142 @@ class ConcreteTableFactory(TableFactory):
         elif isinstance(element, Trip):
             return TripTable(self.column_types)
         elif isinstance(element, DefaultClothingItem):
-            return UserSettingsTable(self.column_types)
+            return UserSettingsTable(self.column_types, User)
         else:
             pass
+
+
+class Table:
+    db = Database()
+    helper = TableHelper()
+    table_name = ""
+    id = 1
+    raised_errors = []
+
+    def _element_already_exists(self, element: TableElement):
+        """Checks whether the table already contains a entry with the same
+        data"""
+
+        self._execute_command(
+            Cmd.get_return_element_command(self.table_name, element))
+
+        data = self.db.cur.fetchall()
+        if len(data) == 0:
+            return False
+        else:
+            raise ElementAlreadyExistsError
+
+    def _execute_command(self, command):
+        self.db.cur.execute(command)
+        self.db.connection.commit()
+
+    def add_element(self, element: TableElement):
+
+        try:
+            if not self._element_already_exists(element):
+                self._execute_command(Cmd.get_add_element_to_table_command(
+                    self.table_name,
+                    self.id,
+                    element))
+                self.id += 1
+                return True
+
+        except ElementAlreadyExistsError as error:
+            self.raised_errors.append(error)
+            return False
+            # TODO: Handle error with warning pop-up message
+
+    def delete_element(self, element: TableElement):
+        """
+        Removes a single username entry from the table.
+        :param :username, :gender
+        :return: None
+        """
+
+        command = Cmd.get_remove_element_command(
+            self.table_name, element)
+        self.db.cur.execute(command)
+        self.db.connection.commit()
+
+    # TODO: Remove unrequired stuff from here
+    def get_elements(self, *queries):
+        """
+        The function returns all matching elements from the table.
+
+        Example:
+        Table.get_elements(Male(), Name('Freddy')) returns all entries of the
+        table that have the name value 'Freddy' and the gender attribute 'Male'
+
+        :param queries:
+        :return:
+        """
+        # if len(queries) > 1:
+        #     query_list = []
+        #     for query in queries:
+        #         query_list.append(query.as_dict())
+        #     command = Cmd.get_return_matching_elements_command(
+        #         self.table_name, query_list)
+        # else:
+        #     command = Cmd.get_return_element_command(
+        #         self.table_name, queries[0])
+        query_list = []
+
+    # if len(queries) > 1:
+        for query in queries:
+            query_list.append(query.as_dict())
+
+        # else:
+        #     query_list.append(queries[0])
+
+        command = Cmd.get_return_matching_elements_command(
+            self.table_name, query_list)
+        # result = self.helper.get_row_content_as_dictionary(
+        #     self.db.cur.execute(command))
+        result = [r for r in
+                  self.helper.get_cursor_data_as_dictionary_generator(
+                      self.db.cur.execute(command))]
+
+        print("Hello: " + str(result))
+        return result
+
+    # TODO: Check if function is still required
+    def get_matching_elements(self, *query_items: QueryItem) -> list:
+        """
+        Returns the content of the table matching the passed :param:query_items.
+
+        :param: query_items is a list of :type:QueryItem objects.
+        If no :param:query_item is passed, the complete table content is
+        returned.
+
+        :param: query_items: dict
+        :return: str
+        """
+
+        command = Cmd.get_return_matching_elements_command(
+            self.table_name, query_items=query_items)
+
+        result = [r for r in
+                  self.helper.get_cursor_data_as_dictionary_generator(
+                      self.db.cur.execute(command))]
+
+        return result
+
+    def clean_all_content(self):
+        """
+        Removes all data from the table.
+        :return: None
+        """
+        command = Cmd.get_clean_all_content_command(
+            self.table_name)
+        self.db.cur.execute(command)
+        self.id = 1
+
+    def get_errors(self) -> list:
+        """
+        Returns a list of all errors that have been raised inside the table
+        :return:
+        """
+        return self.raised_errors
 
 
 class UserTable(Table):
@@ -206,34 +189,35 @@ class UserTable(Table):
     table_name = 'users'
 
     def __init__(self, columns: collections.OrderedDict):
-        command = SQLCommandGenerator.get_create_table_command(self.table_name,
-                                                               columns)
+        command = Cmd.get_create_table_command(self.table_name,
+                                               columns)
         self.db.cur.execute(command)
         self.db.connection.commit()
 
     def add_element(self, element: User):
-        super(UserTable, self).add_element(element=element)
+        added = super(UserTable, self).add_element(element=element)
+        return added
 
 
 class GenderDefaultClothesTable(Table):
     table_name = 'gender_default_clothes'
 
     def __init__(self, columns: collections.OrderedDict):
-        command = SQLCommandGenerator.get_create_table_command(self.table_name,
-                                                               columns)
+        command = Cmd.get_create_table_command(self.table_name,
+                                               columns)
         self.db.cur.execute(command)
         self.db.connection.commit()
 
     def get_default_clothes(self, gender):
-        command = SQLCommandGenerator.get_return_element_command()
+        command = Cmd.get_return_element_command()
 
 
 class TripTable(Table):
     table_name = 'trips'
 
     def __init__(self, columns: collections.OrderedDict):
-        command = SQLCommandGenerator.get_create_table_command(self.table_name,
-                                                               columns)
+        command = Cmd.get_create_table_command(self.table_name,
+                                               columns)
         self.db.cur.execute(command)
         self.db.connection.commit()
 
@@ -246,11 +230,12 @@ class UserSettingsTable(Table):
     table_name = 'user_{0}_default_clothes'
     default_clothes = None
 
-    def __init__(self, user_id: int, gender: str,
-                 columns: collections.OrderedDict):
-        self.table_name.format(str(user_id))
-        command = SQLCommandGenerator.get_create_table_command(self.table_name,
-                                                               columns)
+    # user_id: int, gender: str,
+
+    def __init__(self, columns: collections.OrderedDict, user: User):
+        self.table_name.format(str(user.user_id))
+        command = Cmd.get_create_table_command(self.table_name,
+                                               columns)
         self.db.cur.execute(command)
         self.db.connection.commit()
 
@@ -258,6 +243,3 @@ class UserSettingsTable(Table):
 
     def add_default_clothes(self, gender: str) -> None:
         pass
-
-    # def get_default_clothes(self, gender: Gender) -> list:
-    #     pass

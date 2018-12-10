@@ -2,11 +2,25 @@ from packit_app import database as db, tables, elements
 from packit_app import constants
 import os
 
+import parse
+from behave import register_type
+from packit_app.elements import Male, Female
+
+
+# @parse.with_pattern(r"\w+")
+# def parse_gender(gender_str: str):
+#     if gender_str.lower() == "female":
+#         return Female()
+#     elif gender_str.lower() == "male":
+#         return Male()
+
 
 def before_all(context):
+    # register_type(Gender=parse_gender)
     context.db = db.Database()
     context.table_factory = tables.ConcreteTableFactory()
     context.user_table = context.table_factory.create_table(elements.User())
+    # context.input_helper = InputHelper()
 
 
 def after_all(context):
@@ -18,3 +32,8 @@ def after_all(context):
 def after_scenario(context, scenario):
     if 'clear_user_table_after' in scenario.tags:
         context.user_table.clean_all_content()
+
+
+
+
+
