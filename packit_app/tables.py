@@ -100,7 +100,7 @@ class Table:
         self.db.connection.commit()
 
     # TODO: Remove unrequired stuff from here
-    def get_elements(self, *queries):
+    def get_matching_elements(self, *queries):
         """
         The function returns all matching elements from the table.
 
@@ -141,7 +141,7 @@ class Table:
         return result
 
     # TODO: Check if function is still required
-    def get_matching_elements(self, *query_items: QueryItem) -> list:
+    def get_matching_elements_old(self, *query_items: QueryItem) -> list:
         """
         Returns the content of the table matching the passed :param:query_items.
 

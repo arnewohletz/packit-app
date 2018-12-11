@@ -6,7 +6,7 @@ from packit_app.elements import User
 
 @when(u'{clothing_type} is added to {gender} user {name}')
 def add_singular_clothing_piece_to_user(context, clothing_type, gender, name):
-    content = context.user_table.get_elements(
+    content = context.user_table.get_matching_elements(
         User(name=name, gender=gender))
     # content
 
