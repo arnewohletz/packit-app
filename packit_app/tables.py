@@ -13,19 +13,19 @@ class TableFactory(ABC):
 
     @abstractmethod
     def create_table(self, element: TableElement):
-        """Creates a table inside the :class:`Database` database
-
-        The passed parameter :param:`element` defines the column names and
-        types
-        :param element: :class:`TableElement` object that are supposed to be
-        managed by the table
-        """
         pass
 
 
-class ConcreteTableFactory(TableFactory):
+class SingletonTableFactory(TableFactory):
 
     def create_table(self, element: TableElement):
+        """Creates a Table object inside a :class:`Database` object.
+        The table is not created if it already exists.
+
+        :param element: defines the element type the table is supposed to
+         store. The table then receives an appropriate name as well as the
+         proper amount of columns with correct name and types.
+        """
         self.column_types['id'] = 'INTEGER NOT NULL PRIMARY KEY ASC'
         table_layout_values = element.as_dict()
 
@@ -41,13 +41,23 @@ class ConcreteTableFactory(TableFactory):
             return UserTable(self.column_types)
         elif isinstance(element, Trip):
             return TripTable(self.column_types)
-        elif isinstance(element, DefaultClothingItem):
-            return UserSettingsTable(self.column_types, User)
+
         else:
+            #TODO: Add an 'IncompatibleTableElementError' raise
             pass
 
 
+class UserSettingsTableFactory(TableFactory):
+
+    def create_table(self, element: TableElement, user: User):
+    # elif isinstance(element, DefaultClothingItem):
+    # return UserSettingsTable(self.column_types, user)
+
+
 class Table:
+    """
+
+    """
     db = Database()
     helper = TableHelper()
     table_name = ""
@@ -111,28 +121,14 @@ class Table:
         :param queries:
         :return:
         """
-        # if len(queries) > 1:
-        #     query_list = []
-        #     for query in queries:
-        #         query_list.append(query.as_dict())
-        #     command = Cmd.get_return_matching_elements_command(
-        #         self.table_name, query_list)
-        # else:
-        #     command = Cmd.get_return_element_command(
-        #         self.table_name, queries[0])
         query_list = []
 
-    # if len(queries) > 1:
         for query in queries:
             query_list.append(query.as_dict())
 
-        # else:
-        #     query_list.append(queries[0])
-
         command = Cmd.get_return_matching_elements_command(
             self.table_name, query_list)
-        # result = self.helper.get_row_content_as_dictionary(
-        #     self.db.cur.execute(command))
+
         result = [r for r in
                   self.helper.get_cursor_data_as_dictionary_generator(
                       self.db.cur.execute(command))]
