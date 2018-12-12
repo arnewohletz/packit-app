@@ -42,6 +42,14 @@ class Name(QueryItem):
         self.value = value
 
 
+class Destination(QueryItem):
+    column_name = "destination"
+
+    def __init__(self, value):
+        super(Destination, self).__init__()
+
+
+
 class User(TableElement):
     def __init__(self, name="", gender=Gender()):
         super(User, self).__init__()
@@ -64,3 +72,15 @@ class Trip(TableElement):
         self.column_types['destination'] = destination
         self.column_types['start_date'] = start_date
         self.column_types['end_date'] = end_date
+
+
+class Trip(TableElement):
+    def __init____(self, destination, start_date, end_date, day_average_temp,
+                   day_max_temp, day_min_temp, night_average_indoor_temp,
+                   sport_days, no_sport_days, transit_days):
+        super(Trip, self).__init__()
+        self.column_types[]
+
+
+class UserClothingSetting(TableElement):
+    def __init__(self, ):

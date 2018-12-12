@@ -50,8 +50,16 @@ class SingletonTableFactory(TableFactory):
 class UserSettingsTableFactory(TableFactory):
 
     def create_table(self, element: TableElement, user: User):
-    # elif isinstance(element, DefaultClothingItem):
-    # return UserSettingsTable(self.column_types, user)
+        self.column_types['id'] = 'INTEGER NOT NULL PRIMARY KEY ASC'
+        table_layout_values = element.as_dict()
+
+        for column in table_layout_values:
+            if type(column) == str:
+                self.column_types[column] = 'TEXT'
+            elif type(column) == int:
+                self.column_types[column] = 'INTEGER'
+            elif type(column) == float:
+                self.column_types[column] = 'REAL'
 
 
 class Table:
@@ -109,7 +117,6 @@ class Table:
         self.db.cur.execute(command)
         self.db.connection.commit()
 
-    # TODO: Remove unrequired stuff from here
     def get_matching_elements(self, *queries):
         """
         The function returns all matching elements from the table.
@@ -137,26 +144,26 @@ class Table:
         return result
 
     # TODO: Check if function is still required
-    def get_matching_elements_old(self, *query_items: QueryItem) -> list:
-        """
-        Returns the content of the table matching the passed :param:query_items.
-
-        :param: query_items is a list of :type:QueryItem objects.
-        If no :param:query_item is passed, the complete table content is
-        returned.
-
-        :param: query_items: dict
-        :return: str
-        """
-
-        command = Cmd.get_return_matching_elements_command(
-            self.table_name, query_items=query_items)
-
-        result = [r for r in
-                  self.helper.get_cursor_data_as_dictionary_generator(
-                      self.db.cur.execute(command))]
-
-        return result
+    # def get_matching_elements_old(self, *query_items: QueryItem) -> list:
+    #     """
+    #     Returns the content of the table matching the passed :param:query_items.
+    #
+    #     :param: query_items is a list of :type:QueryItem objects.
+    #     If no :param:query_item is passed, the complete table content is
+    #     returned.
+    #
+    #     :param: query_items: dict
+    #     :return: str
+    #     """
+    #
+    #     command = Cmd.get_return_matching_elements_command(
+    #         self.table_name, query_items=query_items)
+    #
+    #     result = [r for r in
+    #               self.helper.get_cursor_data_as_dictionary_generator(
+    #                   self.db.cur.execute(command))]
+    #
+    #     return result
 
     def clean_all_content(self):
         """
@@ -239,3 +246,28 @@ class UserSettingsTable(Table):
 
     def add_default_clothes(self, gender: str) -> None:
         pass
+
+
+class TripsTable(Table):
+    table_name = "Trips"
+    pass
+
+
+class UserClothingSettingsTable(Table):
+    table_name = "UserClothingSettings"
+    pass
+
+
+class UserTripClothing(Table):
+    table_name = "UserTripClothingQuantity"
+    pass
+
+
+class GenderTable(Table):
+    table_name = "Gender"
+    pass
+
+
+class ClothingItemsTable(Table):
+    table_name = "ClothingItems"
+    pass
