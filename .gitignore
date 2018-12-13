@@ -96,7 +96,7 @@ ENV/
 .ropeproject
 
 # Pycharm project settings
-.idea
+.idea/
 
 # mkdocs documentation
 /site
