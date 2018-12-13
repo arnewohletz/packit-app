@@ -4,7 +4,7 @@ import string
 
 from features.support import database as database_helper
 from features.support import custom_type_parser
-from packit_app.elements import User, Male, Female, Name
+from packit_app.elements import User, Male, Female, Username
 
 register_type(Gender=custom_type_parser.parse_gender)
 
