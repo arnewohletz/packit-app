@@ -47,7 +47,7 @@ class SingletonTableFactory(TableFactory):
             pass
 
 
-class UserSettingsTableFactory(TableFactory):
+class UserClothingSettingsTableFactory(TableFactory):
 
     def create_table(self, element: TableElement, user: User):
         self.column_types['id'] = 'INTEGER NOT NULL PRIMARY KEY ASC'
@@ -105,6 +105,16 @@ class Table:
             return False
             # TODO: Handle error with warning pop-up message
 
+    def clean_all_content(self):
+        """
+        Removes all data from the table.
+        :return: None
+        """
+        command = Cmd.get_clean_all_content_command(
+            self.table_name)
+        self.db.cur.execute(command)
+        self.id = 1
+
     def delete_element(self, element: TableElement):
         """
         Removes a single username entry from the table.
@@ -142,38 +152,6 @@ class Table:
 
         print("Hello: " + str(result))
         return result
-
-    # TODO: Check if function is still required
-    # def get_matching_elements_old(self, *query_items: QueryItem) -> list:
-    #     """
-    #     Returns the content of the table matching the passed :param:query_items.
-    #
-    #     :param: query_items is a list of :type:QueryItem objects.
-    #     If no :param:query_item is passed, the complete table content is
-    #     returned.
-    #
-    #     :param: query_items: dict
-    #     :return: str
-    #     """
-    #
-    #     command = Cmd.get_return_matching_elements_command(
-    #         self.table_name, query_items=query_items)
-    #
-    #     result = [r for r in
-    #               self.helper.get_cursor_data_as_dictionary_generator(
-    #                   self.db.cur.execute(command))]
-    #
-    #     return result
-
-    def clean_all_content(self):
-        """
-        Removes all data from the table.
-        :return: None
-        """
-        command = Cmd.get_clean_all_content_command(
-            self.table_name)
-        self.db.cur.execute(command)
-        self.id = 1
 
     def get_errors(self) -> list:
         """
