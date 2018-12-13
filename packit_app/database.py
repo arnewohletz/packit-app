@@ -18,6 +18,10 @@ class Database:
         self.connection = sqlite3.connect(self.db_location)
         self.cur = self.connection.cursor()
 
+    def execute_command(self, command):
+        self.cur.execute(command)
+        self.connection.commit()
+
     def close_connection(self):
         """Closes the database connection (unlocks it)."""
         self.connection.close()

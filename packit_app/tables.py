@@ -16,7 +16,7 @@ class TableFactory(ABC):
         pass
 
 
-class SingletonTableFactory(TableFactory):
+class ConcreteTableFactory(TableFactory):
 
     def create_table(self, element: TableElement):
         """Creates a Table object inside a :class:`Database` object.
@@ -26,8 +26,16 @@ class SingletonTableFactory(TableFactory):
          store. The table then receives an appropriate name as well as the
          proper amount of columns with correct name and types.
         """
-        self.column_types['id'] = 'INTEGER NOT NULL PRIMARY KEY ASC'
+        primary_key_column_name = ""
+
+        # def __init__(self, columns: collections.OrderedDict):
+        #     columns.update(
+        #         {
+        #             self.primary_key_column_name: "INTEGER NOT NULL PRIMARY KEY ASC"})
+        #     columns.move_to_end(self.primary_key_column_name, last=False)
         table_layout_values = element.as_dict()
+        #
+        # table_layout_values[primary_key] = "INTEGER NOT NULL PRIMARY KEY ASC"
 
         for column in table_layout_values:
             if type(column) == str:
@@ -37,13 +45,24 @@ class SingletonTableFactory(TableFactory):
             elif type(column) == float:
                 self.column_types[column] = 'REAL'
 
+        # table_layout_values.update({self.primary_key_column_name:"INTEGER NOT NULL PRIMARY KEY ASC"})
+        # table_layout_values.move_to_end(self.primary_key_column_name, last=False)
+
         if isinstance(element, User):
             return UserTable(self.column_types)
         elif isinstance(element, Trip):
             return TripTable(self.column_types)
+        elif isinstance(element, Garment):
+            return GarmentTable(self.column_types)
+        elif isinstance(element, Gender):
+            return GenderTable(self.column_types)
+        elif isinstance(element, UserTripGarmentAmount):
+            return UserTripGarmentAmountTable(self.column_types)
+        elif isinstance(element, UserGarmentSettings):
+            return UserGarmentSettingsTable(self.column_types)
 
         else:
-            #TODO: Add an 'IncompatibleTableElementError' raise
+            # TODO: Add an 'IncompatibleTableElementError' raise
             pass
 
 
@@ -69,14 +88,22 @@ class Table:
     db = Database()
     helper = TableHelper()
     table_name = ""
+    primary_key_column_name = ""
     id = 1
     raised_errors = []
+
+    def __init__(self, primary_key, data_columns):
+        data_columns.update(
+            {primary_key: "INTEGER NOT NULL PRIMARY KEY ASC"})
+        data_columns.move_to_end(primary_key, last=False)
+        self.db.execute_command(Cmd.get_create_table_command(self.table_name,
+                                                             data_columns))
 
     def _element_already_exists(self, element: TableElement):
         """Checks whether the table already contains a entry with the same
         data"""
 
-        self._execute_command(
+        self.db.execute_command(
             Cmd.get_return_element_command(self.table_name, element))
 
         data = self.db.cur.fetchall()
@@ -85,15 +112,11 @@ class Table:
         else:
             raise ElementAlreadyExistsError
 
-    def _execute_command(self, command):
-        self.db.cur.execute(command)
-        self.db.connection.commit()
-
     def add_element(self, element: TableElement):
 
         try:
             if not self._element_already_exists(element):
-                self._execute_command(Cmd.get_add_element_to_table_command(
+                self.db.execute_command(Cmd.get_add_element_to_table_command(
                     self.table_name,
                     self.id,
                     element))
@@ -153,6 +176,10 @@ class Table:
         print("Hello: " + str(result))
         return result
 
+    def get_primary_key_value(self, *queries):
+        result = self.get_matching_elements(queries)
+        return result[0][self.primary_key_column_name]
+
     def get_errors(self) -> list:
         """
         Returns a list of all errors that have been raised inside the table
@@ -161,91 +188,78 @@ class Table:
         return self.raised_errors
 
 
+class GarmentTable(Table):
+    table_name = "Garment"
+    primary_key_column_name = "GarmentID"
+
+    def __init__(self, columns: collections.OrderedDict):
+        super(GarmentTable, self).__init__(self.primary_key_column_name,
+                                           columns)
+
+
+class GenderTable(Table):
+    table_name = "Gender"
+    primary_key_column_name = "GenderID"
+
+    def __init__(self, columns: collections.OrderedDict):
+        super(GenderTable, self).__init__(self.primary_key_column_name,
+                                          columns)
+
+
+class TripTable(Table):
+    table_name = "Trip"
+    primary_key_column_name = "TripID"
+
+    def __init__(self, columns: collections.OrderedDict):
+        super(TripTable, self).__init__(self.primary_key_column_name, columns)
+
+
+class UserGarmentSettingsTable(Table):
+    """
+    UserSettingsTable contains the individual settings of each user. It
+    implements the TableStrategy interface.
+    """
+    table_name = "UserGarmentSettings"
+    primary_key_column_name = "UserGarmentSettingsID"
+
+    def __init__(self, columns: collections.OrderedDict):
+        super(UserGarmentSettingsTable, self).__init__(
+            self.primary_key_column_name, columns)
+
+    # def __init__(self, columns: collections.OrderedDict, user: User):
+    #     self.table_name.format(str(user.user_id))
+    #     command = Cmd.get_create_table_command(self.table_name,
+    #                                            columns)
+    #     self.db.cur.execute(command)
+    #     self.db.connection.commit()
+    #
+    #     self.add_default_clothes(gender)
+    #
+    # def add_default_clothes(self, gender: str) -> None:
+    #     pass
+
+
 class UserTable(Table):
     """
     UserTable manages the packit 'users' table within the Database which
     manages the registered users. It implements the TableStrategy interface.
     """
 
-    table_name = 'users'
+    table_name = 'User'
+    primary_key_column_name = "UserID"
 
     def __init__(self, columns: collections.OrderedDict):
-        command = Cmd.get_create_table_command(self.table_name,
-                                               columns)
-        self.db.cur.execute(command)
-        self.db.connection.commit()
+        super(UserTable, self).__init__(self.primary_key_column_name, columns)
 
     def add_element(self, element: User):
         added = super(UserTable, self).add_element(element=element)
         return added
 
 
-class GenderDefaultClothesTable(Table):
-    table_name = 'gender_default_clothes'
+class UserTripGarmentAmountTable(Table):
+    table_name = "UserTripGarmentAmount"
+    primary_key_column_name = "UserTripGarmentAmountID"
 
     def __init__(self, columns: collections.OrderedDict):
-        command = Cmd.get_create_table_command(self.table_name,
-                                               columns)
-        self.db.cur.execute(command)
-        self.db.connection.commit()
-
-    def get_default_clothes(self, gender):
-        command = Cmd.get_return_element_command()
-
-
-class TripTable(Table):
-    table_name = 'trips'
-
-    def __init__(self, columns: collections.OrderedDict):
-        command = Cmd.get_create_table_command(self.table_name,
-                                               columns)
-        self.db.cur.execute(command)
-        self.db.connection.commit()
-
-
-class UserSettingsTable(Table):
-    """
-    UserSettingsTable contains the individual settings of each user. It
-    implements the TableStrategy interface.
-    """
-    table_name = 'user_{0}_default_clothes'
-    default_clothes = None
-
-    # user_id: int, gender: str,
-
-    def __init__(self, columns: collections.OrderedDict, user: User):
-        self.table_name.format(str(user.user_id))
-        command = Cmd.get_create_table_command(self.table_name,
-                                               columns)
-        self.db.cur.execute(command)
-        self.db.connection.commit()
-
-        self.add_default_clothes(gender)
-
-    def add_default_clothes(self, gender: str) -> None:
-        pass
-
-
-class TripsTable(Table):
-    table_name = "Trips"
-    pass
-
-
-class UserClothingSettingsTable(Table):
-    table_name = "UserClothingSettings"
-    pass
-
-
-class UserTripClothing(Table):
-    table_name = "UserTripClothingQuantity"
-    pass
-
-
-class GenderTable(Table):
-    table_name = "Gender"
-    pass
-
-
-class ClothingItemsTable(Table):
-    table_name = "ClothingItems"
-    pass
+        super(UserTripGarmentAmountTable, self).__init__(
+            self.primary_key_column_name, columns)
