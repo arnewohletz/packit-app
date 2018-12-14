@@ -1,10 +1,14 @@
-from .elements import User, DefaultClothingItem, Trip, TableElement, QueryItem
+from .elements import User, DefaultClothingItem, Trip, TableElement, \
+    QueryItem, Female, Male, Garment, Gender, UserTripGarmentAmount, \
+    UserGarmentSettings
+from .elements import *
 from .database import Database
 from .sql_command_generator import SQLCommandGenerator as Cmd
 from .table_helper import TableHelper
 from .errors import *
 import collections
 from abc import ABC, abstractmethod
+from overrides import overrides
 
 
 class TableFactory(ABC):
@@ -159,12 +163,16 @@ class Table:
         table that have the name value 'Freddy' and the gender attribute 'Male'
 
         :param queries:
-        :return:
+        :return: list
         """
         query_list = []
+        if queries:
+            query_list = list(queries)
 
-        for query in queries:
-            query_list.append(query.as_dict())
+        # if queries:
+        #     for query in queries[0]:
+        #         query_list.append(query)
+        # query_list.append(query.as_dict())
 
         command = Cmd.get_return_matching_elements_command(
             self.table_name, query_list)
@@ -173,11 +181,18 @@ class Table:
                   self.helper.get_cursor_data_as_dictionary_generator(
                       self.db.cur.execute(command))]
 
-        print("Hello: " + str(result))
         return result
 
-    def get_primary_key_value(self, *queries):
-        result = self.get_matching_elements(queries)
+    # def get_primary_key_value(self, *queries):
+    #     result = self.get_matching_elements(queries)
+    #     return result[0][self.primary_key_column_name]
+
+    def get_primary_key_value(self, ordereddict):
+        result = self.get_matching_elements(ordereddict)
+
+        # for key in element.column_types:
+        #     command += "'" + element.column_types[key] + "',"
+        # result = self.get_matching_elements(*queries)
         return result[0][self.primary_key_column_name]
 
     def get_errors(self) -> list:
@@ -204,6 +219,13 @@ class GenderTable(Table):
     def __init__(self, columns: collections.OrderedDict):
         super(GenderTable, self).__init__(self.primary_key_column_name,
                                           columns)
+        super(GenderTable, self).add_element(Female().as_dict())
+        super(GenderTable, self).add_element(Male().as_dict())
+
+    @staticmethod
+    def get_primary_key_value(queries):
+        result = Table.get_matching_elements(queries)
+        return result[0][self.primary_key_column_name]
 
 
 class TripTable(Table):
@@ -251,9 +273,53 @@ class UserTable(Table):
     def __init__(self, columns: collections.OrderedDict):
         super(UserTable, self).__init__(self.primary_key_column_name, columns)
 
+    def _match_ids(self, element: User):
+        print(element)
+        content = element.as_dict()
+        # Für die get_primary_key Methode wird eine List von QueryElements benötigt
+        # da diese die get_matching_elements Methode aufruft
+        # Da die _match_ids methode derzeit von der add_element Methode aufgerufen wird
+        # liefert diese ein TableElement in diese Methode hinein
+        # Ziel ist es daher, aus einem OrderedDict eine Liste von QueryElements zu machen
+
+        # if content[GenderName.column_name] == "male":
+        #
+        #
+        # for column in element.as_dict():
+        #     if column == GenderName.column_name:
+        #         # if content
+        #         # content[column] = GenderTable.get_primary_key_value(column)
+        #         # element.[column_name] = GenderTable.get_primary_key_value(
+        #         #     value)
+        #         query = {
+        #             GenderName.column_name: content[GenderName.column_name]}
+        #         result = GenderTable.get_primary_key_value(query)
+        #
+        # return result
+
+    @overrides
     def add_element(self, element: User):
+        # TODO: Transform [{name="Arne, gender="male"}] to [{name="Arne", gender=1}]
+
+        gender_table = GenderTable.get_matching_elements()
+        print('hello')
+        element.column_types[
+            GenderName.column_name] = self.get_primary_key_value(
+            element.as_dict())
+        element.column_types[
+            GenderID.column_name] = self.get_primary_key_value(
+            [{'gendername': 'male'}, {'username': "Arne"}])
+
         added = super(UserTable, self).add_element(element=element)
         return added
+
+    # def get_primary_key_value(self, **kwargs):
+    #     result = self.get_matching_elements(kwargs)
+    #
+    #     # for key in element.column_types:
+    #     #     command += "'" + element.column_types[key] + "',"
+    #     # result = self.get_matching_elements(*queries)
+    #     return result[0][self.primary_key_column_name]
 
 
 class UserTripGarmentAmountTable(Table):

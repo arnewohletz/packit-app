@@ -1,6 +1,6 @@
 import collections
 from abc import ABC
-from .tables import UserTable
+# from .tables import GenderTable, UserTable
 
 
 class Element(ABC):
@@ -9,11 +9,21 @@ class Element(ABC):
 
 
 class QueryItem(Element):
+    """
+    A QueryItem represents a single column of a TableItem.
+
+    Each QueryItem type holds the the column name it is saved in.
+    """
     column_name = ""
     value = ""
+
     # id = 0
 
     def as_dict(self):
+        """
+        Returns the column name and value as a dictionary
+        :return: dict
+        """
         return dict({self.column_name: self.value})
 
 
@@ -26,8 +36,20 @@ class TableElement(Element):
         return self.column_types
 
 
+class GenderID(QueryItem):
+    value = "genderID"
+
+
+class GarmentName(QueryItem):
+    value = "name"
+
+
+class GarmentIsDefault(QueryItem):
+    value = "isDefault"
+
+
 class GenderName(QueryItem):
-    column_name = "name"
+    column_name = "gender"
 
 
 class Female(GenderName):
@@ -41,7 +63,7 @@ class Male(GenderName):
 
 
 class Username(QueryItem):
-    column_name = "name"
+    column_name = "username"
 
     def __init__(self, value):
         super(Username, self).__init__()
@@ -94,15 +116,20 @@ class TripDateStart(QueryItem):
 class User(TableElement):
     name = ""
     gender = None
-    default_table = UserTable.table_name
+    # default_table = UserTable.table_name
+    # gender_table = GenderTable(collections.OrderedDict())
 
-    def __init__(self, name="", gender=None):
+    def __init__(self, name="", gender=Male()):
         super(User, self).__init__()
         self.column_types[Username.column_name] = name
-        self.column_types[Gender.column_name] = gender.id
+        self.column_types[GenderName.column_name] = gender.value
+        # self.column_types[
+        #     GenderName.column_name] = self.gender_table.get_primary_key_value(
+        #     gender)
 
     # def get_primary_key_value(self):
     #     db.execute(Cmd.return_matching_elements_command(self.default_table, self.name, self.gender))
+
 
 # TODO: Update column_types
 class DefaultClothingItem(TableElement):
@@ -145,3 +172,10 @@ class Garment(TableElement):
         self.column_types[GarmentName.column_name] = name
         self.column_types[GarmentIsDefault.column_name] = is_default
 
+
+class UserTripGarmentAmount(TableElement):
+    pass
+
+
+class UserGarmentSettings(TableElement):
+    pass

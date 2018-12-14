@@ -75,6 +75,21 @@ class SQLCommandGenerator:
 
     @staticmethod
     def get_return_matching_elements_command(table_name, query_items=None):
+        """
+        Returns a proper SQL command for selecting matching items of the given
+        :param:table_name that are defined by :param:query_items.
+        :param: query_items must be of type list where the list items itself
+        are dictionaries, containing the column and value of a :param:QueryItem.
+
+        Example:
+
+        get_return_matching_elements_command(table_name="foo", [{foo:bar}, {bar:foo}]
+
+        :param table_name: str
+        :param query_items: list of dictionaries
+        :return:
+        """
+
         command = "SELECT * FROM " + table_name
         counter = {}
 
