@@ -108,10 +108,10 @@ class SQLCommandGenerator:
         for query in query_items:
             for column, value in query.items():
                 if counter[column] > 1:
-                    command += column + " = '" + value + "' OR "
+                    command += column + " = '" + str(value) + "' OR "
                     counter[column] -= 1
                 elif counter[column] == 1:
-                    command += column + " = '" + value + "' AND "
+                    command += column + " = '" + str(value) + "' AND "
 
         command = command[:-5] + ")"
 

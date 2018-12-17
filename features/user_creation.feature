@@ -16,8 +16,8 @@ Feature: Different users are supposed to use a single software installation to
 
         Examples: Users
             | gender | name  |
-            | male   | Harry |
             | female | Susan |
+            | male   | Harry |
 
     @clear_user_table_after
     Scenario Outline: Create various amount of new users

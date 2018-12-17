@@ -1,6 +1,6 @@
 import collections
 from abc import ABC
-# from .tables import GenderTable, UserTable
+# from .database import Database
 
 
 class Element(ABC):
@@ -14,8 +14,10 @@ class QueryItem(Element):
 
     Each QueryItem type holds the the column name it is saved in.
     """
-    column_name = ""
-    value = ""
+    def __init__(self):
+        super(QueryItem, self).__init__()
+        self.column_name = ""
+        self.value = ""
 
     # id = 0
 
@@ -28,16 +30,20 @@ class QueryItem(Element):
 
 
 class TableElement(Element):
-    id = 0
-    column_types = collections.OrderedDict()
-    default_table = None
+    # id = 0
+    # column_types = collections.OrderedDict()
+    # default_table = None
+
+    def __init__(self):
+        self.column_types = collections.OrderedDict()
+        self.id = 0
 
     def as_dict(self):
         return self.column_types
 
+    def get_id(self):
+        pass
 
-class GenderID(QueryItem):
-    value = "genderID"
 
 
 class GarmentName(QueryItem):
@@ -46,6 +52,10 @@ class GarmentName(QueryItem):
 
 class GarmentIsDefault(QueryItem):
     value = "isDefault"
+
+
+class GenderID(QueryItem):
+    column_name = "genderID"
 
 
 class GenderName(QueryItem):
@@ -116,19 +126,26 @@ class TripDateStart(QueryItem):
 class User(TableElement):
     name = ""
     gender = None
-    # default_table = UserTable.table_name
+    # default_table = Database.user_table
+
     # gender_table = GenderTable(collections.OrderedDict())
 
     def __init__(self, name="", gender=Male()):
         super(User, self).__init__()
         self.column_types[Username.column_name] = name
-        self.column_types[GenderName.column_name] = gender.value
+        # self.column_types[GenderID.column_name] = gender.genderID
+        self.column_types[GenderID.column_name] = gender
         # self.column_types[
         #     GenderName.column_name] = self.gender_table.get_primary_key_value(
         #     gender)
 
     # def get_primary_key_value(self):
     #     db.execute(Cmd.return_matching_elements_command(self.default_table, self.name, self.gender))
+
+    # def get_id(self):
+    #     result = self.default_table.get_matching_elements(self, self.column_types)
+    #     return result
+
 
 
 # TODO: Update column_types
@@ -159,10 +176,16 @@ class Trip(TableElement):
 
 
 class Gender(TableElement):
+    # default_table = Database.gender_table
 
-    def __init__(self, name):
+    def __init__(self, name=""):
         super(Gender, self).__init__()
         self.column_types[GenderName.column_name] = name
+
+    # @classmethod
+    # def get_id(cls):
+    #     result = Gender.default_table.get_matching_elements(cls)
+    #     return result
 
 
 class Garment(TableElement):

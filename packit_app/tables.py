@@ -11,12 +11,43 @@ from abc import ABC, abstractmethod
 from overrides import overrides
 
 
+class TableManager:
+
+    gender_table = None
+    user_table = None
+
+    def __init__(self):
+        table_factory = ConcreteTableFactory()
+        self.gender_table = table_factory.create_table(Gender())
+        self.user_table = table_factory.create_table(User())
+
+
+    # def add_element(self, table, element):
+    #     try:
+    #         if not self._element_already_exists(element):
+    #             self.db.execute_command(Cmd.get_add_element_to_table_command(
+    #                 self.table_name,
+    #                 self.id,
+    #                 element))
+    #             self.id += 1
+    #             return True
+    #
+    #     except ElementAlreadyExistsError as error:
+    #         self.raised_errors.append(error)
+    #         return False
+
+
 class TableFactory(ABC):
     """Abstract class that all table factory classes must implement"""
-    column_types = collections.OrderedDict()
+
+    # column_types = collections.OrderedDict()
+
+    def __init__(self):
+        self.column_types = collections.OrderedDict()
 
     @abstractmethod
     def create_table(self, element: TableElement):
+        self.column_types = collections.OrderedDict()
         pass
 
 
@@ -41,6 +72,7 @@ class ConcreteTableFactory(TableFactory):
         #
         # table_layout_values[primary_key] = "INTEGER NOT NULL PRIMARY KEY ASC"
 
+        super(ConcreteTableFactory, self).__init__()
         for column in table_layout_values:
             if type(column) == str:
                 self.column_types[column] = 'TEXT'
@@ -219,12 +251,18 @@ class GenderTable(Table):
     def __init__(self, columns: collections.OrderedDict):
         super(GenderTable, self).__init__(self.primary_key_column_name,
                                           columns)
-        super(GenderTable, self).add_element(Female().as_dict())
-        super(GenderTable, self).add_element(Male().as_dict())
+        super(GenderTable, self).add_element(Gender(Male.value))
+        super(GenderTable, self).add_element(Gender(Female.value))
+        # super(GenderTable, self).add_element(Female().as_dict())
+        # super(GenderTable, self).add_element(Male().as_dict())
 
-    @staticmethod
-    def get_primary_key_value(queries):
-        result = Table.get_matching_elements(queries)
+    # @staticmethod
+    # def get_primary_key_value(queries):
+    #     result = Table.get_matching_elements(queries)
+    #     return result[0][self.primary_key_column_name]
+
+    def get_primary_key_value(self, queries):
+        result = self.get_matching_elements(queries)
         return result[0][self.primary_key_column_name]
 
 
@@ -301,14 +339,30 @@ class UserTable(Table):
     def add_element(self, element: User):
         # TODO: Transform [{name="Arne, gender="male"}] to [{name="Arne", gender=1}]
 
-        gender_table = GenderTable.get_matching_elements()
-        print('hello')
-        element.column_types[
-            GenderName.column_name] = self.get_primary_key_value(
-            element.as_dict())
-        element.column_types[
-            GenderID.column_name] = self.get_primary_key_value(
-            [{'gendername': 'male'}, {'username': "Arne"}])
+        # gender_table = GenderTable.get_matching_elements()
+
+        # element.column_types[
+        #     GenderName.column_name] = self.get_primary_key_value(
+        #     element.as_dict())
+        # element.column_types[
+        #     GenderID.column_name] = self.get_primary_key_value(
+        #     [{'gendername': 'male'}, {'username': "Arne"}])
+        #
+        # added = super(UserTable, self).add_element(element=element)
+        # return added
+
+        #TODO: I have a User object at this point, containing a Gender object inside its column_types dictionary
+        # How to get the genderID from the Gender object?
+        genderid = TableManager.gender_table.get_primary_key_value(element.column_types[GenderID.column_name])
+        print("Done")
+
+        gender = element.column_types[GenderName.column_name]
+
+
+        # gender = element[0][GenderName.column_name]
+        gender_id = Database.gender_table.get_matching_elements(
+            dict(gender=gender))[0][GenderID.column_name]
+        element[0][gender] = gender_id
 
         added = super(UserTable, self).add_element(element=element)
         return added
