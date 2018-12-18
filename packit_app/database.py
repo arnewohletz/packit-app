@@ -1,5 +1,6 @@
 import sqlite3
 from packit_app import constants
+from .tables import TableFactoryImpl
 
 
 class Database:
@@ -17,6 +18,7 @@ class Database:
     def __init__(self):
         self.connection = sqlite3.connect(self.db_location)
         self.cur = self.connection.cursor()
+        self.table_factory = ConcreteTableFactory(self)
 
     def execute_command(self, command):
         self.cur.execute(command)

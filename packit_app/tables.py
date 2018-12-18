@@ -51,6 +51,44 @@ class TableFactory(ABC):
         pass
 
 
+class TableFactoryImpl(TableFactory):
+
+    def __init__(self, database):
+        super(TableFactoryImpl, self).__init__()
+        self.database = database
+
+    def create_table(self, element: TableElement):
+        """Creates a Table object inside a :class:`Database` object.
+        The table is not created if it already exists.
+
+        :param element: defines the element type the table is supposed to
+         store. The table then receives an appropriate name as well as the
+         proper amount of columns with correct name and types.
+        """
+        table_layout_values = element.as_dict()
+
+        # super(ConcreteTableFactory, self).__init__()
+        for column in table_layout_values:
+            if type(column) == str:
+                self.column_types[column] = 'TEXT'
+            elif type(column) == int:
+                self.column_types[column] = 'INTEGER'
+            elif type(column) == float:
+                self.column_types[column] = 'REAL'
+
+        # table_layout_values.update({self.primary_key_column_name:"INTEGER NOT NULL PRIMARY KEY ASC"})
+        # table_layout_values.move_to_end(self.primary_key_column_name, last=False)
+
+        if isinstance(element, User):
+            return MyUserTable(self.column_types)
+        elif isinstance(element, Gender):
+            return MyGenderTable(self.column_types)
+
+        else:
+            # TODO: Add an 'IncompatibleTableElementError' raise
+            pass
+
+
 class ConcreteTableFactory(TableFactory):
 
     def create_table(self, element: TableElement):
@@ -121,7 +159,8 @@ class Table:
     """
 
     """
-    db = Database()
+    # db = Database()
+    db = None
     helper = TableHelper()
     table_name = ""
     primary_key_column_name = ""
@@ -233,6 +272,14 @@ class Table:
         :return:
         """
         return self.raised_errors
+
+
+class MyGenderTable(Table):
+
+    def __init__(self, database, columns):
+        self.db = database
+        super(MyGenderTable, self).__init__(self, columns)
+
 
 
 class GarmentTable(Table):
@@ -353,6 +400,7 @@ class UserTable(Table):
 
         #TODO: I have a User object at this point, containing a Gender object inside its column_types dictionary
         # How to get the genderID from the Gender object?
+
         genderid = TableManager.gender_table.get_primary_key_value(element.column_types[GenderID.column_name])
         print("Done")
 

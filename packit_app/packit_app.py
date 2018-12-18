@@ -9,12 +9,12 @@ from .elements import User, Gender
 
 class Application:
 
-    database = None
-    user_table = None
-    gender_table = None
+    # database = None
+    # user_table = None
+    # gender_table = None
 
-    def initialize(self):
-        table_factory = ConcreteTableFactory()
+    def __init__(self):
+        # table_factory = ConcreteTableFactory()
         self.database = Database()
-        self.user_table = table_factory.create_table(User())
-        self.gender_table = table_factory.create_table(Gender())
+        # self.user_table = table_factory.create_table(User())
+        # self.gender_table = table_factory.create_table(Gender())
