@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from .database import Database
-from .tables import ConcreteTableFactory
+from .tables import TableFactoryImpl
 from .elements import User, Gender
 
 """Main module."""
@@ -16,5 +16,6 @@ class Application:
     def __init__(self):
         # table_factory = ConcreteTableFactory()
         self.database = Database()
+        self.table_factory = TableFactoryImpl(self.database)
         # self.user_table = table_factory.create_table(User())
         # self.gender_table = table_factory.create_table(Gender())

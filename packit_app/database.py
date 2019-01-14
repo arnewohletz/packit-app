@@ -8,7 +8,7 @@ class Database:
     The Database class manages the initial creation of the SQLite database file
     and contains the connection and cursor variables needed to interact with
     the database. Since the Database class is a singleton, its sole
-    instantiation is refered to by calling the get_instance() method.
+    instantiation is referred to by calling the get_instance() method.
     """
     connection = None
     cur = None
@@ -18,9 +18,10 @@ class Database:
     def __init__(self):
         self.connection = sqlite3.connect(self.db_location)
         self.cur = self.connection.cursor()
-        self.table_factory = ConcreteTableFactory(self)
+        self.table_factory = TableFactoryImpl(self)
 
     def execute_command(self, command):
+        """Executes any given SQL query on the connected database"""
         self.cur.execute(command)
         self.connection.commit()
 

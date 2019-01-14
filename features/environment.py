@@ -1,4 +1,4 @@
-from packit_app import database as db, tables
+# from packit_app import database as db, tables
 from packit_app import constants
 import os
 from packit_app.packit_app import Application
@@ -21,8 +21,11 @@ def before_all(context):
 
     context.app = Application()
     context.db = context.app.database
-    context.user_table = context.app.user_table
-    context.gender_table = context.app.gender_table
+    # context.user_table = context.app.user_table
+    context.table_factory = context.app.table_factory
+    context.user_table = context.table_factory.create_table(User())
+    context.gender_table = context.table_factory.create_table(Gender())
+    # context.gender_table = context.app.gender_table
 
     # context.db = db.Database()
     # context.table_manager = tables.TableManager()

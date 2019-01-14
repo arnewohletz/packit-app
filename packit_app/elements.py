@@ -1,35 +1,15 @@
 import collections
 from abc import ABC
 # from .database import Database
+from .field_values import *
 
 
-class Element(ABC):
-    def __init__(self):
-        pass
+# class Element(ABC):
+#     def __init__(self):
+#         pass
 
 
-class QueryItem(Element):
-    """
-    A QueryItem represents a single column of a TableItem.
-
-    Each QueryItem type holds the the column name it is saved in.
-    """
-    def __init__(self):
-        super(QueryItem, self).__init__()
-        self.column_name = ""
-        self.value = ""
-
-    # id = 0
-
-    def as_dict(self):
-        """
-        Returns the column name and value as a dictionary
-        :return: dict
-        """
-        return dict({self.column_name: self.value})
-
-
-class TableElement(Element):
+class TableDataElement:
     # id = 0
     # column_types = collections.OrderedDict()
     # default_table = None
@@ -41,103 +21,88 @@ class TableElement(Element):
     def as_dict(self):
         return self.column_types
 
-    def get_id(self):
-        pass
+    # def get_id_as_dict(self):
+    #
+    #     pass
 
 
+# class Female(GenderName):
+#     value = "female"
+#     GenderID = 2
+#
+#
+# class Male(GenderName):
+#     value = "male"
+#     GenderID = 1
 
-class GarmentName(QueryItem):
-    value = "name"
+class Gender(TableDataElement):
+    # default_table = Database.gender_table
 
+    def __init__(self, gender=Male()):
+        super(Gender, self).__init__()
+        # self.column_types[GenderID.column_name] = gender.field[
+        #     GenderID.column_name]
+        self.column_types[GenderName.column_name] = gender.field[
+            GenderName.column_name]
 
-class GarmentIsDefault(QueryItem):
-    value = "isDefault"
+        # self.id_column_name = "GenderID"
+        # # self.column_types[GenderName.column_name] = gender.value
+        # self.column_types["name"] = gender.value
+        # self.column_types[self.id_column_name] = gender.id
+        # self.GenderID = None
 
-
-class GenderID(QueryItem):
-    column_name = "genderID"
-
-
-class GenderName(QueryItem):
-    column_name = "gender"
-
-
-class Female(GenderName):
-    value = "female"
-    genderID = 2
-
-
-class Male(GenderName):
-    value = "male"
-    genderID = 1
-
-
-class Username(QueryItem):
-    column_name = "username"
-
-    def __init__(self, value):
-        super(Username, self).__init__()
-        self.value = value
+    # @classmethod
+    # def get_id(cls):
+    #     result = Gender.default_table.get_matching_elements(cls)
+    #     return result
 
 
-class TripTemperatureDayAverage(QueryItem):
-    column_name = "day_average_temp"
+# class Female(Gender):
+#     # value = "female"
+#     # GenderID = 2
+#
+#     def __init__(self):
+#         super(Female, self).__init__()
+#         self.GenderID = 2
+#         self.value = "female"
+#
+#
+# class Male(Gender):
+#     # value = "male"
+#     # GenderID = 1
+#
+#     def __init__(self):
+#         super(Male, self).__init__()
+#         self.GenderID = 1
+#         self.value = "male"
 
 
-class TripTemperatureDayMax(QueryItem):
-    column_name = "dayMaxTemp"
-
-
-class TripTemperatureDayMin(QueryItem):
-    column_name = "dayMinTemp"
-
-
-class TripDestination(QueryItem):
-    column_name = "destination"
-
-    def __init__(self, value):
-        super(TripDestination, self).__init__()
-
-
-class TripTemperatureNightIndoorAverage(QueryItem):
-    column_name = "night_average_indoor_temp"
-
-
-class TripDaysInTransit(QueryItem):
-    column_name = "days_in_transit"
-
-
-class TripDaysWithSports(QueryItem):
-    column_name = "days_without_sports"
-
-
-class TripDaysWithoutSports(QueryItem):
-    column_name = "days_with sports"
-
-
-class TripDateEnd(QueryItem):
-    column_name = "end_date"
-
-
-class TripDateStart(QueryItem):
-    column_name = "start_date"
-
-
-class User(TableElement):
+class User(TableDataElement):
     name = ""
     gender = None
+
     # default_table = Database.user_table
 
     # gender_table = GenderTable(collections.OrderedDict())
 
-    def __init__(self, name="", gender=Male()):
+    def __init__(self, username=Username(""), gender=Male()):
         super(User, self).__init__()
-        self.column_types[Username.column_name] = name
-        # self.column_types[GenderID.column_name] = gender.genderID
-        self.column_types[GenderID.column_name] = gender
-        # self.column_types[
-        #     GenderName.column_name] = self.gender_table.get_primary_key_value(
-        #     gender)
+        self.column_types[Username.column_name] = username.field[
+            Username.column_name]
+        self.column_types[GenderID.column_name] = gender.field[
+            GenderID.column_name]
+
+    # def __init__(self, username=Username(""), gender=Male()):
+    #     super(User, self).__init__()
+    #     self.username = username
+    #     self.gender = gender
+    #     self.column_types[self.username.column_name] = self.username.value
+    #     self.column_types[self.gender.id_column_name] = self.gender.GenderID
+    #     # self.column_types[GenderID.column_name] = gender.GenderID
+    #     self.column_types[GenderID.column_name] = gender.GenderID
+    # self.column_types[
+    #     GenderName.column_name] = self.gender_table.get_primary_key_value(
+    #     gender)
 
     # def get_primary_key_value(self):
     #     db.execute(Cmd.return_matching_elements_command(self.default_table, self.name, self.gender))
@@ -147,16 +112,15 @@ class User(TableElement):
     #     return result
 
 
-
 # TODO: Update column_types
-class DefaultClothingItem(TableElement):
+class DefaultClothingElement(TableDataElement):
     def __init__(self, gender="", clothing_item=""):
-        super(DefaultClothingItem, self).__init__()
+        super(DefaultClothingElement, self).__init__()
         self.column_types['gender'] = gender
         self.column_types['clothing_item'] = clothing_item
 
 
-class Trip(TableElement):
+class Trip(TableDataElement):
     def __init__(self, destination, start_date, end_date, day_average_temp,
                  day_max_temp, day_min_temp, night_average_indoor_temp,
                  sport_days, no_sport_days, transit_days):
@@ -175,20 +139,7 @@ class Trip(TableElement):
         self.column_types[TripDaysInTransit.column_name] = transit_days
 
 
-class Gender(TableElement):
-    # default_table = Database.gender_table
-
-    def __init__(self, name=""):
-        super(Gender, self).__init__()
-        self.column_types[GenderName.column_name] = name
-
-    # @classmethod
-    # def get_id(cls):
-    #     result = Gender.default_table.get_matching_elements(cls)
-    #     return result
-
-
-class Garment(TableElement):
+class Garment(TableDataElement):
     def __init__(self, gender, name, is_default):
         super(Garment, self).__init__()
         self.column_types[GenderName.column_name] = gender
@@ -196,9 +147,9 @@ class Garment(TableElement):
         self.column_types[GarmentIsDefault.column_name] = is_default
 
 
-class UserTripGarmentAmount(TableElement):
+class UserTripGarmentAmount(TableDataElement):
     pass
 
 
-class UserGarmentSettings(TableElement):
+class UserGarmentSettings(TableDataElement):
     pass

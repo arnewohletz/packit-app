@@ -1,4 +1,4 @@
-from .elements import TableElement, QueryItem
+from .elements import TableDataElement, TableField
 import collections
 
 
@@ -6,13 +6,13 @@ class SQLCommandGenerator:
 
     @staticmethod
     def get_add_element_to_table_command(table_name: str, value_id: int,
-                                         element: TableElement):
+                                         element: TableDataElement):
 
         command = "INSERT INTO " + table_name + ' VALUES(' + str(
             value_id) + ","
 
         for key in element.column_types:
-            command += "'" + element.column_types[key] + "',"
+            command += "'" + str(element.column_types[key]) + "',"
 
         command = command[:-1] + ")"
 
@@ -41,7 +41,7 @@ class SQLCommandGenerator:
         return command
 
     @staticmethod
-    def get_remove_element_command(table_name: str, element: TableElement):
+    def get_remove_element_command(table_name: str, element: TableDataElement):
 
         command = "DELETE FROM " + table_name + " WHERE ("
 
@@ -55,12 +55,12 @@ class SQLCommandGenerator:
     # TODO: Check if method is still required
     @staticmethod
     def get_return_element_command(table_name,
-                                   element: TableElement):
+                                   element: TableDataElement):
         columns = list(element.column_types.keys())
 
         command = "SELECT * FROM " + table_name + " WHERE "
         for data in columns:
-            command += data + " = '" + element.column_types[data] + "' AND "
+            command += str(data) + " = '" + str(element.column_types[data]) + "' AND "
 
         command = command[:-5]
 
@@ -94,24 +94,33 @@ class SQLCommandGenerator:
         counter = {}
 
         if query_items:
-            for query in query_items:
-                for column, value in query.items():
-                    if column not in counter:
-                        counter[column] = 1
-                    else:
-                        counter[column] += 1
+            for column, value in query_items.items():
+                if column not in counter:
+                    counter[column] = 1
+                else:
+                    counter[column] += 1
         else:
             return command
 
+        # if query_items:
+        #     for query in query_items:
+        #         for column, value in query.items():
+        #             if column not in counter:
+        #                 counter[column] = 1
+        #             else:
+        #                 counter[column] += 1
+        # else:
+        #     return command
+
         command = command + " WHERE ("
 
-        for query in query_items:
-            for column, value in query.items():
-                if counter[column] > 1:
-                    command += column + " = '" + str(value) + "' OR "
-                    counter[column] -= 1
-                elif counter[column] == 1:
-                    command += column + " = '" + str(value) + "' AND "
+        # for query in query_items:
+        for column, value in query_items.items():
+            if counter[column] > 1:
+                command += column + " = '" + str(value) + "' OR "
+                counter[column] -= 1
+            elif counter[column] == 1:
+                command += column + " = '" + str(value) + "' AND "
 
         command = command[:-5] + ")"
 

@@ -1,104 +1,125 @@
 
 
-class QueryItem:
+class TableField:
     """
-    A QueryItem represents a single column of a TableItem.
+    A TableField represents a single field inside a table.
 
-    Each QueryItem type holds the the column name it is saved in.
+    Each TableField type holds the the column name it is saved in as well as
+    its value.
     """
+
+    column_name = ""
+    value = None
+    # field = {}
+
     def __init__(self):
-        super(QueryItem, self).__init__()
-        self.column_name = ""
-        self.value = ""
+        super(TableField, self).__init__()
+        self.field = {}
+        # self.column_name = ""
+        # self.value = ""
 
-    # id = 0
-
+    # TODO: Check if this function is still needed
     def as_dict(self):
         """
         Returns the column name and value as a dictionary
         :return: dict
         """
-        return dict({self.column_name: self.value})
+        # return dict({self.column_name: self.value})
+        return dict({self.column_name: self.field[self.column_name]})
 
 
-class GarmentName(QueryItem):
-    value = "name"
+class GarmentName(TableField):
+    value = "Name"
 
 
-class GarmentIsDefault(QueryItem):
-    value = "isDefault"
+class GarmentIsDefault(TableField):
+    value = "IsDefault"
 
 
-class GenderID(QueryItem):
-    column_name = "genderID"
+class GenderID(TableField):
+    column_name = "GenderID"
+
+    def __init__(self, gender_id: int):
+        super(GenderID, self).__init__()
+        self.field[self.column_name] = gender_id
 
 
-class GenderName(QueryItem):
-    column_name = "gender"
+class GenderName(TableField):
+    column_name = "Name"
 
 
-class Male(QueryItem):
+class Male(TableField):
+
+    column_name = "Name"
 
     def __init__(self):
         super(Male, self).__init__()
-        self.genderID = 1
-        self.value = "male"
+        self.field[GenderID.column_name] = 1
+        self.field[GenderName.column_name] = "male"
+    # def __init__(self):
+    #     super(Male, self).__init__()
+    #     self.GenderID = 1
+    #     self.value = "male"
 
 
-class Female(QueryItem):
+class Female(TableField):
+
+    column_name = "Name"
 
     def __init__(self):
         super(Female, self).__init__()
-        self.genderID = 2
-        self.value = "female"
+        self.field[GenderID.column_name] = 2
+        self.field[GenderName.column_name] = "female"
+        # self.GenderID = 2
+        # self.value = "female"
 
 
-class Username(QueryItem):
+class Username(TableField):
+    column_name = "Username"
 
-    def __init__(self, value):
+    def __init__(self, name: str):
         super(Username, self).__init__()
-        self.value = value
-        self.column_name = "username"
+        self.field[self.column_name] = name
 
 
-class TripTemperatureDayAverage(QueryItem):
-    column_name = "day_average_temp"
+class TripTemperatureDayAverage(TableField):
+    column_name = "DayAverageTemp"
 
 
-class TripTemperatureDayMax(QueryItem):
-    column_name = "dayMaxTemp"
+class TripTemperatureDayMax(TableField):
+    column_name = "DayMaxTemp"
 
 
-class TripTemperatureDayMin(QueryItem):
-    column_name = "dayMinTemp"
+class TripTemperatureDayMin(TableField):
+    column_name = "DayMinTemp"
 
 
-class TripDestination(QueryItem):
-    column_name = "destination"
+class TripDestination(TableField):
+    column_name = "Destination"
 
     def __init__(self, value):
         super(TripDestination, self).__init__()
 
 
-class TripTemperatureNightIndoorAverage(QueryItem):
-    column_name = "night_average_indoor_temp"
+class TripTemperatureNightIndoorAverage(TableField):
+    column_name = "NightAverageIndoorTemp"
 
 
-class TripDaysInTransit(QueryItem):
-    column_name = "days_in_transit"
+class TripDaysInTransit(TableField):
+    column_name = "DaysInTransit"
 
 
-class TripDaysWithSports(QueryItem):
-    column_name = "days_without_sports"
+class TripDaysWithSports(TableField):
+    column_name = "DaysWithoutSports"
 
 
-class TripDaysWithoutSports(QueryItem):
-    column_name = "days_with sports"
+class TripDaysWithoutSports(TableField):
+    column_name = "DaysWithSports"
 
 
-class TripDateEnd(QueryItem):
-    column_name = "end_date"
+class TripDateEnd(TableField):
+    column_name = "EndDate"
 
 
-class TripDateStart(QueryItem):
-    column_name = "start_date"
+class TripDateStart(TableField):
+    column_name = "StartDate"
