@@ -255,15 +255,25 @@ class Table:
 
     def get_matching_elements(self, *field_values):
         """
-        The function returns all matching elements from the table.
+        Returns all matching table elements as a list dictionaries.
+
+        `TableField`
+        Zero, one or more dictionaries of type :class:`~packit_app.field_values.TableField`
+        can to be passed as ``field_values``. If none are passed, all table
+        elements are returned. Any passed ``field_value`` functions as a
+        filter, where only elements fulfilling all filter conditions are
+        returned.
 
         Example:
-        Table.get_matching_elements(Male(), Name('Freddy')) returns all entries
-        of the table that have the name value 'Freddy' and the gender attribute
-        'Male'
+        ``Table.get_matching_elements(Male(), Username('Freddy'))`` returns all
+        entries of the table that have the `Username` 'Freddy' and the gender
+        attribute 'Male'
 
-        :param queries:
-        :return: list
+        :param field_values: Zero, one or more `TableField` objects
+        :rtype: list of dictionaries, if one or more elements are found. Each
+            dictionary contains the complete data of each found
+            `TableDataElement`. An empty list is returned in case no match is
+            found.
         """
 
         all_queries_dict = {}

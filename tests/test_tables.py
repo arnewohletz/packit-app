@@ -7,6 +7,5 @@ import pytest
 import os
 import sqlite3
 
-def test_each_user_has_unique_id():
-    db = Database()
+
 

@@ -46,7 +46,7 @@ class SQLCommandGenerator:
         command = "DELETE FROM " + table_name + " WHERE ("
 
         for key in element.column_types:
-            command += key + " = '" + element.column_types[key] + "' AND "
+            command += key + " = '" + str(element.column_types[key]) + "' AND "
 
         command = command[:-5] + ")"
 
