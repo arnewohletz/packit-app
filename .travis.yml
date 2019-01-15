@@ -20,7 +20,7 @@ matrix:
 install: pip install -U tox-travis
 
 before_script:
-    python -m pip install -r requirements_dev.txt
+    python -m pip install -r requirements_build.txt
 
 # Command to run tests, e.g. python setup.py test
 script:
