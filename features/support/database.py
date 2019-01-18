@@ -1,15 +1,14 @@
-from packit_app import database, tables
-from packit_app.sql_command_generator import SQLCommandGenerator
+from packit_app import database
 
 
 class DatabaseHelper:
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.db = database.Database()
         self.conn = self.db.connection
         self.cur = self.db.cur
 
-    def print_table(self, table_name):
+    def print_table(self, table_name: str) -> None:
         self.db.cur.execute(
             """SELECT * FROM {0}""".format(table_name)
         )
@@ -19,19 +18,3 @@ class DatabaseHelper:
 
         if content == ():
             print('<user table empty>')
-
-
-
-#
-# class UserTableHelper:
-#
-#     def __init__(self):
-#         self.db = database.Database()
-#         self.user_table = tables.UserTable()
-#         self.generator = SQLCommandGenerator()
-#
-#     def drop_user_table(self):
-#         command = self.generator.get_drop_table_command(
-#             self.user_table.table_name)
-#         self.db.connection.execute(command)
-#         self.db.connection.commit()

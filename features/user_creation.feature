@@ -50,5 +50,3 @@ Feature: Different users are supposed to use a single software installation to
             | gender | name  |
             | male   | Harry |
             | female | Susan |
-
-

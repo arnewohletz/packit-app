@@ -21,7 +21,6 @@
 import os
 import sys
 import packit_app
-from packit_app import __version__
 
 sys.path.insert(0, os.path.abspath('..'))
 
@@ -52,10 +51,6 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 default_role = 'py:obj'
 pygments_style = 'sphinx'
 add_module_names = True
-
-
-# The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'sphinx'
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = False

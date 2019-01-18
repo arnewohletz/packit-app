@@ -1,5 +1,5 @@
 from behave import given, when, then
-from packit_app.elements import User
+from packit_app.table_elements import User
 
 
 # REMOVE & ADD NEW

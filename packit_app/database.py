@@ -15,16 +15,16 @@ class Database:
     errors = []
     db_location = constants.DB_LOCATION
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.connection = sqlite3.connect(self.db_location)
         self.cur = self.connection.cursor()
         self.table_factory = TableFactoryImpl(self)
 
-    def execute_command(self, command):
+    def execute_command(self, command: str) -> None:
         """Executes any given SQL query on the connected database"""
         self.cur.execute(command)
         self.connection.commit()
 
-    def close_connection(self):
+    def close_connection(self) -> None:
         """Closes the database connection (unlocks it)."""
         self.connection.close()

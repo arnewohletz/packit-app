@@ -1,4 +1,4 @@
-from .elements import TableDataElement, TableField
+from .table_elements import TableDataElement
 import collections
 
 
@@ -102,19 +102,8 @@ class SQLCommandGenerator:
         else:
             return command
 
-        # if query_items:
-        #     for query in query_items:
-        #         for column, value in query.items():
-        #             if column not in counter:
-        #                 counter[column] = 1
-        #             else:
-        #                 counter[column] += 1
-        # else:
-        #     return command
-
         command = command + " WHERE ("
 
-        # for query in query_items:
         for column, value in query_items.items():
             if counter[column] > 1:
                 command += column + " = '" + str(value) + "' OR "

@@ -13,7 +13,7 @@ class TableHelper:
         :param curs: Cursor
         :return: dict
         """
-        # field_names = [d[0].lower() for d in curs.description]
+
         field_names = [d[0] for d in curs.description]
         while True:
             rows = curs.fetchmany()

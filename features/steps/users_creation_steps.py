@@ -1,10 +1,10 @@
-from behave import given, when, then, register_type
 import random
 import string
 
+from behave import given, when, then, register_type
 from features.support import database as database_helper
 from features.support import custom_type_parser
-from packit_app.elements import User, Male, Female, Username
+from packit_app.table_elements import User, Username, GenderID
 
 register_type(Gender=custom_type_parser.parse_gender)
 register_type(Username=custom_type_parser.parse_username)
@@ -37,9 +37,8 @@ def users_table_contains_certain_user(context, gender, name):
 
 @when(u'the {gender:Gender} user named {name:Username} is deleted')
 def delete_user(context, name, gender):
-    context.user_table.delete_element(User(username=name, gender=gender))
-
     gender_id = context.gender_table.get_primary_key_as_dict(gender)
+    context.user_table.delete_element(User(username=name, gender_id=GenderID(gender_id['GenderID'])))
     user_data = context.user_table.get_matching_elements(
         gender_id,
         name.as_dict())
@@ -48,15 +47,11 @@ def delete_user(context, name, gender):
 
 @when(u'a new {gender:Gender} user named {name:Username} is created')
 def create_new_user(context, gender, name):
-    added = context.user_table.add_element(User(username=name, gender=gender))
-    # user_data = context.user_table.get_matching_elements(
-    #     User(name=name, gender=gender))
     gender_id = context.gender_table.get_primary_key_as_dict(gender)
+    added = context.user_table.add_element(User(username=name, gender_id=GenderID(gender_id['GenderID'])))
     user_data = context.user_table.get_matching_elements(
         gender_id,
         name.as_dict())
-    # user_data = context.user_table.get_matching_elements(gender.as_dict(),
-    #                                                      name.as_dict())
     if added is True:
         assert len(
             user_data) == 1, "User was supposed to be added, but wasn't."
@@ -67,8 +62,8 @@ def create_multiple_random_users(context, amount: int):
     for i in range(amount):
         name = Username(''.join(
             random.choices(string.ascii_lowercase + string.digits, k=10)))
-        gender = random.choice([Male(), Female()])
-        context.user_table.add_element(User(username=name, gender=gender))
+        gender_id = random.choice([GenderID(1), GenderID(2)])
+        context.user_table.add_element(User(username=name, gender_id=GenderID(gender_id)))
 
 
 # FOR CHECKING ENTRIES
@@ -94,8 +89,6 @@ def user_does_not_exist(context, gender, name):
     user_data = context.user_table.get_matching_elements(
         gender_id,
         name.as_dict())
-    # user_data = context.user_table.get_matching_elements(
-    #     User(username=name, gender=gender))
     assert user_data == [], "User is not suppose to exist in users table"
 
 
