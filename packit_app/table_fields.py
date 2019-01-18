@@ -47,31 +47,36 @@ class GenderID(TableField):
 class GenderName(TableField):
     column_name = "Name"
 
+    def __init__(self, gender_name):
+        super(GenderName, self).__init__()
+        self.field[self.column_name] = gender_name
 
-class Male(TableField):
+#TODO: male & female were commented -> might be needed back
 
-    column_name = "Name"
-
-    def __init__(self):
-        super(Male, self).__init__()
-        self.field[GenderID.column_name] = 1
-        self.field[GenderName.column_name] = "male"
-    # def __init__(self):
-    #     super(Male, self).__init__()
-    #     self.GenderID = 1
-    #     self.value = "male"
-
-
-class Female(TableField):
-
-    column_name = "Name"
-
-    def __init__(self):
-        super(Female, self).__init__()
-        self.field[GenderID.column_name] = 2
-        self.field[GenderName.column_name] = "female"
-        # self.GenderID = 2
-        # self.value = "female"
+# class Male(TableField):
+#
+#     column_name = "Name"
+#
+#     def __init__(self):
+#         super(Male, self).__init__()
+#         self.field[GenderID.column_name] = 1
+#         self.field[GenderName.column_name] = "male"
+#     # def __init__(self):
+#     #     super(Male, self).__init__()
+#     #     self.GenderID = 1
+#     #     self.value = "male"
+#
+#
+# class Female(TableField):
+#
+#     column_name = "Name"
+#
+#     def __init__(self):
+#         super(Female, self).__init__()
+#         self.field[GenderID.column_name] = 2
+#         self.field[GenderName.column_name] = "female"
+#         # self.GenderID = 2
+#         # self.value = "female"
 
 
 class Username(TableField):

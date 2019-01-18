@@ -1,24 +1,17 @@
-import collections
+from collections import OrderedDict
 from abc import ABC
-# from .database import Database
-from .field_values import *
+from .table_fields import *
 
 
-# class Element(ABC):
-#     def __init__(self):
-#         pass
+class TableDataElement(ABC):
+    i = 0
+    column_types = None
 
-
-class TableDataElement:
-    # id = 0
-    # column_types = collections.OrderedDict()
-    # default_table = None
-
-    def __init__(self):
-        self.column_types = collections.OrderedDict()
+    def __init__(self) -> None:
+        self.column_types = OrderedDict()
         self.id = 0
 
-    def as_dict(self):
+    def as_dict(self) -> OrderedDict:
         return self.column_types
 
     # def get_id_as_dict(self):
@@ -38,9 +31,12 @@ class TableDataElement:
 class Gender(TableDataElement):
     # default_table = Database.gender_table
 
-    def __init__(self, gender=Male()):
+    # def __init__(self, gender: GenderName = GenderName("male"),
+    #              gender_id: GenderID = GenderID(1)) -> None:
+    def __init__(self, gender: GenderName = GenderName("male")) -> None:
+        # def __init__(self, gender: TableField = Male()) -> None:
         super(Gender, self).__init__()
-        # self.column_types[GenderID.column_name] = gender.field[
+        # self.column_types[GenderID.column_name] = gender_id.field[
         #     GenderID.column_name]
         self.column_types[GenderName.column_name] = gender.field[
             GenderName.column_name]
@@ -55,6 +51,36 @@ class Gender(TableDataElement):
     # def get_id(cls):
     #     result = Gender.default_table.get_matching_elements(cls)
     #     return result
+
+
+class Male(Gender):
+    column_name = "Name"
+
+    def __init__(self):
+        super(Male, self).__init__(GenderName("male"))
+        # super(Male, self).__init__(GenderName("male"), GenderID(1))
+        # self.column_types[GenderName.column_name] = "male"
+        # self.column_types[GenderID.column_name] = 1
+        # self.field[GenderID.column_name] = 1
+        # self.field[GenderName.column_name] = "male"
+    # def __init__(self):
+    #     super(Male, self).__init__()
+    #     self.GenderID = 1
+    #     self.value = "male"
+
+
+class Female(Gender):
+    column_name = "Name"
+
+    def __init__(self):
+        # super(Female, self).__init__(GenderName("female"), GenderID(2))
+        super(Female, self).__init__(GenderName("female"))
+        # self.column_types[GenderName.column_name] = "female"
+        # self.column_types[GenderID.column_name] = 2
+        # self.field[GenderID.column_name] = 2
+        # self.field[GenderName.column_name] = "female"
+        # self.GenderID = 2
+        # self.value = "female"
 
 
 # class Female(Gender):
@@ -85,11 +111,12 @@ class User(TableDataElement):
 
     # gender_table = GenderTable(collections.OrderedDict())
 
-    def __init__(self, username=Username(""), gender=Male()):
+    def __init__(self, username: Username = Username(""),
+                 gender_id: GenderID = GenderID(1)) -> None:
         super(User, self).__init__()
         self.column_types[Username.column_name] = username.field[
             Username.column_name]
-        self.column_types[GenderID.column_name] = gender.field[
+        self.column_types[GenderID.column_name] = gender_id.field[
             GenderID.column_name]
 
     # def __init__(self, username=Username(""), gender=Male()):
