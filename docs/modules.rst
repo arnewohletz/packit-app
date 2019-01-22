@@ -5,12 +5,12 @@ Modules
 tables
 ------
 .. automodule:: packit_app.tables
-    :members: Table
-    :exclude-members: TableFactory, TableFactoryImpl
+    :members: Table, TableFactoryImpl
+    :exclude-members: TableFactory
 
 field_values
 ------------
-.. automodule:: packit_app.field_values
+.. automodule:: packit_app.table_fields
     :members:
 
 

@@ -17,51 +17,23 @@ from abc import ABC, abstractmethod
 #         self.gender_table = table_factory.create_table(Gender())
 #         self.user_table = table_factory.create_table(User())
 
-class TableFactory(ABC):
-    """Abstract class that all table factory classes must implement"""
-
-    def __init__(self):
-        self.column_types = collections.OrderedDict()
-
-    @abstractmethod
-    def create_table(self, element: TableDataElement):
-        self.column_types = collections.OrderedDict()
-        pass
-
-
-class TableFactoryImpl(TableFactory):
-
-    def __init__(self, database):
-        super(TableFactoryImpl, self).__init__()
-        self.database = database
-
-    def create_table(self, item: TableDataElement):
-        """Creates a Table object inside a :class:`Database` object.
-        The table is not created if it already exists.
-
-        :param item: defines the element type the table is supposed to
-         store. The table then receives an appropriate name as well as the
-         proper amount of columns with correct name and types.
-        """
-        self.column_types.clear()
-
-        for column in item.column_types:
-            if type(item.column_types[column]) == str:
-                self.column_types[column] = "TEXT"
-            elif type(item.column_types[column]) == int:
-                self.column_types[column] = "INTEGER"
-            elif type(item.column_types[column]) == float:
-                self.column_types[column] = "REAL"
-
-        if isinstance(item, User):
-            return UserTable(self.database, self.column_types)
-        elif isinstance(item, Gender):
-            return GenderTable(self.database, self.column_types)
-
 
 class Table:
     """
+    Parent class for all tables inside the database.
 
+    .. warning::
+        Please do not create tables by instantiating this class, but use the
+        `TableFactoryImpl.create_table()` method for this purpose.
+
+    Each table requires a `primary_key` column, which saves an integer value
+    for each `TableDataElement` that is added to the table.
+
+    :param primary_key: string name that the primary key column is supposed to
+        have.
+    :param column_types: dictionary that holds a key-value pair for each column
+        , where the key holds the column name and the value contains the type
+        information.
     """
     db = None
     helper = TableHelper()
@@ -70,10 +42,10 @@ class Table:
     id = 1
     raised_errors = []
 
-    def __init__(self, primary_key, column_types):
+    def __init__(self, primary_key_column_name: str, column_types) -> None:
         column_types.update(
-            {primary_key: "INTEGER NOT NULL PRIMARY KEY ASC"})
-        column_types.move_to_end(primary_key, last=False)
+            {primary_key_column_name: "INTEGER NOT NULL PRIMARY KEY ASC"})
+        column_types.move_to_end(primary_key_column_name, last=False)
         self.db.execute_command(Cmd.get_create_table_command(self.table_name,
                                                              column_types))
 
@@ -81,8 +53,8 @@ class Table:
         """Checks whether the table already contains a entry with the same
         data"""
 
-        self.db.execute_command(
-            Cmd.get_return_element_command(self.table_name, element))
+        self.db.execute_command(Cmd.get_return_matching_elements_command(
+            self.table_name, element.get_as_dict()))
 
         data = self.db.cur.fetchall()
         if len(data) == 0:
@@ -91,6 +63,12 @@ class Table:
             raise ElementAlreadyExistsError
 
     def add_element(self, element: TableDataElement):
+        """
+        Adds a single `TableDataElement` to the table.
+
+        :param element: element to be added
+        :return: None
+        """
 
         try:
             if not self._element_already_exists(element):
@@ -108,7 +86,8 @@ class Table:
 
     def clean_all_content(self):
         """
-        Removes all data from the table.
+        Removes all data from the table. Column types are not removed.
+
         :return: None
         """
         command = Cmd.get_clean_all_content_command(
@@ -118,8 +97,10 @@ class Table:
 
     def delete_element(self, element: TableDataElement):
         """
-        Removes a single username entry from the table.
-        :param :username, :gender
+        Removes a single data `TableDataElement` from the table.
+
+        :param element: `TableDataElement` that is supposed to be removed from
+            the table.
         :return: None
         """
 
@@ -128,7 +109,7 @@ class Table:
         self.db.cur.execute(command)
         self.db.connection.commit()
 
-    def get_matching_elements(self, *field_values):
+    def get_matching_elements(self, *field_values: TableField):
         """
         Returns all matching table elements as a list dictionaries.
 
@@ -140,9 +121,9 @@ class Table:
         returned.
 
         Example:
-        ``Table.get_matching_elements(Male(), Username('Freddy'))`` returns all
-        entries of the table that have the `Username` 'Freddy' and the gender
-        attribute 'Male'
+        ``Table.get_matching_elements(Username('Freddy')), Male()`` returns all
+        entries of the table that have the username 'Freddy' and is of gender
+        `Male`.
 
         :param field_values: Zero, one or more `TableField` objects
         :rtype: list of dictionaries, if one or more elements are found. Each
@@ -164,6 +145,13 @@ class Table:
 
         return result
 
+    def get_errors(self) -> list:
+        """
+        Returns a list of all errors that have been raised inside the table
+        :return:
+        """
+        return self.raised_errors
+
     # TODO: Empty function of table specific content
     def get_primary_key_as_dict(self, element: TableDataElement):
         result = self.get_matching_elements(element.column_types)
@@ -173,13 +161,6 @@ class Table:
                 self.primary_key_column_name]}
         else:
             return
-
-    def get_errors(self) -> list:
-        """
-        Returns a list of all errors that have been raised inside the table
-        :return:
-        """
-        return self.raised_errors
 
 
 class GarmentTable(Table):
@@ -195,10 +176,10 @@ class GenderTable(Table):
     table_name = "Gender"
     primary_key_column_name = "GenderID"
 
-    def __init__(self, database, columns_types):
+    def __init__(self, database, column_types):
         self.db = database
         super(GenderTable, self).__init__(self.primary_key_column_name,
-                                          columns_types)
+                                          column_types)
         super(GenderTable, self).add_element(Male())
         super(GenderTable, self).add_element(Female())
 
@@ -238,6 +219,13 @@ class UserTable(Table):
         super(UserTable, self).__init__(self.primary_key_column_name,
                                         column_types)
 
+    # def get_matching_elements(self, *field_values):
+    #     for field_value in field_values:
+    #         if isinstance(field_value, Gender):
+    #             field_value =
+    #
+    #     super(UserTable, self).get_matching_elements()
+
 
 class UserTripGarmentAmountTable(Table):
     table_name = "UserTripGarmentAmount"
@@ -246,3 +234,50 @@ class UserTripGarmentAmountTable(Table):
     def __init__(self, columns: collections.OrderedDict):
         super(UserTripGarmentAmountTable, self).__init__(
             self.primary_key_column_name, columns)
+
+
+class TableFactory(ABC):
+    """Abstract class that all table factory classes must implement"""
+
+    def __init__(self):
+        self.column_types = collections.OrderedDict()
+
+    @abstractmethod
+    def create_table(self, element: TableDataElement):
+        pass
+
+
+class TableFactoryImpl(TableFactory):
+    """The sole purpose of this class is to create `Table` objects."""
+
+    def __init__(self, database):
+        super(TableFactoryImpl, self).__init__()
+        self.database = database
+
+    def create_table(self, element: TableDataElement) -> Table:
+        """Creates a Table object inside a :class:`Database` object.
+
+        Item must be an implementation of the `TableDataElement` interface,
+        which defines the resulting type of the table, that is returned.
+        The proper column types are assigned to the table, depending on the
+        default input value of each `TableField`, that `item` contains.
+        The column names are derived accordingly.
+
+        :param element: defines the element type the table is supposed to
+         store. Must be of type `TableDataElement`.
+        :rtype: `Table`
+        """
+        self.column_types.clear()
+
+        for column in element.column_types:
+            if type(element.column_types[column]) == str:
+                self.column_types[column] = "TEXT"
+            elif type(element.column_types[column]) == int:
+                self.column_types[column] = "INTEGER"
+            elif type(element.column_types[column]) == float:
+                self.column_types[column] = "REAL"
+
+        if isinstance(element, User):
+            return UserTable(self.database, self.column_types)
+        elif isinstance(element, Gender):
+            return GenderTable(self.database, self.column_types)

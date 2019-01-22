@@ -9,6 +9,11 @@ def parse_gender(gender_str: str):
     elif gender_str.lower() == "male":
         return Male()
 
+# @parse.with_pattern(r"\w+")
+# def parse_gender_id(gender_str: str):
+#     if gender_str.lower() == "female":
+#         return GenderID(context.gender_table.get_matching_elements)
+
 
 @parse.with_pattern(r"\w+")
 def parse_username(name: str):

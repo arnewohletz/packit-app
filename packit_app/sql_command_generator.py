@@ -5,17 +5,22 @@ import collections
 class SQLCommandGenerator:
 
     @staticmethod
-    def get_add_element_to_table_command(table_name: str, value_id: int,
-                                         element: TableDataElement):
+    def get_add_element_to_table_command(table_name: str, element_id: int,
+                                         element: TableDataElement) -> str:
 
         command = "INSERT INTO " + table_name + ' VALUES(' + str(
-            value_id) + ","
+            element_id) + ","
 
         for key in element.column_types:
             command += "'" + str(element.column_types[key]) + "',"
 
         command = command[:-1] + ")"
 
+        return command
+
+    @staticmethod
+    def get_clean_all_content_command(table_name: str) -> str:
+        command = "DELETE FROM " + table_name
         return command
 
     @staticmethod
@@ -31,17 +36,8 @@ class SQLCommandGenerator:
         return command
 
     @staticmethod
-    def get_clean_all_content_command(table_name: str):
-        command = "DELETE FROM " + table_name
-        return command
-
-    @staticmethod
-    def get_drop_table_command(table_name: str):
-        command = "DROP TABLE IF EXISTS " + table_name
-        return command
-
-    @staticmethod
-    def get_remove_element_command(table_name: str, element: TableDataElement):
+    def get_remove_element_command(table_name: str,
+                                   element: TableDataElement) -> str:
 
         command = "DELETE FROM " + table_name + " WHERE ("
 
@@ -52,29 +48,9 @@ class SQLCommandGenerator:
 
         return command
 
-    # TODO: Check if method is still required
     @staticmethod
-    def get_return_element_command(table_name,
-                                   element: TableDataElement):
-        columns = list(element.column_types.keys())
-
-        command = "SELECT * FROM " + table_name + " WHERE "
-        for data in columns:
-            command += str(data) + " = '" + str(element.column_types[data]) + "' AND "
-
-        command = command[:-5]
-
-        return command
-
-    @staticmethod
-    def get_return_all_elements_from_table_command(table_name):
-
-        command = "SELECT * FROM " + table_name
-
-        return command
-
-    @staticmethod
-    def get_return_matching_elements_command(table_name, query_items=None):
+    def get_return_matching_elements_command(table_name: str,
+                                             query_items: collections.OrderedDict = None):
         """
         Returns a proper SQL command for selecting matching items of the given
         :param:table_name that are defined by :param:query_items.

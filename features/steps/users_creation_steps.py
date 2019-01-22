@@ -22,36 +22,36 @@ def clear_users_table(context):
 
 
 @given(
-    u'the application contains a {gender:Gender} user named {name:Username}')
-def users_table_contains_certain_user(context, gender, name):
+    u'the application contains a {gender:Gender} user named {username:Username}')
+def users_table_contains_certain_user(context, gender, username):
     clear_users_table(context)
-    create_new_user(context, gender=gender, name=name)
+    create_new_user(context, gender=gender, username=username)
     gender_id = context.gender_table.get_primary_key_as_dict(gender)
     user_data = context.user_table.get_matching_elements(
         gender_id,
-        name.as_dict())
+        username.get_as_dict())
     assert len(user_data) == 1, "Requested user does not exist!"
 
 
 # FOR REMOVING & ADDING NEW ENTRIES
 
-@when(u'the {gender:Gender} user named {name:Username} is deleted')
-def delete_user(context, name, gender):
+@when(u'the {gender:Gender} user named {username:Username} is deleted')
+def delete_user(context, username, gender):
     gender_id = context.gender_table.get_primary_key_as_dict(gender)
-    context.user_table.delete_element(User(username=name, gender_id=GenderID(gender_id['GenderID'])))
+    context.user_table.delete_element(User(username=username, gender_id=GenderID(gender_id['GenderID'])))
     user_data = context.user_table.get_matching_elements(
         gender_id,
-        name.as_dict())
+        username.get_as_dict())
     assert len(user_data) == 0, "User has not been deleted!"
 
 
-@when(u'a new {gender:Gender} user named {name:Username} is created')
-def create_new_user(context, gender, name):
+@when(u'a new {gender:Gender} user named {username:Username} is created')
+def create_new_user(context, gender, username):
     gender_id = context.gender_table.get_primary_key_as_dict(gender)
-    added = context.user_table.add_element(User(username=name, gender_id=GenderID(gender_id['GenderID'])))
+    added = context.user_table.add_element(User(username=username, gender_id=GenderID(gender_id['GenderID'])))
     user_data = context.user_table.get_matching_elements(
         gender_id,
-        name.as_dict())
+        username.get_as_dict())
     if added is True:
         assert len(
             user_data) == 1, "User was supposed to be added, but wasn't."
@@ -69,26 +69,26 @@ def create_multiple_random_users(context, amount: int):
 # FOR CHECKING ENTRIES
 
 @then(
-    u'there is only one {gender:Gender} user named {name:Username} in the application')
-@then(u'the application contains a {gender:Gender} user named {name:Username}')
-def user_does_exist_once(context, gender, name):
+    u'there is only one {gender:Gender} user named {username:Username} in the application')
+@then(u'the application contains a {gender:Gender} user named {username:Username}')
+def user_does_exist_once(context, gender, username):
     gender_id = context.gender_table.get_primary_key_as_dict(gender)
     user_data = context.user_table.get_matching_elements(
         gender_id,
-        name.as_dict())
+        username.get_as_dict())
     assert len(user_data) > 0, \
-        "{0} user named {1} does not exists".format(gender.value, name)
+        "{0} user named {1} does not exists".format(gender.value, username)
     assert len(user_data) < 2, \
-        "{0} user named {1} exists more than once".format(gender.value, name)
+        "{0} user named {1} exists more than once".format(gender.value, username)
 
 
 @then(
-    u'there is no {gender:Gender} user named {name:Username} in the application')
-def user_does_not_exist(context, gender, name):
+    u'there is no {gender:Gender} user named {username:Username} in the application')
+def user_does_not_exist(context, gender, username):
     gender_id = context.gender_table.get_primary_key_as_dict(gender)
     user_data = context.user_table.get_matching_elements(
         gender_id,
-        name.as_dict())
+        username.get_as_dict())
     assert user_data == [], "User is not suppose to exist in users table"
 
 

@@ -1,17 +1,15 @@
 from collections import OrderedDict
-from abc import ABC
+import abc
 from .table_fields import *
 
 
-class TableDataElement(ABC):
-    i = 0
+class TableDataElement(abc.ABC):
     column_types = None
 
     def __init__(self) -> None:
         self.column_types = OrderedDict()
-        self.id = 0
 
-    def as_dict(self) -> OrderedDict:
+    def get_as_dict(self) -> OrderedDict:
         return self.column_types
 
 

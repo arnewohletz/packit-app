@@ -1,6 +1,7 @@
+import abc
 
 
-class TableField:
+class TableField(abc.ABC):
     """
     A TableField represents a single field inside a table.
 
@@ -9,13 +10,13 @@ class TableField:
     """
 
     column_name = ""
-    value = None
+    # value = None
 
     def __init__(self):
-        super(TableField, self).__init__()
+        # super(TableField, self).__init__()
         self.field = {}
 
-    def as_dict(self):
+    def get_as_dict(self):
         """
         Returns the column name and value of the `TableField` as a dictionary
         :return: dict
@@ -50,9 +51,9 @@ class GenderName(TableField):
 class Username(TableField):
     column_name = "Username"
 
-    def __init__(self, name: str):
+    def __init__(self, username: str):
         super(Username, self).__init__()
-        self.field[self.column_name] = name
+        self.field[self.column_name] = username
 
 
 class TripTemperatureDayAverage(TableField):

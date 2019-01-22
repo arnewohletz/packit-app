@@ -20,7 +20,6 @@
 #
 import os
 import sys
-import packit_app
 
 sys.path.insert(0, os.path.abspath('..'))
 
@@ -29,8 +28,8 @@ sys.path.insert(0, os.path.abspath('..'))
 project = u'packit-app'
 copyright = u"2018-2019, Arne Wohletz"
 author = u"Arne Wohletz"
-version = packit_app.__version__
-release = packit_app.__version__
+version = "0.1"
+release = "0.1"
 
 # -- General configuration ---------------------------------------------
 
