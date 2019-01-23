@@ -10,13 +10,11 @@ class TableField(abc.ABC):
     """
 
     column_name = ""
-    # value = None
 
     def __init__(self):
-        # super(TableField, self).__init__()
         self.field = {}
 
-    def get_as_dict(self):
+    def get_field_as_dict(self):
         """
         Returns the column name and value of the `TableField` as a dictionary
         :return: dict
@@ -70,9 +68,6 @@ class TripTemperatureDayMin(TableField):
 
 class TripDestination(TableField):
     column_name = "Destination"
-
-    def __init__(self, value):
-        super(TripDestination, self).__init__()
 
 
 class TripTemperatureNightIndoorAverage(TableField):

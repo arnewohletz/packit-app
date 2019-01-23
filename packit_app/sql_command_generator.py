@@ -5,8 +5,32 @@ import collections
 class SQLCommandGenerator:
 
     @staticmethod
+    def get_update_element_data():
+        """
+        This method is supposed to update ... continue
+        :return:
+        """
+        pass
+
+    @staticmethod
     def get_add_element_to_table_command(table_name: str, element_id: int,
                                          element: TableDataElement) -> str:
+
+        # TODO: Change SQL command into this:
+        # insert into Gender(Name, GenderID) values('male', 1);
+        # now:
+        # insert into Gender(1, 'male')
+        # this is not good because it relies on the proper order of the
+        # OrderedDict, the TableDataElement brings. But I want to be able to
+        # add new data, that contains more than the TableDataElement data
+        # e.g. GarmentTable will hold the Garment object data, which is
+        # 'name' and 'gender_id' but the information, whether this garment's
+        # quantities must be specified by all new users must also be in it, but
+        # it is not part of the Garment object. A new GarmentTable entry is
+        # supposed to look like this then:
+        # garment_table.add_element(Garment(Name('pants'), GenderID(gender_id)),
+        #   QuantityMustBeSpecified(True))
+        # so it requires a Garment object and a QuantityMustBeSpecified object
 
         command = "INSERT INTO " + table_name + ' VALUES(' + str(
             element_id) + ","

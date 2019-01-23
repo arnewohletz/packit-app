@@ -54,7 +54,7 @@ class Table:
         data"""
 
         self.db.execute_command(Cmd.get_return_matching_elements_command(
-            self.table_name, element.get_as_dict()))
+            self.table_name, element.get_fields_as_dict()))
 
         data = self.db.cur.fetchall()
         if len(data) == 0:
@@ -109,7 +109,36 @@ class Table:
         self.db.cur.execute(command)
         self.db.connection.commit()
 
-    def get_matching_elements(self, *field_values: TableField):
+    def _get_matching_elements(self, fields: dict):
+
+        command = Cmd.get_return_matching_elements_command(
+            self.table_name, fields)
+
+        result = [r for r in
+                  self.helper.get_cursor_data_as_dictionary_generator(
+                      self.db.cur.execute(command))]
+
+        return result
+
+    def get_element(self, element: TableDataElement) -> list:
+        """
+        Returns full table data of an `TableDataElement` within a dictionary.
+        If the element cannot be found, an empty list is returned.
+
+        Example:
+        ``Table.get_element(User(Username('Harry'), Male())) returns the data
+        of a male user named Harry.
+
+        :param element: Should be a valid `TableDataElement` type for the
+            `Table` type it is applied on.
+        :rtype: list, containing either one or zero dictionaries, depending on
+            whether the element has been found or not.
+        """
+        queries = dict(element.fields)
+
+        return self._get_matching_elements(queries)
+
+    def get_matching_elements(self, *field_values: TableField) -> list:
         """
         Returns all matching table elements as a list dictionaries.
 
@@ -132,18 +161,11 @@ class Table:
             found.
         """
 
-        all_queries_dict = {}
+        queries = {}
         for field_value in field_values:
-            all_queries_dict.update(field_value.field)
+            queries.update(field_value.field)
 
-        command = Cmd.get_return_matching_elements_command(
-            self.table_name, all_queries_dict)
-
-        result = [r for r in
-                  self.helper.get_cursor_data_as_dictionary_generator(
-                      self.db.cur.execute(command))]
-
-        return result
+        return self._get_matching_elements(queries)
 
     def get_errors(self) -> list:
         """
@@ -154,13 +176,9 @@ class Table:
 
     # TODO: Empty function of table specific content
     def get_primary_key_as_dict(self, element: TableDataElement):
-        # result = self.get_matching_elements(element.fields)
-        result = self.get_matching_elements(element)
+        result = self.get_element(element)
 
         if len(result) > 0:
-            # return {self.primary_key_column_name: result[0][
-            #     self.primary_key_column_name]}
-            value = result[0][self.primary_key_column_name]
             return result[0][self.primary_key_column_name]
         else:
             return
@@ -221,21 +239,15 @@ class UserTable(Table):
         self.db = database
         super(UserTable, self).__init__(self.primary_key_column_name,
                                         column_types)
-
-    # def add_element(self, element: TableDataElement):
-    #     for field in element.fields:
-    #         if isinstance(field, Gender):
-    #             gender_id =
-    #             field =
     #
-    #     super(UserTable, self).add_element(self, )
-
-    # def get_matching_elements(self, *field_values):
-    #     for field_value in field_values:
-    #         if isinstance(field_value, Gender):
-    #             field_value =
+    # def add_element(self, element: TableDataElement, *data_fields: TableField):
+    #     combined_data_fields = {}
     #
-    #     super(UserTable, self).get_matching_elements()
+    #     combined_data_fields.update(element.get_fields_as_dict())
+    #
+    #     if len(data_fields) > 0:
+    #         for data_field in data_fields:
+    #             combined_data_fields.update(data_field.get_field_as_dict())
 
 
 class UserTripGarmentAmountTable(Table):

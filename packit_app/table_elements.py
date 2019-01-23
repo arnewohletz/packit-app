@@ -9,8 +9,9 @@ class TableDataElement(abc.ABC):
     def __init__(self) -> None:
         self.fields = OrderedDict()
 
-    def get_as_dict(self) -> OrderedDict:
-        return self.fields
+    def get_fields_as_dict(self) -> dict:
+
+        return dict(self.fields)
 
 
 class Gender(TableDataElement):
