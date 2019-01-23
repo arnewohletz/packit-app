@@ -4,20 +4,20 @@ from .table_fields import *
 
 
 class TableDataElement(abc.ABC):
-    column_types = None
+    fields = None
 
     def __init__(self) -> None:
-        self.column_types = OrderedDict()
+        self.fields = OrderedDict()
 
     def get_as_dict(self) -> OrderedDict:
-        return self.column_types
+        return self.fields
 
 
 class Gender(TableDataElement):
 
     def __init__(self, gender: GenderName = GenderName("male")) -> None:
         super(Gender, self).__init__()
-        self.column_types[GenderName.column_name] = gender.field[
+        self.fields[GenderName.column_name] = gender.field[
             GenderName.column_name]
 
 
@@ -40,9 +40,9 @@ class User(TableDataElement):
     def __init__(self, username: Username = Username(""),
                  gender_id: GenderID = GenderID(1)) -> None:
         super(User, self).__init__()
-        self.column_types[Username.column_name] = username.field[
+        self.fields[Username.column_name] = username.field[
             Username.column_name]
-        self.column_types[GenderID.column_name] = gender_id.field[
+        self.fields[GenderID.column_name] = gender_id.field[
             GenderID.column_name]
 
 
@@ -50,8 +50,8 @@ class User(TableDataElement):
 class DefaultClothingElement(TableDataElement):
     def __init__(self, gender="", clothing_item=""):
         super(DefaultClothingElement, self).__init__()
-        self.column_types['gender'] = gender
-        self.column_types['clothing_item'] = clothing_item
+        self.fields['gender'] = gender
+        self.fields['clothing_item'] = clothing_item
 
 
 class Trip(TableDataElement):
@@ -59,26 +59,26 @@ class Trip(TableDataElement):
                  day_max_temp, day_min_temp, night_average_indoor_temp,
                  sport_days, no_sport_days, transit_days):
         super(Trip, self).__init__()
-        self.column_types[TripDestination.column_name] = destination
-        self.column_types[TripDateStart.column_name] = start_date
-        self.column_types[TripDateEnd.column_name] = end_date
-        self.column_types[
+        self.fields[TripDestination.column_name] = destination
+        self.fields[TripDateStart.column_name] = start_date
+        self.fields[TripDateEnd.column_name] = end_date
+        self.fields[
             TripTemperatureDayAverage.column_name] = day_average_temp
-        self.column_types[TripTemperatureDayMax.column_name] = day_max_temp
-        self.column_types[TripTemperatureDayMin.column_name] = day_min_temp
-        self.column_types[
+        self.fields[TripTemperatureDayMax.column_name] = day_max_temp
+        self.fields[TripTemperatureDayMin.column_name] = day_min_temp
+        self.fields[
             TripTemperatureNightIndoorAverage.column_name] = night_average_indoor_temp
-        self.column_types[TripDaysWithSports.column_name] = sport_days
-        self.column_types[TripDaysWithoutSports.column_name] = no_sport_days
-        self.column_types[TripDaysInTransit.column_name] = transit_days
+        self.fields[TripDaysWithSports.column_name] = sport_days
+        self.fields[TripDaysWithoutSports.column_name] = no_sport_days
+        self.fields[TripDaysInTransit.column_name] = transit_days
 
 
 class Garment(TableDataElement):
     def __init__(self, gender, name, is_default):
         super(Garment, self).__init__()
-        self.column_types[GenderName.column_name] = gender
-        self.column_types[GarmentName.column_name] = name
-        self.column_types[GarmentIsDefault.column_name] = is_default
+        self.fields[GenderName.column_name] = gender
+        self.fields[GarmentName.column_name] = name
+        self.fields[GarmentIsDefault.column_name] = is_default
 
 
 class UserTripGarmentAmount(TableDataElement):

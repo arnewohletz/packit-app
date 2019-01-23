@@ -11,8 +11,8 @@ class SQLCommandGenerator:
         command = "INSERT INTO " + table_name + ' VALUES(' + str(
             element_id) + ","
 
-        for key in element.column_types:
-            command += "'" + str(element.column_types[key]) + "',"
+        for key in element.fields:
+            command += "'" + str(element.fields[key]) + "',"
 
         command = command[:-1] + ")"
 
@@ -41,8 +41,8 @@ class SQLCommandGenerator:
 
         command = "DELETE FROM " + table_name + " WHERE ("
 
-        for key in element.column_types:
-            command += key + " = '" + str(element.column_types[key]) + "' AND "
+        for key in element.fields:
+            command += key + " = '" + str(element.fields[key]) + "' AND "
 
         command = command[:-5] + ")"
 
@@ -50,7 +50,7 @@ class SQLCommandGenerator:
 
     @staticmethod
     def get_return_matching_elements_command(table_name: str,
-                                             query_items: collections.OrderedDict = None):
+                                             query_items: dict = None):
         """
         Returns a proper SQL command for selecting matching items of the given
         :param:table_name that are defined by :param:query_items.

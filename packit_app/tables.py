@@ -134,7 +134,7 @@ class Table:
 
         all_queries_dict = {}
         for field_value in field_values:
-            all_queries_dict.update(field_value)
+            all_queries_dict.update(field_value.field)
 
         command = Cmd.get_return_matching_elements_command(
             self.table_name, all_queries_dict)
@@ -154,11 +154,14 @@ class Table:
 
     # TODO: Empty function of table specific content
     def get_primary_key_as_dict(self, element: TableDataElement):
-        result = self.get_matching_elements(element.column_types)
+        # result = self.get_matching_elements(element.fields)
+        result = self.get_matching_elements(element)
 
         if len(result) > 0:
-            return {self.primary_key_column_name: result[0][
-                self.primary_key_column_name]}
+            # return {self.primary_key_column_name: result[0][
+            #     self.primary_key_column_name]}
+            value = result[0][self.primary_key_column_name]
+            return result[0][self.primary_key_column_name]
         else:
             return
 
@@ -219,6 +222,14 @@ class UserTable(Table):
         super(UserTable, self).__init__(self.primary_key_column_name,
                                         column_types)
 
+    # def add_element(self, element: TableDataElement):
+    #     for field in element.fields:
+    #         if isinstance(field, Gender):
+    #             gender_id =
+    #             field =
+    #
+    #     super(UserTable, self).add_element(self, )
+
     # def get_matching_elements(self, *field_values):
     #     for field_value in field_values:
     #         if isinstance(field_value, Gender):
@@ -269,12 +280,12 @@ class TableFactoryImpl(TableFactory):
         """
         self.column_types.clear()
 
-        for column in element.column_types:
-            if type(element.column_types[column]) == str:
+        for column in element.fields:
+            if type(element.fields[column]) == str:
                 self.column_types[column] = "TEXT"
-            elif type(element.column_types[column]) == int:
+            elif type(element.fields[column]) == int:
                 self.column_types[column] = "INTEGER"
-            elif type(element.column_types[column]) == float:
+            elif type(element.fields[column]) == float:
                 self.column_types[column] = "REAL"
 
         if isinstance(element, User):
