@@ -1,3 +1,4 @@
+@run
 Feature: Adding new garment types to application
 
     Scenario Outline: New gender garment can be added
@@ -7,9 +8,9 @@ Feature: Adding new garment types to application
 
         Examples:
             | garment   | gender    | default       |
-            | pants     | male      | not default   |
+            | pants     | male      | non-default   |
             | socks     | male      | default       |
-            | t-shirts  | female    | not default   |
+            | t-shirts  | female    | non-default   |
 
 #    Scenario: Correct set of default clothes is applied for new users
 #        Given the default clothing set for male users contains underpants, socks, tshirts, pants

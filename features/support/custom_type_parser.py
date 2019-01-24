@@ -1,18 +1,32 @@
 from packit_app.table_elements import Female, Male, Username
+from packit_app.table_fields import GarmentIsDefault, GarmentName
 import parse
 
 
 @parse.with_pattern(r"\w+")
-def parse_gender(gender_str: str):
-    if gender_str.lower() == "female":
-        return Female()
-    elif gender_str.lower() == "male":
-        return Male()
+def parse_default_garment(default_garment: str):
+    if default_garment == "default":
+        return GarmentIsDefault(True)
+    elif default_garment == "non-default":
+        return GarmentIsDefault(False)
+    else:
+        raise ValueError(str(default_garment) + " is not a valid default garment descriptor")
 
-# @parse.with_pattern(r"\w+")
-# def parse_gender_id(gender_str: str):
-#     if gender_str.lower() == "female":
-#         return GenderID(context.gender_table.get_matching_elements)
+
+@parse.with_pattern(r"\w+")
+def parse_garment_name(name: str):
+    return GarmentName(name)
+
+
+@parse.with_pattern(r"\w+")
+def parse_gender(gender: str):
+
+    if gender.lower() == "female":
+        return Female()
+    elif gender.lower() == "male":
+        return Male()
+    else:
+        raise ValueError(str(gender) + " is not a valid gender description")
 
 
 @parse.with_pattern(r"\w+")
