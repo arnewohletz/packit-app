@@ -50,3 +50,15 @@ Feature: Different users are supposed to use a single software installation to
             | gender | name  |
             | male   | Harry |
             | female | Susan |
+
+
+    # TODO: Implement later
+#    Scenario Outline: All default clothes quantities are set for new users
+#        Given pants, t-shirts, socks are defined as default garment types for <gender> users
+#        When a <gender> user named <Harry> is created
+#        Then the default quantities for pants, t-shirts, socks are set for this user
+#
+#        Examples:
+#            | gender    | name  |
+#            | male      | Harry |
+#            | female    | Susan |
