@@ -13,8 +13,34 @@ class SQLCommandGenerator:
         pass
 
     @staticmethod
-    def get_add_element_to_table_command(table_name: str, element_id: int,
-                                         element: TableDataElement) -> str:
+    def get_add_data_to_table_command(table_name: str,
+                                      primary_key_column_name: str,
+                                      element_id: int,
+                                      data: dict) -> str:
+
+        command = "INSERT INTO " + table_name + " (" + \
+                  primary_key_column_name + " ,"
+
+        column_data = value_data = ""
+
+        for key, value in data.items():
+            column_data += key + ", "
+            if type(value) == str:
+                value_data += "'" + str(value) + "', "
+            else:
+                value_data += str(value) + ", "
+
+        column_data = column_data[:-2]
+        value_data = value_data[:-2]
+
+        command += column_data + ") VALUES (" + str(
+            element_id) + ", " + value_data + ")"
+
+        return command
+
+    @staticmethod
+    def OLD_get_add_element_to_table_command(table_name: str, element_id: int,
+                                             element: TableDataElement) -> str:
 
         # TODO: Change SQL command into this:
         # insert into Gender(Name, GenderID) values('male', 1);

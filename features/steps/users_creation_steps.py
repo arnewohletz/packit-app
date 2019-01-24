@@ -68,7 +68,7 @@ def create_multiple_random_users(context, amount: int):
             random.choices(string.ascii_lowercase + string.digits, k=10)))
         gender_id = random.choice([GenderID(1), GenderID(2)])
         context.user_table.add_element(
-            User(username=name, gender_id=GenderID(gender_id)))
+            User(username=name, gender_id=gender_id))
 
 
 # FOR CHECKING ENTRIES

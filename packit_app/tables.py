@@ -1,4 +1,5 @@
 from .table_elements import *
+from .table_fields import TableField
 from .sql_command_generator import SQLCommandGenerator as Cmd
 from .table_helper import TableHelper
 from .errors import *
@@ -62,7 +63,7 @@ class Table:
         else:
             raise ElementAlreadyExistsError
 
-    def add_element(self, element: TableDataElement):
+    def add_element(self, element: TableDataElement, *data: TableField):
         """
         Adds a single `TableDataElement` to the table.
 
@@ -70,12 +71,17 @@ class Table:
         :return: None
         """
 
+        added_data = element.get_fields_as_dict()
+        for field in data:
+            added_data.update(field.get_field_as_dict())
+
         try:
             if not self._element_already_exists(element):
-                self.db.execute_command(Cmd.get_add_element_to_table_command(
+                self.db.execute_command(Cmd.get_add_data_to_table_command(
                     self.table_name,
+                    self.primary_key_column_name,
                     self.id,
-                    element))
+                    added_data))
                 self.id += 1
                 return True
 
