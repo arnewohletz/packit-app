@@ -10,7 +10,6 @@ class TableDataElement(abc.ABC):
         self.fields = OrderedDict()
 
     def get_fields_as_dict(self) -> dict:
-
         return dict(self.fields)
 
 
@@ -47,12 +46,11 @@ class User(TableDataElement):
             GenderID.column_name]
 
 
-# TODO: Update column_types
-class DefaultClothingElement(TableDataElement):
-    def __init__(self, gender="", clothing_item=""):
-        super(DefaultClothingElement, self).__init__()
-        self.fields['gender'] = gender
-        self.fields['clothing_item'] = clothing_item
+# class DefaultClothingElement(TableDataElement):
+#     def __init__(self, gender="", clothing_item=""):
+#         super(DefaultClothingElement, self).__init__()
+#         self.fields['gender'] = gender
+#         self.fields['clothing_item'] = clothing_item
 
 
 class Trip(TableDataElement):
@@ -74,12 +72,19 @@ class Trip(TableDataElement):
         self.fields[TripDaysInTransit.column_name] = transit_days
 
 
+# TODO: Somehow, the element columns are not added to GarmentTable -> Check that
+# GenderID oder Gender???
 class Garment(TableDataElement):
-    def __init__(self, gender, name, is_default):
+    def __init__(self, gender_id: GenderID = GenderID(1),
+                 name: GarmentName = GarmentName(""),
+                 is_default: GarmentIsDefault = GarmentIsDefault(True)):
         super(Garment, self).__init__()
-        self.fields[GenderName.column_name] = gender
-        self.fields[GarmentName.column_name] = name
-        self.fields[GarmentIsDefault.column_name] = is_default
+        self.fields[GenderID.column_name] = gender_id.field[
+            GenderID.column_name]
+        self.fields[GarmentName.column_name] = name.field[
+            GarmentName.column_name]
+        self.fields[GarmentIsDefault.column_name] = is_default.field[
+            GarmentIsDefault.column_name]
 
 
 class UserTripGarmentAmount(TableDataElement):

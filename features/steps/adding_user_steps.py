@@ -2,14 +2,14 @@ import random
 import string
 
 from behave import given, when, then, register_type
-from features.support import database as database_helper
+# from features.support import database as database_helper
 from features.support import custom_type_parser
 from packit_app.table_elements import User, Username, GenderID
 
 register_type(Gender=custom_type_parser.parse_gender)
 register_type(Username=custom_type_parser.parse_username)
 
-helper = database_helper.DatabaseHelper()
+# helper = database_helper.DatabaseHelper()
 
 
 # DEFINING STATES

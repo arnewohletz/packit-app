@@ -2,8 +2,8 @@ from packit_app.table_elements import Female, Male, Username
 from packit_app.table_fields import GarmentIsDefault, GarmentName
 import parse
 
-
-@parse.with_pattern(r"\w+")
+#TODO: Adapt regex be more restrictive but accept 'non-default'
+@parse.with_pattern(r"\w+.*\w+")
 def parse_default_garment(default_garment: str):
     if default_garment == "default":
         return GarmentIsDefault(True)
@@ -12,8 +12,8 @@ def parse_default_garment(default_garment: str):
     else:
         raise ValueError(str(default_garment) + " is not a valid default garment descriptor")
 
-
-@parse.with_pattern(r"\w+")
+#TODO: Adapt regex be more restrictive but accept 't-shirt'
+@parse.with_pattern(r"\w+.*\w+")
 def parse_garment_name(name: str):
     return GarmentName(name)
 

@@ -7,18 +7,6 @@ import collections
 from abc import ABC, abstractmethod
 
 
-# TODO: Is this class really needed?
-
-# class TableManager:
-#     gender_table = None
-#     user_table = None
-#
-#     def __init__(self):
-#         table_factory = TableFactoryImpl()
-#         self.gender_table = table_factory.create_table(Gender())
-#         self.user_table = table_factory.create_table(User())
-
-
 class Table:
     """
     Parent class for all tables inside the database.
@@ -43,7 +31,9 @@ class Table:
     id = 1
     raised_errors = []
 
-    def __init__(self, primary_key_column_name: str, column_types) -> None:
+    def __init__(self, database, primary_key_column_name: str,
+                 column_types) -> None:
+        self.db = database
         column_types.update(
             {primary_key_column_name: "INTEGER NOT NULL PRIMARY KEY ASC"})
         column_types.move_to_end(primary_key_column_name, last=False)
@@ -194,9 +184,10 @@ class GarmentTable(Table):
     table_name = "Garment"
     primary_key_column_name = "GarmentID"
 
-    def __init__(self, columns: collections.OrderedDict):
-        super(GarmentTable, self).__init__(self.primary_key_column_name,
-                                           columns)
+    def __init__(self, database, column_types: collections.OrderedDict):
+        super(GarmentTable, self).__init__(database,
+                                           self.primary_key_column_name,
+                                           column_types)
 
 
 class GenderTable(Table):
@@ -204,8 +195,8 @@ class GenderTable(Table):
     primary_key_column_name = "GenderID"
 
     def __init__(self, database, column_types):
-        self.db = database
-        super(GenderTable, self).__init__(self.primary_key_column_name,
+        super(GenderTable, self).__init__(database,
+                                          self.primary_key_column_name,
                                           column_types)
         super(GenderTable, self).add_element(Male())
         super(GenderTable, self).add_element(Female())
@@ -242,10 +233,9 @@ class UserTable(Table):
     primary_key_column_name = "UserID"
 
     def __init__(self, database, column_types):
-        self.db = database
-        super(UserTable, self).__init__(self.primary_key_column_name,
+        super(UserTable, self).__init__(database, self.primary_key_column_name,
                                         column_types)
-    #
+
     # def add_element(self, element: TableDataElement, *data_fields: TableField):
     #     combined_data_fields = {}
     #
@@ -310,3 +300,5 @@ class TableFactoryImpl(TableFactory):
             return UserTable(self.database, self.column_types)
         elif isinstance(element, Gender):
             return GenderTable(self.database, self.column_types)
+        elif isinstance(element, Garment):
+            return GarmentTable(self.database, self.column_types)
