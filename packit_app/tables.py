@@ -53,7 +53,8 @@ class Table:
         else:
             raise ElementAlreadyExistsError
 
-    def add_element(self, element: TableDataElement, *data: TableField):
+    def add_element(self, element: TableDataElement,
+                    *data: TableField) -> bool:
         """
         Adds a single `TableDataElement` to the table.
 
