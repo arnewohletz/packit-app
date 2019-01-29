@@ -12,6 +12,18 @@ Feature: Adding new garment types to application
             | socks     | male      | default       |
             | t-shirts  | female    | non-default   |
 
+    Scenario Outline: Changing gender garment default setting is applied to new users
+        Given the application contains a garment type <garment> for <gender> users which is set as <default_set>
+        When the default setting is set to <default_new>
+        And a new <gender> user staged for creation
+        Then the new user <must_or_must_not> specify quantities for <garment>
+
+        Examples:
+            | garment   | gender    | default_set   | default_new   | must_or_must_not  |
+            | pants     | female    | non-default   | default       | must              |
+            | socks     | male      | default       | non-default   | must not          |
+
+
 #    Scenario: Correct set of default clothes is applied for new users
 #        Given the default clothing set for male users contains underpants, socks, tshirts, pants
 #        When a new male user named Harry is created

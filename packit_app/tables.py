@@ -40,9 +40,13 @@ class Table:
         self.db.execute_command(Cmd.get_create_table_command(self.table_name,
                                                              column_types))
 
-    def _element_already_exists(self, element: TableDataElement):
-        """Checks whether the table already contains a entry with the same
-        data"""
+    def _element_exists(self, element: TableDataElement) -> bool:
+        """Checks whether the table contains a entry with the same data as
+        ``element``
+
+        :param element: `TableDataElement` which will be searched in the table
+        :rtype: bool
+        """
 
         self.db.execute_command(Cmd.get_return_matching_elements_command(
             self.table_name, element.get_fields_as_dict()))
@@ -51,7 +55,8 @@ class Table:
         if len(data) == 0:
             return False
         else:
-            raise ElementAlreadyExistsError
+            return True
+            # raise ElementAlreadyExistsError
 
     def add_element(self, element: TableDataElement,
                     *data: TableField) -> bool:
@@ -66,20 +71,24 @@ class Table:
         for field in data:
             added_data.update(field.get_field_as_dict())
 
-        try:
-            if not self._element_already_exists(element):
-                self.db.execute_command(Cmd.get_add_data_to_table_command(
-                    self.table_name,
-                    self.primary_key_column_name,
-                    self.id,
-                    added_data))
-                self.id += 1
-                return True
+        # try:
 
-        except ElementAlreadyExistsError as error:
-            self.raised_errors.append(error)
-            return False
+        if not self._element_exists(element):
+            self.db.execute_command(Cmd.get_add_data_to_table_command(
+                self.table_name,
+                self.primary_key_column_name,
+                self.id,
+                added_data))
+            self.id += 1
+            return True
+        else:
             # TODO: Handle error with warning pop-up message
+            raise ElementAlreadyExistsError
+            # self.raised_errors.append(ElementAlreadyExistsError)
+
+        # except ElementAlreadyExistsError as error:
+        #
+        #     return False
 
     def clean_all_content(self):
         """
@@ -105,6 +114,20 @@ class Table:
             self.table_name, element)
         self.db.cur.execute(command)
         self.db.connection.commit()
+
+    def set_element_field_value(self, element: TableDataElement, field: TableField) -> None:
+        """
+        Set a single data value of an existing `TableDataElement` from the
+        table.
+
+        If the element does not exist an
+        :param element:
+        :param field:
+        :return:
+        """
+
+        command = Cmd.get_set_field_value_command(self.table_name, element, field)
+        self.db.cur.execute(command)
 
     def _get_matching_elements(self, fields: dict):
 
@@ -143,7 +166,7 @@ class Table:
         Zero, one or more dictionaries of type :class:`~packit_app.field_values.TableField`
         can to be passed as ``field_values``. If none are passed, all table
         elements are returned. Any passed ``field_value`` functions as a
-        filter, where only elements fulfilling all filter conditions are
+        filter, where only elements matching all filter conditions are
         returned.
 
         Example:
