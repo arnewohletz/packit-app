@@ -72,8 +72,6 @@ class Trip(TableDataElement):
         self.fields[TripDaysInTransit.column_name] = transit_days
 
 
-# TODO: Somehow, the element columns are not added to GarmentTable -> Check that
-# GenderID oder Gender???
 class Garment(TableDataElement):
     def __init__(self, gender_id: GenderID = GenderID(1),
                  name: GarmentName = GarmentName(""),
@@ -83,8 +81,8 @@ class Garment(TableDataElement):
             GenderID.column_name]
         self.fields[GarmentName.column_name] = name.field[
             GarmentName.column_name]
-        self.fields[GarmentIsDefault.column_name] = is_default.field[
-            GarmentIsDefault.column_name]
+        # self.fields[GarmentIsDefault.column_name] = is_default.field[
+        #     GarmentIsDefault.column_name]
 
 
 class UserTripGarmentAmount(TableDataElement):

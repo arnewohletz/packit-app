@@ -115,7 +115,8 @@ class Table:
         self.db.cur.execute(command)
         self.db.connection.commit()
 
-    def set_element_field_value(self, element: TableDataElement, field: TableField) -> None:
+    def set_element_field_value(self, element: TableDataElement,
+                                field: TableField) -> None:
         """
         Set a single data value of an existing `TableDataElement` from the
         table.
@@ -126,7 +127,8 @@ class Table:
         :return:
         """
 
-        command = Cmd.get_set_field_value_command(self.table_name, element, field)
+        command = Cmd.get_set_field_value_command(self.table_name, element,
+                                                  field)
         self.db.cur.execute(command)
 
     def _get_matching_elements(self, fields: dict):
@@ -203,6 +205,16 @@ class Table:
         else:
             return
 
+    def set_data(self, element: TableDataElement,
+                 **field_data: TableField) -> None:
+        """
+        Sets data value for one or multiple data table fields of a
+        `TableDataElement`.
+        :param element: the table element whose data to set
+        :param field_data: one or more `TableField` objects which
+        :return: bool
+        """
+
 
 class GarmentTable(Table):
     table_name = "Garment"
@@ -212,6 +224,14 @@ class GarmentTable(Table):
         super(GarmentTable, self).__init__(database,
                                            self.primary_key_column_name,
                                            column_types)
+
+    def set_default(self, element: TableDataElement, default=True):
+        """
+        Set a single `Garment` element within the table as default garment for
+        the
+        :param default:
+        :return:
+        """
 
 
 class GenderTable(Table):

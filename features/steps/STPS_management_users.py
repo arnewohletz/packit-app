@@ -2,13 +2,18 @@ import random
 import string
 
 from behave import given, when, then, register_type
-from features.support import custom_type_parser
+from parse_type import TypeBuilder
+from features.support import custom_type_parser, optional_word_parser
 from packit_app.table_elements import User, Username, GenderID
 from packit_app.errors import ElementAlreadyExistsError
 
 register_type(Gender=custom_type_parser.parse_gender)
 register_type(Username=custom_type_parser.parse_username)
 register_type(GarmentName=custom_type_parser.parse_garment_name)
+
+parse_optional_word_not = TypeBuilder.with_optional(
+    optional_word_parser.parse_word_not)
+register_type(optional_not_=parse_optional_word_not)
 
 
 # DEFINING STATES
@@ -67,9 +72,8 @@ def specific_user_is_added(context, gender, username):
         context.raised_errors.append(error)
 
 
-@when(u'a new {gender:Gender} user staged for adding')
+@when(u'a new {gender:Gender} user is staged for creation')
 def specific_user_is_staged_for_adding(context, gender):
-
     raise NotImplementedError(
         u'STEP: When a new female user staged for adding')
 
@@ -108,8 +112,10 @@ def specific_user_exists_only_once(context, gender, username):
                                                           username)
 
 
-@then(u'the new user must specify quantities for {garment:GarmentName}')
-def specific_garment_settings_must_be_made_when_adding_matching_user(context, garment):
-    # context.user
+@then(
+    u'the new user must {:optional_not_} specify quantities for {garment:GarmentName}')
+def specific_garment_settings_must_be_made_when_adding_matching_user(context,
+                                                                     not_,
+                                                                     garment):
     raise NotImplementedError(
         u'STEP: Then the new user must specify quantities for pants')

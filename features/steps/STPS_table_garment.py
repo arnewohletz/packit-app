@@ -14,6 +14,7 @@ register_type(GarmentName=custom_type_parser.parse_garment_name)
 def specific_garment_type_does_not_exit(context, garment, gender):
     context.garment_table.clean_all_content()
     gender_id = GenderID(context.gender_table.get_primary_key_as_dict(gender))
+    # TODO: cannot context.garment_element - is it not saved in Context object?
     context.garment_element = Garment(name=garment, gender_id=gender_id)
 
     result = context.garment_table.get_element(context.garment_element)
@@ -23,21 +24,27 @@ def specific_garment_type_does_not_exit(context, garment, gender):
 @given(
     u'the application contains a garment type {garment:GarmentName} for {gender:Gender} users which is set as {default:GarmentIsDefault}')
 def specific_garment_type_exists(context, garment, gender, default):
+    gender_id = GenderID(context.gender_table.get_primary_key_as_dict(gender))
+    context.garment_element = Garment(name=garment, gender_id=gender_id)
     specific_garment_type_is_added(context, garment=garment, gender=gender,
                                    default=default)
     specific_garment_type_has_correct_data(context, garment=garment,
                                            gender=gender, default=default)
-    context.garment = garment
+    # context.garment_element = garment
 
 
 @when(
     u'{garment:GarmentName} is added for {gender:Gender} users as {default:GarmentIsDefault}')
 def specific_garment_type_is_added(context, garment, gender, default):
     gender_id = GenderID(context.gender_table.get_primary_key_as_dict(gender))
-    added = context.garment_table.add_element(
-        Garment(gender_id=gender_id, name=garment, is_default=default))
+    # added = context.garment_table.add_element(
+    #     Garment(gender_id=gender_id, name=garment, is_default=default))
+    garment_element = Garment(gender_id=gender_id, name=garment)
+    added = context.garment_table.add_element(garment_element)
+    set_default = context.garment_table.set_default(garment_element, default)
 
     assert added is True, "Element was not added."
+    assert set_default is True, "Element default data was not set"
 
 
 @then(

@@ -15,7 +15,7 @@ Feature: Adding new garment types to application
     Scenario Outline: Changing gender garment default setting is applied to new users
         Given the application contains a garment type <garment> for <gender> users which is set as <default_set>
         When the default setting is set to <default_new>
-        And a new <gender> user staged for creation
+        And a new <gender> user is staged for creation
         Then the new user <must_or_must_not> specify quantities for <garment>
 
         Examples:

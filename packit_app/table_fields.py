@@ -22,6 +22,28 @@ class TableField(abc.ABC):
         return dict({self.column_name: self.field[self.column_name]})
 
 
+class TableElementField(abc.ABC):
+    """
+    `TableField` that is contained in a `TableElement`
+    """
+
+    def __init__(self):
+        super(TableElementField, self).__init__()
+
+
+class TableDataField(abc.ABC):
+    """
+    `TableField` that is not contained in a `TableElement`, but is assigned to
+    it.
+
+    The data of a `TableDataField` can be edited, whereas the `TableElement`
+    data can only be defined during its initial creation.
+    """
+
+    def __init__(self):
+        super(TableDataField, self).__init__()
+
+
 class GarmentName(TableField):
     column_name = "Name"
 
