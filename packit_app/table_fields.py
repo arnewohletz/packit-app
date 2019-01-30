@@ -22,7 +22,7 @@ class TableField(abc.ABC):
         return dict({self.column_name: self.field[self.column_name]})
 
 
-class TableElementField(abc.ABC):
+class TableElementField(abc.ABC, TableField):
     """
     `TableField` that is contained in a `TableElement`
     """
@@ -31,7 +31,7 @@ class TableElementField(abc.ABC):
         super(TableElementField, self).__init__()
 
 
-class TableDataField(abc.ABC):
+class TableDataField(abc.ABC, TableField):
     """
     `TableField` that is not contained in a `TableElement`, but is assigned to
     it.
@@ -44,7 +44,7 @@ class TableDataField(abc.ABC):
         super(TableDataField, self).__init__()
 
 
-class GarmentName(TableField):
+class GarmentName(TableElementField):
     column_name = "Name"
 
     def __init__(self, name: str) -> None:
@@ -52,7 +52,7 @@ class GarmentName(TableField):
         self.field[self.column_name] = name
 
 
-class GarmentIsDefault(TableField):
+class GarmentIsDefault(TableDataField):
     column_name = "IsDefault"
 
     def __init__(self, is_default: bool) -> None:
@@ -63,7 +63,7 @@ class GarmentIsDefault(TableField):
             self.field[self.column_name] = 0
 
 
-class GenderID(TableField):
+class GenderID(TableElementField):
     column_name = "GenderID"
 
     def __init__(self, gender_id: int) -> None:
@@ -71,7 +71,7 @@ class GenderID(TableField):
         self.field[self.column_name] = gender_id
 
 
-class GenderName(TableField):
+class GenderName(TableElementField):
     column_name = "Name"
 
     def __init__(self, gender_name) -> None:
@@ -79,7 +79,7 @@ class GenderName(TableField):
         self.field[self.column_name] = gender_name
 
 
-class Username(TableField):
+class Username(TableElementField):
     column_name = "Username"
 
     def __init__(self, username: str):
@@ -87,41 +87,41 @@ class Username(TableField):
         self.field[self.column_name] = username
 
 
-class TripTemperatureDayAverage(TableField):
+class TripTemperatureDayAverage(TableDataField):
     column_name = "DayAverageTemp"
 
 
-class TripTemperatureDayMax(TableField):
+class TripTemperatureDayMax(TableDataField):
     column_name = "DayMaxTemp"
 
 
-class TripTemperatureDayMin(TableField):
+class TripTemperatureDayMin(TableDataField):
     column_name = "DayMinTemp"
 
 
-class TripDestination(TableField):
+class TripDestination(TableDataField):
     column_name = "Destination"
 
 
-class TripTemperatureNightIndoorAverage(TableField):
+class TripTemperatureNightIndoorAverage(TableDataField):
     column_name = "NightAverageIndoorTemp"
 
 
-class TripDaysInTransit(TableField):
+class TripDaysInTransit(TableDataField):
     column_name = "DaysInTransit"
 
 
-class TripDaysWithSports(TableField):
+class TripDaysWithSports(TableDataField):
     column_name = "DaysWithoutSports"
 
 
-class TripDaysWithoutSports(TableField):
+class TripDaysWithoutSports(TableDataField):
     column_name = "DaysWithSports"
 
 
-class TripDateEnd(TableField):
+class TripDateEnd(TableDataField):
     column_name = "EndDate"
 
 
-class TripDateStart(TableField):
+class TripDateStart(TableDataField):
     column_name = "StartDate"

@@ -206,7 +206,7 @@ class Table:
             return
 
     def set_data(self, element: TableDataElement,
-                 **field_data: TableField) -> None:
+                 **field_data: TableDataField) -> None:
         """
         Sets data value for one or multiple data table fields of a
         `TableDataElement`.
@@ -214,6 +214,7 @@ class Table:
         :param field_data: one or more `TableField` objects which
         :return: bool
         """
+
 
 
 class GarmentTable(Table):
