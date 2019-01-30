@@ -1,6 +1,7 @@
 @run
 Feature: Creating and removing users
 
+    @run
     Scenario: Create new user
         Given the application contains 10 users
         And there is no male user named Harry in the application
@@ -8,6 +9,7 @@ Feature: Creating and removing users
         Then the application contains 11 users
         And the application contains a male user named Harry
 
+    @run
     Scenario Outline: Cannot create second user with same name and gender
         Given the application contains a <gender> user named <name>
         When a new <gender> user named <name> is created
@@ -19,6 +21,7 @@ Feature: Creating and removing users
             | male   | Harry |
             | female | Susan |
 
+    @run
     Scenario Outline: Delete a user
         Given the application contains a <gender> user named <name>
         When the <gender> user named <name> is deleted

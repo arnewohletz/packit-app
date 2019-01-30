@@ -23,7 +23,7 @@ register_type(optional_not_=parse_optional_word_not)
 def specific_user_exists(context, gender, username):
     context.user_table.clean_all_content()
     specific_user_is_added(context, gender=gender, username=username)
-    gender_id = GenderID(context.gender_table.get_primary_key_as_dict(gender))
+    gender_id = GenderID(context.gender_table.get_primary_key(gender))
     user_data = context.user_table.get_matching_elements(
         gender_id,
         username)
@@ -44,7 +44,7 @@ def specific_user_quantity_exists(context, amount: int):
 
 @when(u'the {gender:Gender} user named {username:Username} is deleted')
 def specific_user_is_deleted(context, username, gender):
-    gender_id = GenderID(context.gender_table.get_primary_key_as_dict(gender))
+    gender_id = GenderID(context.gender_table.get_primary_key(gender))
     context.user_table.delete_element(
         User(username=username, gender_id=gender_id))
 
@@ -56,7 +56,7 @@ def specific_user_is_deleted(context, username, gender):
 
 @when(u'a new {gender:Gender} user named {username:Username} is created')
 def specific_user_is_added(context, gender, username):
-    gender_id = GenderID(context.gender_table.get_primary_key_as_dict(gender))
+    gender_id = GenderID(context.gender_table.get_primary_key(gender))
     try:
         added = context.user_table.add_element(
             User(username=username, gender_id=gender_id))
@@ -83,7 +83,7 @@ def specific_user_is_staged_for_adding(context, gender):
 @then(
     u'there is no {gender:Gender} user named {username:Username} in the application')
 def specific_user_does_not_exist(context, gender, username):
-    gender_id = GenderID(context.gender_table.get_primary_key_as_dict(gender))
+    gender_id = GenderID(context.gender_table.get_primary_key(gender))
     user_data = context.user_table.get_matching_elements(
         gender_id,
         username)
@@ -101,7 +101,7 @@ def proper_amount_of_users_exists(context, amount):
 @then(
     u'there is only one {gender:Gender} user named {username:Username} in the application')
 def specific_user_exists_only_once(context, gender, username):
-    gender_id = GenderID(context.gender_table.get_primary_key_as_dict(gender))
+    gender_id = GenderID(context.gender_table.get_primary_key(gender))
     user_data = context.user_table.get_matching_elements(
         gender_id,
         username)

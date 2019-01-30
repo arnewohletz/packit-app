@@ -40,7 +40,7 @@ class Table:
         self.db.execute_command(Cmd.get_create_table_command(self.table_name,
                                                              column_types))
 
-    def _element_exists(self, element: TableDataElement) -> bool:
+    def _element_exists(self, element: TableElementIdentifier) -> bool:
         """Checks whether the table contains a entry with the same data as
         ``element``
 
@@ -58,7 +58,7 @@ class Table:
             return True
             # raise ElementAlreadyExistsError
 
-    def add_element(self, element: TableDataElement,
+    def add_element(self, element: TableElementIdentifier,
                     *data: TableField) -> bool:
         """
         Adds a single `TableDataElement` to the table.
@@ -69,12 +69,12 @@ class Table:
 
         added_data = element.get_fields_as_dict()
         for field in data:
-            added_data.update(field.get_field_as_dict())
+            added_data.update(field.get_data_as_dict())
 
         # try:
 
         if not self._element_exists(element):
-            self.db.execute_command(Cmd.get_add_data_to_table_command(
+            self.db.execute_command(Cmd.get_add_element_to_table_command(
                 self.table_name,
                 self.primary_key_column_name,
                 self.id,
@@ -101,7 +101,7 @@ class Table:
         self.db.cur.execute(command)
         self.id = 1
 
-    def delete_element(self, element: TableDataElement):
+    def delete_element(self, element: TableElementIdentifier):
         """
         Removes a single data `TableDataElement` from the table.
 
@@ -115,7 +115,7 @@ class Table:
         self.db.cur.execute(command)
         self.db.connection.commit()
 
-    def set_element_field_value(self, element: TableDataElement,
+    def set_element_field_value(self, element: TableElementIdentifier,
                                 field: TableField) -> None:
         """
         Set a single data value of an existing `TableDataElement` from the
@@ -126,7 +126,7 @@ class Table:
         :param field:
         :return:
         """
-
+        # TODO: Implement method
         command = Cmd.get_set_field_value_command(self.table_name, element,
                                                   field)
         self.db.cur.execute(command)
@@ -142,7 +142,7 @@ class Table:
 
         return result
 
-    def get_element(self, element: TableDataElement) -> list:
+    def get_element(self, element: TableElementIdentifier) -> list:
         """
         Returns full table data of an `TableDataElement` within a dictionary.
         If the element cannot be found, an empty list is returned.
@@ -185,7 +185,7 @@ class Table:
 
         queries = {}
         for field_value in field_values:
-            queries.update(field_value.field)
+            queries.update(field_value.data)
 
         return self._get_matching_elements(queries)
 
@@ -197,16 +197,24 @@ class Table:
         return self.raised_errors
 
     # TODO: Empty function of table specific content
-    def get_primary_key_as_dict(self, element: TableDataElement):
-        result = self.get_element(element)
+    def get_primary_key(self,
+                        element_identifier: TableElementIdentifier) -> int:
+        """
+        Returns the elements unique primary key id
+        
+        :param element_identifier: Table
+        :return:
+        """
+        result = self.get_element(element_identifier)
 
         if len(result) > 0:
             return result[0][self.primary_key_column_name]
         else:
+            # TODO: Raise ElementDoesNotExistError
             return
 
-    def set_data(self, element: TableDataElement,
-                 **field_data: TableDataField) -> None:
+    def set_data(self, element: TableElementIdentifier,
+                 *data_fields: TableElementDataField) -> None:
         """
         Sets data value for one or multiple data table fields of a
         `TableDataElement`.
@@ -214,7 +222,13 @@ class Table:
         :param field_data: one or more `TableField` objects which
         :return: bool
         """
-
+        # element_id = GenderID(self.get_primary_key(element))
+        data = {}
+        for data_field in data_fields:
+            data.update(data_field.data)
+        command = Cmd.get_update_element_data_command(self.table_name,
+                                                      element, data)
+        self.db.cur.execute(command)
 
 
 class GarmentTable(Table):
@@ -222,17 +236,34 @@ class GarmentTable(Table):
     primary_key_column_name = "GarmentID"
 
     def __init__(self, database, column_types: collections.OrderedDict):
+
+        # TODO: Adding data elements here does not assign column type
+        # that is done in the TableFactoryImpl
+
+        # column_types.update(GarmentIsDefault().get_data_as_dict(), last=True)
+        # if data_fields:
+        #     for data_field in data_fields:
+        #         column_types.update(data_field.get_data_as_dict())
         super(GarmentTable, self).__init__(database,
                                            self.primary_key_column_name,
                                            column_types)
 
-    def set_default(self, element: TableDataElement, default=True):
+    def set_default(self, element: TableElementIdentifier,
+                    default: bool):
         """
         Set a single `Garment` element within the table as default garment for
         the
+        :param element:
         :param default:
         :return:
         """
+
+        if default:
+            default_data = GarmentIsDefault(True)
+        else:
+            default_data = GarmentIsDefault(False)
+
+        super(GarmentTable, self).set_data(element, default_data)
 
 
 class GenderTable(Table):
@@ -307,7 +338,12 @@ class TableFactory(ABC):
         self.column_types = collections.OrderedDict()
 
     @abstractmethod
-    def create_table(self, element: TableDataElement):
+    def create_table(self, element: TableElementIdentifier):
+        pass
+
+    @abstractmethod
+    def _add_data_column(self, element: TableElementIdentifier,
+                         *data: TableElementDataField):
         pass
 
 
@@ -318,7 +354,23 @@ class TableFactoryImpl(TableFactory):
         super(TableFactoryImpl, self).__init__()
         self.database = database
 
-    def create_table(self, element: TableDataElement) -> Table:
+    def _add_data_column(self, element: TableElementIdentifier,
+                         *data: TableElementDataField):
+        """
+        Adds one or more `TableElementDataField` to the table column
+        :param element:
+        :param data:
+        :return: TableElementIdentifier
+        """
+        # TODO: Write method to add *data fields to element
+
+        # garment_is_default = GarmentIsDefault().get_data_as_dict()
+        # element.fields.update(garment_is_default)
+        # element.fields.move_to_end(garment_is_default, last=False)
+
+        return element
+
+    def create_table(self, element: TableElementIdentifier) -> Table:
         """Creates a Table object inside a :class:`Database` object.
 
         Item must be an implementation of the `TableDataElement` interface,
@@ -332,6 +384,9 @@ class TableFactoryImpl(TableFactory):
         :rtype: `Table`
         """
         self.column_types.clear()
+
+        if isinstance(element, Garment):
+            element = self._add_data_column(element, GarmentIsDefault())
 
         for column in element.fields:
             if type(element.fields[column]) == str:

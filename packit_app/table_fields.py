@@ -12,26 +12,26 @@ class TableField(abc.ABC):
     column_name = ""
 
     def __init__(self):
-        self.field = {}
+        self.data = {}
 
-    def get_field_as_dict(self):
+    def get_data_as_dict(self):
         """
         Returns the column name and value of the `TableField` as a dictionary
         :return: dict
         """
-        return dict({self.column_name: self.field[self.column_name]})
+        return dict({self.column_name: self.data[self.column_name]})
 
 
-class TableElementField(abc.ABC, TableField):
+class TableElementIdentifierField(TableField):
     """
     `TableField` that is contained in a `TableElement`
     """
 
     def __init__(self):
-        super(TableElementField, self).__init__()
+        super(TableElementIdentifierField, self).__init__()
 
 
-class TableDataField(abc.ABC, TableField):
+class TableElementDataField(TableField):
     """
     `TableField` that is not contained in a `TableElement`, but is assigned to
     it.
@@ -41,87 +41,87 @@ class TableDataField(abc.ABC, TableField):
     """
 
     def __init__(self):
-        super(TableDataField, self).__init__()
+        super(TableElementDataField, self).__init__()
 
 
-class GarmentName(TableElementField):
+class GarmentName(TableElementIdentifierField):
     column_name = "Name"
 
     def __init__(self, name: str) -> None:
         super(GarmentName, self).__init__()
-        self.field[self.column_name] = name
+        self.data[self.column_name] = name
 
 
-class GarmentIsDefault(TableDataField):
+class GarmentIsDefault(TableElementDataField):
     column_name = "IsDefault"
 
-    def __init__(self, is_default: bool) -> None:
+    def __init__(self, is_default: bool = True) -> None:
         super(GarmentIsDefault, self).__init__()
         if is_default:
-            self.field[self.column_name] = 1
+            self.data[self.column_name] = 1
         else:
-            self.field[self.column_name] = 0
+            self.data[self.column_name] = 0
 
 
-class GenderID(TableElementField):
+class GenderID(TableElementIdentifierField):
     column_name = "GenderID"
 
     def __init__(self, gender_id: int) -> None:
         super(GenderID, self).__init__()
-        self.field[self.column_name] = gender_id
+        self.data[self.column_name] = gender_id
 
 
-class GenderName(TableElementField):
+class GenderName(TableElementIdentifierField):
     column_name = "Name"
 
     def __init__(self, gender_name) -> None:
         super(GenderName, self).__init__()
-        self.field[self.column_name] = gender_name
+        self.data[self.column_name] = gender_name
 
 
-class Username(TableElementField):
+class Username(TableElementIdentifierField):
     column_name = "Username"
 
     def __init__(self, username: str):
         super(Username, self).__init__()
-        self.field[self.column_name] = username
+        self.data[self.column_name] = username
 
 
-class TripTemperatureDayAverage(TableDataField):
+class TripTemperatureDayAverage(TableElementDataField):
     column_name = "DayAverageTemp"
 
 
-class TripTemperatureDayMax(TableDataField):
+class TripTemperatureDayMax(TableElementDataField):
     column_name = "DayMaxTemp"
 
 
-class TripTemperatureDayMin(TableDataField):
+class TripTemperatureDayMin(TableElementDataField):
     column_name = "DayMinTemp"
 
 
-class TripDestination(TableDataField):
+class TripDestination(TableElementDataField):
     column_name = "Destination"
 
 
-class TripTemperatureNightIndoorAverage(TableDataField):
+class TripTemperatureNightIndoorAverage(TableElementDataField):
     column_name = "NightAverageIndoorTemp"
 
 
-class TripDaysInTransit(TableDataField):
+class TripDaysInTransit(TableElementDataField):
     column_name = "DaysInTransit"
 
 
-class TripDaysWithSports(TableDataField):
+class TripDaysWithSports(TableElementDataField):
     column_name = "DaysWithoutSports"
 
 
-class TripDaysWithoutSports(TableDataField):
+class TripDaysWithoutSports(TableElementDataField):
     column_name = "DaysWithSports"
 
 
-class TripDateEnd(TableDataField):
+class TripDateEnd(TableElementDataField):
     column_name = "EndDate"
 
 
-class TripDateStart(TableDataField):
+class TripDateStart(TableElementDataField):
     column_name = "StartDate"
