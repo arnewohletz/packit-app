@@ -73,7 +73,7 @@ def specific_user_is_added(context, gender, username):
 
 
 @when(u'a new {gender:Gender} user is staged for creation')
-def specific_user_is_staged_for_adding(context, gender):
+def specific_user_is_staged_for_creation(context, gender):
     raise NotImplementedError(
         u'STEP: When a new female user staged for adding')
 

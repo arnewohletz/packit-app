@@ -1,4 +1,38 @@
 import itertools
+import abc
+
+from .table_elements import TableElementIdentifier
+from .table_fields import TableField
+
+
+class StagedElement:
+
+    def __init__(self, element: TableElementIdentifier, data: list):
+        self.element = element
+        self.data = data
+
+
+class StagedElementContainer(abc.ABC):
+    staged_elements = []
+
+    def __init__(self):
+        pass
+
+    def stage_element(self, element: TableElementIdentifier,
+                      *data: TableField):
+        pass
+
+
+class StagedNewUserContainer(StagedElementContainer):
+
+    def __init__(self):
+        super(StagedNewUserContainer, self).__init__()
+        pass
+
+    def stage_element(self, element: TableElementIdentifier,
+                      *data: TableField) -> None:
+
+        self.staged_elements.append(StagedElement(element, data))
 
 
 class TableHelper:

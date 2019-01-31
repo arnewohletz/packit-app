@@ -46,13 +46,6 @@ class User(TableElementIdentifier):
             GenderID.column_name]
 
 
-# class DefaultClothingElement(TableDataElement):
-#     def __init__(self, gender="", clothing_item=""):
-#         super(DefaultClothingElement, self).__init__()
-#         self.fields['gender'] = gender
-#         self.fields['clothing_item'] = clothing_item
-
-
 class Trip(TableElementIdentifier):
     def __init__(self, destination, start_date, end_date, day_average_temp,
                  day_max_temp, day_min_temp, night_average_indoor_temp,

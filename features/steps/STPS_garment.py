@@ -14,7 +14,6 @@ register_type(GarmentName=custom_type_parser.parse_garment_name)
 def specific_garment_type_does_not_exit(context, garment, gender):
     context.garment_table.clean_all_content()
     gender_id = GenderID(context.gender_table.get_primary_key(gender))
-    # TODO: cannot context.garment_element - is it not saved in Context object?
     context.garment_element = Garment(name=garment, gender_id=gender_id)
 
     result = context.garment_table.get_element(context.garment_element)
@@ -54,9 +53,9 @@ def set_default_value(context, default):
     # field = context.garment_table.get_element(context.garment_element)
     context.garment_table.set_default(element=context.garment_element,
                                       default=default)
-    set_default_value = context.garment_table.get_element(
+    default_value = context.garment_table.get_element(
         element=context.garment_element)[default.column_name]
-    assert set_default_value == default.data[default.column_name]
+    assert default_value == default.data[default.column_name]
 
 
 @then(
@@ -69,9 +68,9 @@ def specific_garment_type_has_correct_data(context, default, garment, gender):
     #                                                            garment)
     assert garment_data != {}, "Garment type does not exist for specified gender"
     assert garment_data[default.column_name] == default.data[
-        default.column_name], "Default value incorrect - " + default.data[
-        default.column_name] + " was expected, but " + garment_data[
-                                  default.column_name] + " is set"
+        default.column_name], "Default value incorrect - " + str(default.data[
+        default.column_name]) + " was expected, but " + str(garment_data[
+                                  default.column_name]) + " is set"
 
     # if len(garment_data) == 1:
     #     assert garment_data[default.column_name] == default.data[

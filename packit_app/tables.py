@@ -18,8 +18,8 @@ class Table:
     Each table requires a `primary_key` column, which saves an integer value
     for each `TableDataElement` that is added to the table.
 
-    :param primary_key: string name that the primary key column is supposed to
-        have.
+    :param primary_key_column_name: string name that the primary key column is
+        supposed to have.
     :param column_types: dictionary that holds a key-value pair for each column
         , where the key holds the column name and the value contains the type
         information.
@@ -56,7 +56,6 @@ class Table:
             return False
         else:
             return True
-            # raise ElementAlreadyExistsError
 
     def add_element(self, element: TableElementIdentifier,
                     *data: TableField) -> bool:
@@ -71,8 +70,6 @@ class Table:
         for field in data:
             added_data.update(field.get_data_as_dict())
 
-        # try:
-
         if not self._element_exists(element):
             self.db.execute_command(Cmd.get_add_element_to_table_command(
                 self.table_name,
@@ -84,11 +81,6 @@ class Table:
         else:
             # TODO: Handle error with warning pop-up message
             raise ElementAlreadyExistsError
-            # self.raised_errors.append(ElementAlreadyExistsError)
-
-        # except ElementAlreadyExistsError as error:
-        #
-        #     return False
 
     def clean_all_content(self):
         """
@@ -168,8 +160,6 @@ class Table:
         elif len(found_element) == 0:
             return found_element
 
-        # TODO: That doesnt fit
-        # return self._get_matching_elements(queries)[0]
         return found_element[0]
 
     def get_matching_elements(self, *field_values: TableField) -> list:
@@ -234,7 +224,6 @@ class Table:
         :param field_data: one or more `TableField` objects which
         :return: ``True`` for success, ``False`` if action failed
         """
-        # element_id = GenderID(self.get_primary_key(element))
         data = {}
         for data_field in data_fields:
             data.update(data_field.data)
@@ -259,7 +248,7 @@ class GarmentTable(Table):
                                            column_types)
 
     def set_default(self, element: TableElementIdentifier,
-                    default: bool):
+                    default: GarmentIsDefault):
         """
         Set a single `Garment` element within the table as default garment for
         the
@@ -267,13 +256,7 @@ class GarmentTable(Table):
         :param default:
         :return:
         """
-
-        if default:
-            default_data = GarmentIsDefault(True)
-        else:
-            default_data = GarmentIsDefault(False)
-
-        success = super(GarmentTable, self).set_data(element, default_data)
+        success = super(GarmentTable, self).set_data(element, default)
 
         return success
 
