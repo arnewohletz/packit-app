@@ -158,7 +158,19 @@ class Table:
         """
         queries = dict(element.fields)
 
-        return self._get_matching_elements(queries)
+        found_element = self._get_matching_elements(queries)
+
+        if len(found_element) > 1:
+            raise DuplicateElementFoundError(
+                str(len(
+                    found_element)) + "element duplicate(s) was/were found")
+
+        elif len(found_element) == 0:
+            return found_element
+
+        # TODO: That doesnt fit
+        # return self._get_matching_elements(queries)[0]
+        return found_element[0]
 
     def get_matching_elements(self, *field_values: TableField) -> list:
         """
@@ -208,27 +220,33 @@ class Table:
         result = self.get_element(element_identifier)
 
         if len(result) > 0:
-            return result[0][self.primary_key_column_name]
+            return result[self.primary_key_column_name]
         else:
             # TODO: Raise ElementDoesNotExistError
             return
 
     def set_data(self, element: TableElementIdentifier,
-                 *data_fields: TableElementDataField) -> None:
+                 *data_fields: TableElementDataField) -> bool:
         """
         Sets data value for one or multiple data table fields of a
         `TableDataElement`.
         :param element: the table element whose data to set
         :param field_data: one or more `TableField` objects which
-        :return: bool
+        :return: ``True`` for success, ``False`` if action failed
         """
         # element_id = GenderID(self.get_primary_key(element))
         data = {}
         for data_field in data_fields:
             data.update(data_field.data)
-        command = Cmd.get_update_element_data_command(self.table_name,
-                                                      element, data)
-        self.db.cur.execute(command)
+        command = Cmd.get_update_element_data_command(
+            table_name=self.table_name,
+            identifier=element, data=data)
+        try:
+            self.db.execute_command(command)
+        except DatabaseError:
+            return False
+
+        return True
 
 
 class GarmentTable(Table):
@@ -236,14 +254,6 @@ class GarmentTable(Table):
     primary_key_column_name = "GarmentID"
 
     def __init__(self, database, column_types: collections.OrderedDict):
-
-        # TODO: Adding data elements here does not assign column type
-        # that is done in the TableFactoryImpl
-
-        # column_types.update(GarmentIsDefault().get_data_as_dict(), last=True)
-        # if data_fields:
-        #     for data_field in data_fields:
-        #         column_types.update(data_field.get_data_as_dict())
         super(GarmentTable, self).__init__(database,
                                            self.primary_key_column_name,
                                            column_types)
@@ -263,7 +273,9 @@ class GarmentTable(Table):
         else:
             default_data = GarmentIsDefault(False)
 
-        super(GarmentTable, self).set_data(element, default_data)
+        success = super(GarmentTable, self).set_data(element, default_data)
+
+        return success
 
 
 class GenderTable(Table):
@@ -312,15 +324,6 @@ class UserTable(Table):
         super(UserTable, self).__init__(database, self.primary_key_column_name,
                                         column_types)
 
-    # def add_element(self, element: TableDataElement, *data_fields: TableField):
-    #     combined_data_fields = {}
-    #
-    #     combined_data_fields.update(element.get_fields_as_dict())
-    #
-    #     if len(data_fields) > 0:
-    #         for data_field in data_fields:
-    #             combined_data_fields.update(data_field.get_field_as_dict())
-
 
 class UserTripGarmentAmountTable(Table):
     table_name = "UserTripGarmentAmount"
@@ -362,11 +365,10 @@ class TableFactoryImpl(TableFactory):
         :param data:
         :return: TableElementIdentifier
         """
-        # TODO: Write method to add *data fields to element
 
-        # garment_is_default = GarmentIsDefault().get_data_as_dict()
-        # element.fields.update(garment_is_default)
-        # element.fields.move_to_end(garment_is_default, last=False)
+        for data_field in data:
+            element.fields.update(data_field.data)
+            element.fields.move_to_end(data_field.column_name, last=True)
 
         return element
 

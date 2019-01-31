@@ -18,6 +18,7 @@ def specific_garment_type_does_not_exit(context, garment, gender):
     context.garment_element = Garment(name=garment, gender_id=gender_id)
 
     result = context.garment_table.get_element(context.garment_element)
+
     assert result == [], "Garment type exists, but shouldn't."
 
 
@@ -39,9 +40,10 @@ def specific_garment_type_is_added(context, garment, gender, default):
     gender_id = GenderID(context.gender_table.get_primary_key(gender))
     # added = context.garment_table.add_element(
     #     Garment(gender_id=gender_id, name=garment, is_default=default))
-    garment_element = Garment(gender_id=gender_id, name=garment)
-    added = context.garment_table.add_element(garment_element)
-    set_default = context.garment_table.set_default(garment_element, default)
+    context.garment_element = Garment(gender_id=gender_id, name=garment)
+    added = context.garment_table.add_element(context.garment_element)
+    set_default = context.garment_table.set_default(context.garment_element,
+                                                    default)
 
     assert added is True, "Element was not added."
     assert set_default is True, "Element default data was not set"
@@ -49,25 +51,30 @@ def specific_garment_type_is_added(context, garment, gender, default):
 
 @when(u'the default setting is set to {default:GarmentIsDefault}')
 def set_default_value(context, default):
-    field = context.garment_table.get_element(context.garment_element)
-    context.garment_table.set_default(data_field=field)
-    raise NotImplementedError(
-        u'STEP: When the default setting is set to default')
+    # field = context.garment_table.get_element(context.garment_element)
+    context.garment_table.set_default(element=context.garment_element,
+                                      default=default)
+    set_default_value = context.garment_table.get_element(
+        element=context.garment_element)[default.column_name]
+    assert set_default_value == default.data[default.column_name]
 
 
 @then(
     u'the application contains {default:GarmentIsDefault} garment type {garment:GarmentName} for {gender:Gender} users')
 def specific_garment_type_has_correct_data(context, default, garment, gender):
     gender_id = GenderID(context.gender_table.get_primary_key(gender))
-    garment_data = context.garment_table.get_matching_elements(gender_id,
-                                                               garment)
-    assert garment_data != [], "Garment type does not exist for specified gender"
+    garment_data = context.garment_table.get_element(
+        Garment(gender_id=gender_id, name=garment))
+    # garment_data = context.garment_table.get_matching_elements(gender_id,
+    #                                                            garment)
+    assert garment_data != {}, "Garment type does not exist for specified gender"
+    assert garment_data[default.column_name] == default.data[
+        default.column_name], "Default value incorrect - " + default.data[
+        default.column_name] + " was expected, but " + garment_data[
+                                  default.column_name] + " is set"
 
-    if len(garment_data) == 1:
-        assert garment_data[0][default.column_name] == default.field[
-            default.column_name]
-    else:
-        raise ValueError("Garment type has saved duplicates")
-
-
-
+    # if len(garment_data) == 1:
+    #     assert garment_data[default.column_name] == default.data[
+    #         default.column_name]
+    # else:
+    #     raise ValueError("Garment type has saved duplicates")

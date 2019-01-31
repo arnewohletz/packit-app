@@ -32,10 +32,10 @@ class SQLCommandGenerator:
         """
         command = "UPDATE " + table_name + " SET "
 
+        command += SQLCommandGenerator._concatenate_fields_with_and(data)
+        command += " WHERE "
         command += SQLCommandGenerator._concatenate_fields_with_and(
             identifier.get_fields_as_dict())
-        command += " WHERE "
-        command += SQLCommandGenerator._concatenate_fields_with_and(data)
 
         return command
 

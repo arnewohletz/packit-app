@@ -1,4 +1,4 @@
-import sqlite3
+from sqlite3 import connect, DatabaseError
 from packit_app import constants
 from .tables import TableFactoryImpl
 
@@ -16,14 +16,18 @@ class Database:
     db_location = constants.DB_LOCATION
 
     def __init__(self) -> None:
-        self.connection = sqlite3.connect(self.db_location)
+        self.connection = connect(self.db_location)
         self.cur = self.connection.cursor()
         self.table_factory = TableFactoryImpl(self)
 
     def execute_command(self, command: str) -> None:
         """Executes any given SQL query on the connected database"""
-        self.cur.execute(command)
-        self.connection.commit()
+        try:
+            self.cur.execute(command)
+            self.connection.commit()
+        except DatabaseError:
+            pass
+    # TODO: Add error log message
 
     def close_connection(self) -> None:
         """Closes the database connection (unlocks it)."""
