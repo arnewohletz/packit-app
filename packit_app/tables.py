@@ -134,7 +134,7 @@ class Table:
 
         return result
 
-    def get_element(self, element: TableElementIdentifier) -> list:
+    def get_element(self, element: TableElementIdentifier) -> dict:
         """
         Returns full table data of an `TableDataElement` within a dictionary.
         If the element cannot be found, an empty list is returned.
@@ -158,7 +158,7 @@ class Table:
                     found_element)) + "element duplicate(s) was/were found")
 
         elif len(found_element) == 0:
-            return found_element
+            return {}
 
         return found_element[0]
 
@@ -213,7 +213,7 @@ class Table:
             return result[self.primary_key_column_name]
         else:
             # TODO: Raise ElementDoesNotExistError
-            return
+            return -1
 
     def set_data(self, element: TableElementIdentifier,
                  *data_fields: TableElementDataField) -> bool:
@@ -221,7 +221,7 @@ class Table:
         Sets data value for one or multiple data table fields of a
         `TableDataElement`.
         :param element: the table element whose data to set
-        :param field_data: one or more `TableField` objects which
+        :param data_fields: one or more `TableField` objects which
         :return: ``True`` for success, ``False`` if action failed
         """
         data = {}
@@ -240,7 +240,8 @@ class Table:
 
 class GarmentTable(Table):
     table_name = "Garment"
-    primary_key_column_name = "GarmentID"
+    # primary_key_column_name = "GarmentID"
+    primary_key_column_name = GarmentID.column_name
 
     def __init__(self, database, column_types: collections.OrderedDict):
         super(GarmentTable, self).__init__(database,
@@ -263,7 +264,8 @@ class GarmentTable(Table):
 
 class GenderTable(Table):
     table_name = "Gender"
-    primary_key_column_name = "GenderID"
+    # primary_key_column_name = "GenderID"
+    primary_key_column_name = GenderID.column_name
 
     def __init__(self, database, column_types):
         super(GenderTable, self).__init__(database,
@@ -289,9 +291,10 @@ class UserGarmentSettingsTable(Table):
     table_name = "UserGarmentSettings"
     primary_key_column_name = "UserGarmentSettingsID"
 
-    def __init__(self, columns: collections.OrderedDict):
-        super(UserGarmentSettingsTable, self).__init__(
-            self.primary_key_column_name, columns)
+    def __init__(self, database, column_types: collections.OrderedDict):
+        super(UserGarmentSettingsTable, self).__init__(database,
+                                                       self.primary_key_column_name,
+                                                       column_types)
 
 
 class UserTable(Table):
@@ -301,7 +304,8 @@ class UserTable(Table):
     """
 
     table_name = 'User'
-    primary_key_column_name = "UserID"
+    # primary_key_column_name = "UserID"
+    primary_key_column_name = UserID.column_name
 
     def __init__(self, database, column_types):
         super(UserTable, self).__init__(database, self.primary_key_column_name,
@@ -373,6 +377,17 @@ class TableFactoryImpl(TableFactory):
         if isinstance(element, Garment):
             element = self._add_data_column(element, GarmentIsDefault())
 
+        if isinstance(element, UserGarmentSetting):
+            element = self._add_data_column(element,
+                                            QuantityAdditionalDayWithSports(),
+                                            QuantityAdditionalDayInTransit(),
+                                            QuantityDayBelowZero(),
+                                            QuantityDayZeroToTen(),
+                                            QuantityDayTenToTwenty(),
+                                            QuantityDayAboveTwenty(),
+                                            QuantityNightBelowTwenty(),
+                                            QuantityNightAboveTwenty())
+
         for column in element.fields:
             if type(element.fields[column]) == str:
                 self.column_types[column] = "TEXT"
@@ -387,3 +402,5 @@ class TableFactoryImpl(TableFactory):
             return GenderTable(self.database, self.column_types)
         elif isinstance(element, Garment):
             return GarmentTable(self.database, self.column_types)
+        elif isinstance(element, UserGarmentSetting):
+            return UserGarmentSettingsTable(self.database, self.column_types)

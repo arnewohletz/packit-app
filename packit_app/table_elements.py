@@ -82,5 +82,12 @@ class UserTripGarmentAmount(TableElementIdentifier):
     pass
 
 
-class UserGarmentSettings(TableElementIdentifier):
+class UserGarmentSetting(TableElementIdentifier):
+    def __init__(self, user_id: UserID = UserID(1),
+                 garment_id: GarmentID = GarmentID(1)):
+        super(UserGarmentSetting, self).__init__()
+        self.fields[UserID.column_name] = user_id.data[UserID.column_name]
+        self.fields[GarmentID.column_name] = garment_id.data[
+            GarmentID.column_name]
+
     pass

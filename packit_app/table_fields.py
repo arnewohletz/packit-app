@@ -43,6 +43,13 @@ class TableElementDataField(TableField):
     def __init__(self):
         super(TableElementDataField, self).__init__()
 
+class GarmentID(TableElementIdentifierField):
+    column_name = "GarmentID"
+
+    def __init__(self, garment_id: int) -> None:
+        super(GarmentID, self).__init__()
+        self.data[self.column_name] = garment_id
+
 
 class GarmentName(TableElementIdentifierField):
     column_name = "Name"
@@ -79,12 +86,52 @@ class GenderName(TableElementIdentifierField):
         self.data[self.column_name] = gender_name
 
 
+class UserID(TableElementIdentifierField):
+    column_name = "UserID"
+
+    def __init__(self, user_id: int) -> None:
+        super(UserID, self).__init__()
+        self.data[self.column_name] = user_id
+
+
 class Username(TableElementIdentifierField):
     column_name = "Username"
 
     def __init__(self, username: str):
         super(Username, self).__init__()
         self.data[self.column_name] = username
+
+
+class QuantityAdditionalDayInTransit(TableElementDataField):
+    column_name = "QuantityAdditionalDayInTransit"
+
+
+class QuantityAdditionalDayWithSports(TableElementDataField):
+    column_name = "QuantityAdditionalDayWithSports"
+
+
+class QuantityDayBelowZero(TableElementDataField):
+    column_name = "QuantityDayBelowZero"
+
+
+class QuantityDayZeroToTen(TableElementDataField):
+    column_name = "QuantityDayZeroToTen"
+
+
+class QuantityDayTenToTwenty(TableElementDataField):
+    column_name = "QuantityDayTenToTwenty"
+
+
+class QuantityDayAboveTwenty(TableElementDataField):
+    column_name = "QuantityDayAboveTwenty"
+
+
+class QuantityNightBelowTwenty(TableElementDataField):
+    column_name = "QuantityNightBelowTwenty"
+
+
+class QuantityNightAboveTwenty(TableElementDataField):
+    column_name = "QuantityNightAboveTwenty"
 
 
 class TripTemperatureDayAverage(TableElementDataField):

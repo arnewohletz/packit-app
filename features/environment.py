@@ -1,7 +1,8 @@
 import os
 from packit_app import constants
 from packit_app.packit_app import Application
-from packit_app.table_elements import Gender, User, Garment
+from packit_app.table_elements import Gender, User, Garment, \
+    UserGarmentSetting
 
 
 def before_all(context):
@@ -12,6 +13,8 @@ def before_all(context):
     context.user_table = context.table_factory.create_table(User())
     context.gender_table = context.table_factory.create_table(Gender())
     context.garment_table = context.table_factory.create_table(Garment())
+    context.user_garment_settings_table = context.table_factory.create_table(
+        UserGarmentSetting())
 
 
 def after_all(context):

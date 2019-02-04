@@ -4,8 +4,10 @@ import string
 from behave import given, when, then, register_type
 from parse_type import TypeBuilder
 from features.support import custom_type_parser, optional_word_parser
-from packit_app.table_elements import User, Username, GenderID
+from packit_app.table_elements import User, Username, GenderID, \
+    GarmentIsDefault
 from packit_app.errors import ElementAlreadyExistsError
+from packit_app.table_helper import StagedElementContainer
 
 register_type(Gender=custom_type_parser.parse_gender)
 register_type(Username=custom_type_parser.parse_username)
@@ -74,6 +76,21 @@ def specific_user_is_added(context, gender, username):
 
 @when(u'a new {gender:Gender} user is staged for creation')
 def specific_user_is_staged_for_creation(context, gender):
+    gender_id = GenderID(context.gender_table.get_primary_key(gender))
+    container = StagedElementContainer()
+    container.add(
+        User(username=Username("SomeUser"), gender_id=gender_id))
+    default_garment = context.garment_table.get_matching_elements(gender_id,
+                                                                  GarmentIsDefault(
+                                                                      True))
+        # TODO: Get default garment for specified User element
+        # TODO: Add UserGarmentSettings object for each default garment
+
+    if len(default_garment) > 0:
+        for garment in default_garment:
+            context.user_garment_settings_table.add_element()
+
+
     raise NotImplementedError(
         u'STEP: When a new female user staged for adding')
 
