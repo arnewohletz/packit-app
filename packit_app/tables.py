@@ -107,22 +107,6 @@ class Table:
         self.db.cur.execute(command)
         self.db.connection.commit()
 
-    def set_element_field_value(self, element: TableElementIdentifier,
-                                field: TableField) -> None:
-        """
-        Set a single data value of an existing `TableDataElement` from the
-        table.
-
-        If the element does not exist an
-        :param element:
-        :param field:
-        :return:
-        """
-        # TODO: Implement method
-        command = Cmd.get_set_field_value_command(self.table_name, element,
-                                                  field)
-        self.db.cur.execute(command)
-
     def _get_matching_elements(self, fields: dict):
 
         command = Cmd.get_return_matching_elements_command(
@@ -215,18 +199,18 @@ class Table:
             # TODO: Raise ElementDoesNotExistError
             return -1
 
-    def set_data(self, element: TableElementIdentifier,
-                 *data_fields: TableElementDataField) -> bool:
+    def set_data_value(self, element: TableElementIdentifier,
+                       *fields: TableField) -> bool:
         """
         Sets data value for one or multiple data table fields of a
         `TableDataElement`.
         :param element: the table element whose data to set
-        :param data_fields: one or more `TableField` objects which
+        :param fields: one or more `TableField` objects which
         :return: ``True`` for success, ``False`` if action failed
         """
         data = {}
-        for data_field in data_fields:
-            data.update(data_field.data)
+        for field in fields:
+            data.update(field.data)
         command = Cmd.get_update_element_data_command(
             table_name=self.table_name,
             identifier=element, data=data)
@@ -236,6 +220,22 @@ class Table:
             return False
 
         return True
+
+    # def set_value(self, element: TableElementIdentifier,
+    #               field: TableField) -> None:
+    #     """
+    #     Set a single data value of an existing `TableDataElement` from the
+    #     table.
+    #
+    #     If the element does not exist an
+    #     :param element:
+    #     :param field:
+    #     :return:
+    #     """
+    #     # TODO: Implement method
+    #     command = Cmd.get_set_value_command(self.table_name, element,
+    #                                               field)
+    #     self.db.cur.execute(command)
 
 
 class GarmentTable(Table):
@@ -257,7 +257,7 @@ class GarmentTable(Table):
         :param default:
         :return:
         """
-        success = super(GarmentTable, self).set_data(element, default)
+        success = super(GarmentTable, self).set_data_value(element, default)
 
         return success
 
@@ -379,14 +379,27 @@ class TableFactoryImpl(TableFactory):
 
         if isinstance(element, UserGarmentSetting):
             element = self._add_data_column(element,
-                                            QuantityAdditionalDayWithSports(),
-                                            QuantityAdditionalDayInTransit(),
+                                            QuantityDaysWithSports(),
+                                            QuantityDaysInTransit(),
                                             QuantityDayBelowZero(),
                                             QuantityDayZeroToTen(),
                                             QuantityDayTenToTwenty(),
                                             QuantityDayAboveTwenty(),
                                             QuantityNightBelowTwenty(),
                                             QuantityNightAboveTwenty())
+
+        # if isinstance(element, UserGarmentSetting):
+        #     element = self._add_data_column(element,
+        #                                     FloatDataField("QuantityDaysInTransit"),
+        #                                     FloatDataField(COLUMN_NAME_DAYS_IN_TRANSIT),
+        #                                     DataField(COLUMN_NAME_DAYS_IN_TRANSIT, float)
+        #                                     QuantityDaysInTransit(),
+        #                                     QuantityDayBelowZero(),
+        #                                     QuantityDayZeroToTen(),
+        #                                     QuantityDayTenToTwenty(),
+        #                                     QuantityDayAboveTwenty(),
+        #                                     QuantityNightBelowTwenty(),
+        #                                     QuantityNightAboveTwenty())
 
         for column in element.fields:
             if type(element.fields[column]) == str:
