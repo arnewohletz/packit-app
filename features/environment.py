@@ -7,7 +7,7 @@ from packit_app.table_elements import Gender, User
 def before_all(context):
     context.app = Application()
     context.db = context.app.database
-    context.table_factory = context.app.table_factory
+    context.table_factory = context.db.table_factory
     context.user_table = context.table_factory.create_table(User())
     context.gender_table = context.table_factory.create_table(Gender())
 

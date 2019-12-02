@@ -50,8 +50,9 @@ class Table:
                                                              column_types))
 
     def _element_already_exists(self, element: TableDataElement):
-        """Checks whether the table already contains a entry with the same
-        data"""
+        """Checks whether the table already contains an element with the same
+        data. Raises an ElementAlreadyExistsError in case the element already
+        exists."""
 
         self.db.execute_command(Cmd.get_return_matching_elements_command(
             self.table_name, element.get_as_dict()))
@@ -90,8 +91,7 @@ class Table:
 
         :return: None
         """
-        command = Cmd.get_clean_all_content_command(
-            self.table_name)
+        command = Cmd.get_clean_all_content_command(self.table_name)
         self.db.cur.execute(command)
         self.id = 1
 
