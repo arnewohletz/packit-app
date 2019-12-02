@@ -14,3 +14,4 @@ class UserTableHelper:
         helper.get_row_content_as_dictionary()
 
         return user_id
+

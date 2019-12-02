@@ -1,9 +1,9 @@
 from collections import OrderedDict
-import abc
+from abc import ABC
 from .table_fields import *
 
 
-class TableDataElement(abc.ABC):
+class TableDataElement(ABC):
     column_types = None
 
     def __init__(self) -> None:

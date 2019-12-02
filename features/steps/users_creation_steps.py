@@ -6,6 +6,7 @@ from features.support import database as database_helper
 from features.support import custom_type_parser
 from packit_app.table_elements import User, Username, GenderID
 
+
 register_type(Gender=custom_type_parser.parse_gender)
 register_type(Username=custom_type_parser.parse_username)
 
@@ -38,7 +39,8 @@ def users_table_contains_certain_user(context, gender, username):
 @when(u'the {gender:Gender} user named {username:Username} is deleted')
 def delete_user(context, username, gender):
     gender_id = context.gender_table.get_primary_key_as_dict(gender)
-    context.user_table.delete_element(User(username=username, gender_id=GenderID(gender_id['GenderID'])))
+    context.user_table.delete_element(
+        User(username=username, gender_id=GenderID(gender_id['GenderID'])))
     user_data = context.user_table.get_matching_elements(
         gender_id,
         username.get_as_dict())
@@ -48,7 +50,9 @@ def delete_user(context, username, gender):
 @when(u'a new {gender:Gender} user named {username:Username} is created')
 def create_new_user(context, gender, username):
     gender_id = context.gender_table.get_primary_key_as_dict(gender)
-    added = context.user_table.add_element(User(username=username, gender_id=GenderID(gender_id['GenderID'])))
+    added = context.user_table.add_element(
+        User(username=username,
+             gender_id=GenderID(gender_id[GenderID.column_name])))
     user_data = context.user_table.get_matching_elements(
         gender_id,
         username.get_as_dict())
@@ -63,14 +67,16 @@ def create_multiple_random_users(context, amount: int):
         name = Username(''.join(
             random.choices(string.ascii_lowercase + string.digits, k=10)))
         gender_id = random.choice([GenderID(1), GenderID(2)])
-        context.user_table.add_element(User(username=name, gender_id=GenderID(gender_id)))
+        context.user_table.add_element(
+            User(username=name, gender_id=gender_id))
 
 
 # FOR CHECKING ENTRIES
 
 @then(
     u'there is only one {gender:Gender} user named {username:Username} in the application')
-@then(u'the application contains a {gender:Gender} user named {username:Username}')
+@then(
+    u'the application contains a {gender:Gender} user named {username:Username}')
 def user_does_exist_once(context, gender, username):
     gender_id = context.gender_table.get_primary_key_as_dict(gender)
     user_data = context.user_table.get_matching_elements(
@@ -79,7 +85,8 @@ def user_does_exist_once(context, gender, username):
     assert len(user_data) > 0, \
         "{0} user named {1} does not exists".format(gender.value, username)
     assert len(user_data) < 2, \
-        "{0} user named {1} exists more than once".format(gender.value, username)
+        "{0} user named {1} exists more than once".format(gender.value,
+                                                          username)
 
 
 @then(
