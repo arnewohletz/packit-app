@@ -179,9 +179,17 @@
       <screen x="0" y="23" width="2560" height="1417" />
     </state>
     <state x="1515" y="332" key="CommitChangelistDialog2/0.23.2560.1417@0.23.2560.1417" timestamp="1576187389820" />
+    <state x="1374" y="123" width="1080" height="1217" key="DiffContextDialog" timestamp="1576220394929">
+      <screen x="0" y="23" width="2560" height="1417" />
+    </state>
+    <state x="1374" y="123" width="1080" height="1217" key="DiffContextDialog/0.23.2560.1417@0.23.2560.1417" timestamp="1576220394929" />
     <state x="1637" y="449" key="RollbackChangesDialog" timestamp="1576187321947">
       <screen x="0" y="23" width="2560" height="1417" />
     </state>
     <state x="1637" y="449" key="RollbackChangesDialog/0.23.2560.1417@0.23.2560.1417" timestamp="1576187321947" />
+    <state x="1703" y="655" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1576220393963">
+      <screen x="0" y="23" width="2560" height="1417" />
+    </state>
+    <state x="1703" y="655" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.23.2560.1417@0.23.2560.1417" timestamp="1576220393963" />
   </component>
 </project>
