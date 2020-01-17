@@ -74,7 +74,7 @@ class Trip(TableDataElement):
 
 
 class Garment(TableDataElement):
-    def __init__(self, gender, name, is_default):
+    def __init__(self, gender="", name="", is_default=False):
         super(Garment, self).__init__()
         self.column_types[GenderName.column_name] = gender
         self.column_types[GarmentName.column_name] = name
@@ -85,5 +85,5 @@ class UserTripGarmentAmount(TableDataElement):
     pass
 
 
-class UserGarmentSettings(TableDataElement):
+class UserGarmentSetting(TableDataElement):
     pass

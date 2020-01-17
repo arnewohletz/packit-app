@@ -6,7 +6,6 @@ from features.support import database as database_helper
 from features.support import custom_type_parser
 from packit_app.table_elements import User, Username, GenderID
 
-
 register_type(Gender=custom_type_parser.parse_gender)
 register_type(Username=custom_type_parser.parse_username)
 
@@ -32,6 +31,12 @@ def users_table_contains_certain_user(context, gender, username):
         gender_id,
         username.get_as_dict())
     assert len(user_data) == 1, "Requested user does not exist!"
+
+    context.username = username
+    #TODO: Fix this method call
+    context.user_id = context.user_table.get_primary_key_as_dict(
+        User(Username(username.get_field_value()), GenderID(gender_id)))
+    context.gender_id = gender_id
 
 
 # FOR REMOVING & ADDING NEW ENTRIES

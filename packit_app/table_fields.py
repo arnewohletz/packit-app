@@ -23,6 +23,13 @@ class TableField(abc.ABC):
         """
         return dict({self.column_name: self.field[self.column_name]})
 
+    def get_field_value(self):
+        """
+        Returns the field value as a string
+        :return: str
+        """
+        return self.get_as_dict()[self.column_name]
+
 
 class GarmentName(TableField):
     value = "Name"

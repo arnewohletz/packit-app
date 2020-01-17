@@ -2,6 +2,8 @@ from behave import given, when, then
 from packit_app.table_elements import User
 
 
+users = []
+
 # REMOVE & ADD NEW
 
 @when(u'{clothing_type} is added to {gender} user {name}')
@@ -41,6 +43,8 @@ def set_clothing_piece_quantity_single_condition(context, clothing_type,
 @given(u'user {name} has an entry for {clothing_type}')
 def check_user_clothing_entry_exists(context, name, clothing_type):
     # print("checking clothing type existing for that user ...")
+    context.user_id = context.user_table.get_matching_elements
+    # user = User(username=name, gender_id=)
     raise NotImplementedError()
 
 

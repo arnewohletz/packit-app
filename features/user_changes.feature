@@ -1,17 +1,17 @@
-@clothes
+#@clothes
 @run
 Feature: Management of clothing settings for an existing user
 
-  Scenario Outline: Adding new piece of clothing for a user
-    Given the application contains a <gender> user named <name>
-    When <clothing_type> is added to user <name>
-    And quantity for <clothing_type> is set to <quantity_all_temp> for each temperature
-    Then <clothing_type> is added to <name> with <quantity_all_temp> for each temperature
-
-    Examples:
-      | name   | gender | clothing_type | quantity_all_temp |
-      | Thomas | male   | scarf         | 0.5               |
-      | Susan  | female | bolero        | 1.0               |
+#  Scenario Outline: Adding new piece of clothing for a user
+#    Given the application contains a <gender> user named <name>
+#    When <clothing_type> is added to user <name>
+#    And quantity for <clothing_type> is set to <quantity_all_temp> for each temperature
+#    Then <clothing_type> is added to <name> with <quantity_all_temp> for each temperature
+#
+#    Examples:
+#      | name   | gender | clothing_type | quantity_all_temp |
+#      | Thomas | male   | scarf         | 0.5               |
+#      | Susan  | female | bolero        | 1.0               |
 
 
   Scenario Outline: Changing the quantity of existing clothing entry
