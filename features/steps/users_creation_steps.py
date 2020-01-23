@@ -26,16 +26,19 @@ def clear_users_table(context):
 def users_table_contains_certain_user(context, gender, username):
     clear_users_table(context)
     create_new_user(context, gender=gender, username=username)
-    gender_id = context.gender_table.get_primary_key_as_dict(gender)
+    gender_id = context.gender_table.get_primary_key(gender)
     user_data = context.user_table.get_matching_elements(
-        gender_id,
-        username.get_as_dict())
+        GenderID(gender_id), username)
     assert len(user_data) == 1, "Requested user does not exist!"
 
     context.username = username
-    #TODO: Fix this method call
-    context.user_id = context.user_table.get_primary_key_as_dict(
-        User(Username(username.get_field_value()), GenderID(gender_id)))
+    # TODO: Fix this method call
+    # Problem: GenderID object must receive an integer value, but previously
+    # received a dictionary
+    # Fix: variables must be more clear, from which type they are (GOOD) OR
+    # make app less sensitive to type of a table object is (BEST)
+    context.user_id = context.user_table.get_primary_key(
+        User(Username(username.get_value()), GenderID(gender_id)))
     context.gender_id = gender_id
 
 
@@ -43,24 +46,22 @@ def users_table_contains_certain_user(context, gender, username):
 
 @when(u'the {gender:Gender} user named {username:Username} is deleted')
 def delete_user(context, username, gender):
-    gender_id = context.gender_table.get_primary_key_as_dict(gender)
+    gender_id = context.gender_table.get_primary_key(gender)
     context.user_table.delete_element(
-        User(username=username, gender_id=GenderID(gender_id['GenderID'])))
+        User(username=username, gender_id=GenderID(gender_id)))
     user_data = context.user_table.get_matching_elements(
-        gender_id,
-        username.get_as_dict())
+        GenderID(gender_id), username)
     assert len(user_data) == 0, "User has not been deleted!"
 
 
 @when(u'a new {gender:Gender} user named {username:Username} is created')
 def create_new_user(context, gender, username):
-    gender_id = context.gender_table.get_primary_key_as_dict(gender)
+    gender_id = context.gender_table.get_primary_key(gender)
     added = context.user_table.add_element(
-        User(username=username,
-             gender_id=GenderID(gender_id[GenderID.column_name])))
+        User(username=username, gender_id=GenderID(gender_id)))
+
     user_data = context.user_table.get_matching_elements(
-        gender_id,
-        username.get_as_dict())
+        username, GenderID(gender_id))
     if added is True:
         assert len(
             user_data) == 1, "User was supposed to be added, but wasn't."
@@ -83,10 +84,9 @@ def create_multiple_random_users(context, amount: int):
 @then(
     u'the application contains a {gender:Gender} user named {username:Username}')
 def user_does_exist_once(context, gender, username):
-    gender_id = context.gender_table.get_primary_key_as_dict(gender)
+    gender_id = context.gender_table.get_primary_key(gender)
     user_data = context.user_table.get_matching_elements(
-        gender_id,
-        username.get_as_dict())
+        GenderID(gender_id), username)
     assert len(user_data) > 0, \
         "{0} user named {1} does not exists".format(gender.value, username)
     assert len(user_data) < 2, \
@@ -97,10 +97,9 @@ def user_does_exist_once(context, gender, username):
 @then(
     u'there is no {gender:Gender} user named {username:Username} in the application')
 def user_does_not_exist(context, gender, username):
-    gender_id = context.gender_table.get_primary_key_as_dict(gender)
+    gender_id = context.gender_table.get_primary_key(gender)
     user_data = context.user_table.get_matching_elements(
-        gender_id,
-        username.get_as_dict())
+        GenderID(gender_id), username)
     assert user_data == [], "User is not suppose to exist in users table"
 
 

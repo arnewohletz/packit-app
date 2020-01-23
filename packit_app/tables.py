@@ -4,6 +4,7 @@ from .table_helper import TableHelper
 from .errors import *
 import collections
 from abc import ABC, abstractmethod
+from sqlite3 import Error
 
 
 # TODO: Is this class really needed?
@@ -78,7 +79,7 @@ class Table:
                     self.id,
                     element))
                 self.id += 1
-                return True
+                return self.id
 
         except ElementAlreadyExistsError as error:
             self.raised_errors.append(error)
@@ -134,7 +135,9 @@ class Table:
 
         all_queries_dict = {}
         for field_value in field_values:
-            all_queries_dict.update(field_value)
+            # field_value.get_as_dict()
+            # all_queries_dict[field_value.key]
+            all_queries_dict.update(field_value.get_as_dict())
 
         command = Cmd.get_return_matching_elements_command(
             self.table_name, all_queries_dict)
@@ -152,15 +155,40 @@ class Table:
         """
         return self.raised_errors
 
-    # TODO: Empty function of table specific content
-    def get_primary_key_as_dict(self, element: TableDataElement):
-        result = self.get_matching_elements(element.column_types)
+    # # TODO: Empty function of table specific content
+    # def get_primary_key_as_dict(self, element: TableDataElement):
+    #     result = self.get_matching_elements(element.column_types)
+    #
+    #     if len(result) > 0:
+    #         return {self.primary_key_column_name: result[0][
+    #             self.primary_key_column_name]}
+    #     else:
+    #         return
 
-        if len(result) > 0:
-            return {self.primary_key_column_name: result[0][
-                self.primary_key_column_name]}
+    def get_primary_key(self, *fields: TableField):
+        result = self.get_matching_elements(*fields)
+
+        if len(result) == 1:
+            # return {self.primary_key_column_name: result[0][
+            #     self.primary_key_column_name]}
+            return result[0][self.primary_key_column_name]
+        elif len(result) > 1:
+            raise Error("Query matches multiple elements")
         else:
             return
+
+
+    # def get_primary_key(self, element: TableDataElement):
+    #     result = self.get_matching_elements(element.column_types)
+    #
+    #     if len(result) == 1:
+    #         # return {self.primary_key_column_name: result[0][
+    #         #     self.primary_key_column_name]}
+    #         return result[0][self.primary_key_column_name]
+    #     elif len(result) > 1:
+    #         raise Error("Query matches multiple elements")
+    #     else:
+    #         return
 
 
 class GarmentTable(Table):

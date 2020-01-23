@@ -12,6 +12,9 @@ class TableDataElement(ABC):
     def get_as_dict(self) -> OrderedDict:
         return self.column_types
 
+    # def get_id(self, *args, **kwargs) -> int:
+    #     pass
+
 
 class Gender(TableDataElement):
 
@@ -19,6 +22,8 @@ class Gender(TableDataElement):
         super(Gender, self).__init__()
         self.column_types[GenderName.column_name] = gender.field[
             GenderName.column_name]
+
+    # def get_id(self, gender_name: str) -> int:
 
 
 class Male(Gender):
@@ -86,4 +91,7 @@ class UserTripGarmentAmount(TableDataElement):
 
 
 class UserGarmentSetting(TableDataElement):
-    pass
+
+    def __init__(self, user_id, garment_id):
+        super(UserGarmentSetting, self).__init__()
+        pass

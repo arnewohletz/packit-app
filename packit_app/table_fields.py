@@ -21,22 +21,23 @@ class TableField(abc.ABC):
         Returns the column name and value of the `TableField` as a dictionary
         :return: dict
         """
-        return dict({self.column_name: self.field[self.column_name]})
+        return self.field
+        # return dict({self.column_name: self.field})
 
-    def get_field_value(self):
+    def get_value(self):
         """
         Returns the field value as a string
         :return: str
         """
-        return self.get_as_dict()[self.column_name]
+        return self.field[self.column_name]
 
 
 class GarmentName(TableField):
-    value = "Name"
+    field = "Name"
 
 
 class GarmentIsDefault(TableField):
-    value = "IsDefault"
+    field = "IsDefault"
 
 
 class GenderID(TableField):
@@ -45,6 +46,8 @@ class GenderID(TableField):
     def __init__(self, gender_id: int):
         super(GenderID, self).__init__()
         self.field[self.column_name] = gender_id
+
+    # def __init__(self, gender_id: str):
 
 
 class GenderName(TableField):

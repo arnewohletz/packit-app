@@ -63,7 +63,7 @@ class SQLCommandGenerator:
 
         :param table_name: str
         :param query_items: list of dictionaries
-        :return:
+        :return: command: str
         """
 
         command = "SELECT * FROM " + table_name
