@@ -12,7 +12,7 @@ def before_all(context):
     context.gender_table = context.table_factory.create_table(Gender())
     context.garment_table = context.table_factory.create_table(Garment())
     context.user_garment_settings_table = context.table_factory.create_table(
-        UserGarmentSetting())
+        UserGarmentSetting(UserGarmentSetting()))
 
 
 def after_all(context):

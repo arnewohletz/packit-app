@@ -32,12 +32,16 @@ class TableField(abc.ABC):
         return self.field[self.column_name]
 
 
-class GarmentName(TableField):
-    field = "Name"
+class GarmentID(TableField):
+    column_name = "GarmentID"
 
 
 class GarmentIsDefault(TableField):
-    field = "IsDefault"
+    column_name = "IsDefault"
+
+
+class GarmentName(TableField):
+    column_name = "Name"
 
 
 class GenderID(TableField):
@@ -107,3 +111,11 @@ class TripDateEnd(TableField):
 
 class TripDateStart(TableField):
     column_name = "StartDate"
+
+
+class UserID(TableField):
+    column_name = "UserID"
+
+    def __init__(self, user_id: int):
+        super(UserID, self).__init__()
+        self.field[self.column_name] = user_id

@@ -79,11 +79,12 @@ class Table:
                     self.id,
                     element))
                 self.id += 1
-                return self.id
+                return True
+                # return self.id
 
         except ElementAlreadyExistsError as error:
             self.raised_errors.append(error)
-            return False
+            # return self.get_primary_key(element.get_as_dict())
             # TODO: Handle error with warning pop-up message
 
     def clean_all_content(self):
@@ -133,7 +134,7 @@ class Table:
             found.
         """
 
-        all_queries_dict = {}
+        all_queries_dict = OrderedDict()
         for field_value in field_values:
             # field_value.get_as_dict()
             # all_queries_dict[field_value.key]
@@ -147,6 +148,23 @@ class Table:
                       self.db.cur.execute(command))]
 
         return result
+
+    def get_matching_primary_key(self, *field_values: TableField):
+        """
+        This
+        :arg field_values: One or more objects of type `FieldValue` needed
+        to identify a single table entry. If more than one element matches
+        passed ``field_values`` parameters an `AmbiguousElementError`
+
+        :rtype: single element id as 'int'.
+        """
+        element = self.get_matching_elements(*field_values)
+        if len(element) > 1:
+            raise AmbiguousElementError
+        if len(element) == 0:
+            raise ElementNotFoundError
+        else:
+            return element[self.primary_key_column_name]
 
     def get_errors(self) -> list:
         """
@@ -166,6 +184,7 @@ class Table:
     #         return
 
     def get_primary_key(self, *fields: TableField):
+
         result = self.get_matching_elements(*fields)
 
         if len(result) == 1:
@@ -176,7 +195,6 @@ class Table:
             raise Error("Query matches multiple elements")
         else:
             return
-
 
     # def get_primary_key(self, element: TableDataElement):
     #     result = self.get_matching_elements(element.column_types)
@@ -231,6 +249,12 @@ class UserGarmentSettingsTable(Table):
     def __init__(self, columns: collections.OrderedDict):
         super(UserGarmentSettingsTable, self).__init__(
             self.primary_key_column_name, columns)
+
+    # def add_element(self, element: TableDataElement):
+    #     try:
+    #
+    #     # check, if Garment Table already has an entry for the Garment -> add it if not
+    #     # call super method
 
 
 class UserTable(Table):

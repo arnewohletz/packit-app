@@ -4,7 +4,7 @@ import string
 from behave import given, when, then, register_type
 from features.support import database as database_helper
 from features.support import custom_type_parser
-from packit_app.table_elements import User, Username, GenderID
+from packit_app.table_elements import User, Username, GenderID, UserID
 
 register_type(Gender=custom_type_parser.parse_gender)
 register_type(Username=custom_type_parser.parse_username)
@@ -26,9 +26,8 @@ def clear_users_table(context):
 def users_table_contains_certain_user(context, gender, username):
     clear_users_table(context)
     create_new_user(context, gender=gender, username=username)
-    gender_id = context.gender_table.get_primary_key(gender)
-    user_data = context.user_table.get_matching_elements(
-        GenderID(gender_id), username)
+    gender_id = GenderID(context.gender_table.get_primary_key(gender))
+    user_data = context.user_table.get_matching_elements(gender_id, username)
     assert len(user_data) == 1, "Requested user does not exist!"
 
     context.username = username
@@ -37,8 +36,8 @@ def users_table_contains_certain_user(context, gender, username):
     # received a dictionary
     # Fix: variables must be more clear, from which type they are (GOOD) OR
     # make app less sensitive to type of a table object is (BEST)
-    context.user_id = context.user_table.get_primary_key(
-        User(Username(username.get_value()), GenderID(gender_id)))
+    context.user_id = UserID(context.user_table.get_primary_key(
+        User(username, gender_id)))
     context.gender_id = gender_id
 
 

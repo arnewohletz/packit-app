@@ -1,4 +1,4 @@
-from packit_app.table_elements import Female, Male, Username
+from packit_app.table_elements import Female, Male, Username, UserGarmentSetting
 import parse
 
 
@@ -18,3 +18,8 @@ def parse_gender(gender_str: str):
 @parse.with_pattern(r"\w+")
 def parse_username(name: str):
     return Username(name)
+
+
+# @parse.with_pattern(r"\w+")
+# def parse_user_garment_setting(user_garment_setting: str):
+#     pass
