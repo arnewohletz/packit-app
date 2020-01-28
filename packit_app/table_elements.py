@@ -79,9 +79,9 @@ class Trip(TableDataElement):
 
 
 class Garment(TableDataElement):
-    def __init__(self, gender="", name="", is_default=False):
+    def __init__(self, gender_id="", name="", is_default=False):
         super(Garment, self).__init__()
-        self.column_types[GenderID.column_name] = gender
+        self.column_types[GenderID.column_name] = gender_id
         self.column_types[GarmentName.column_name] = name
         self.column_types[GarmentIsDefault.column_name] = is_default
 
@@ -96,3 +96,4 @@ class UserGarmentSetting(TableDataElement):
         super(UserGarmentSetting, self).__init__()
         self.column_types[UserID.column_name] = user_id
         self.column_types[GarmentID.column_name] = garment_id
+

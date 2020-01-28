@@ -43,6 +43,10 @@ class GarmentIsDefault(TableField):
 class GarmentName(TableField):
     column_name = "Name"
 
+    def __init__(self, garment_name: str):
+        super(GarmentName, self).__init__()
+        self.field[self.column_name] = garment_name
+
 
 class GenderID(TableField):
     column_name = "GenderID"

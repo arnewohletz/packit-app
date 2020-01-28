@@ -31,14 +31,14 @@ def users_table_contains_certain_user(context, gender, username):
     assert len(user_data) == 1, "Requested user does not exist!"
 
     context.username = username
+    context.gender_id = gender_id
+    context.user_id = UserID(context.user_table.get_primary_key(
+        User(username, gender_id)))
     # TODO: Fix this method call
     # Problem: GenderID object must receive an integer value, but previously
     # received a dictionary
     # Fix: variables must be more clear, from which type they are (GOOD) OR
     # make app less sensitive to type of a table object is (BEST)
-    context.user_id = UserID(context.user_table.get_primary_key(
-        User(username, gender_id)))
-    context.gender_id = gender_id
 
 
 # FOR REMOVING & ADDING NEW ENTRIES

@@ -3,12 +3,13 @@ from behave import given, when, then, register_type
 from features.support import custom_type_parser
 from packit_app.errors import ElementAlreadyExistsError
 from packit_app.table_elements import User, GenderID, Garment, \
-    UserGarmentSetting
+    UserGarmentSetting, GarmentName
 
 users = []
 
 register_type(Gender=custom_type_parser.parse_gender)
 register_type(Username=custom_type_parser.parse_username)
+register_type(GarmentName=custom_type_parser.parse_garment_name)
 
 
 # register_type(UserGarmentSetting=custom_type_parser.parse_user_garment_setting)
@@ -52,13 +53,15 @@ def set_clothing_piece_quantity_single_condition(context, clothing_type,
 # @given(
 #     u'user {username:Username} has an entry for {garment:UserGarmentSetting}')
 @given(
-    u'user {username:Username} has an entry for {garment}')
+    u'user {username:Username} has an entry for {garment:GarmentName}')
 def check_user_clothing_entry_exists(context, username, garment):
     # print("checking clothing type existing for that user ...")
+    context.garment = Garment(context.gender_id, garment.get_value())
 
     # TODO: Is there a way to return the ID of an added element without
     #  breaking previous code?
-    context.garment_table.add_element(Garment(context.gender_id), garment)
+    #TODO: Why can't the add_element() method not return the element ID?
+    context.garment_table.add_element(context.garment)
     context.garment_id = context.garment_table.get_matching
     context.user_garment_settings_table.add_element(context.user_id, )
 

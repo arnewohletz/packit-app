@@ -213,9 +213,10 @@ class GarmentTable(Table):
     table_name = "Garment"
     primary_key_column_name = "GarmentID"
 
-    def __init__(self, columns: collections.OrderedDict):
+    def __init__(self, database, column_types: collections.OrderedDict):
+        self.db = database
         super(GarmentTable, self).__init__(self.primary_key_column_name,
-                                           columns)
+                                           column_types)
 
 
 class GenderTable(Table):
@@ -324,12 +325,15 @@ class TableFactoryImpl(TableFactory):
         for column in element.column_types:
             if type(element.column_types[column]) == str:
                 self.column_types[column] = "TEXT"
-            elif type(element.column_types[column]) == int:
+            elif isinstance(element.column_types[column], (int, bool)):
                 self.column_types[column] = "INTEGER"
             elif type(element.column_types[column]) == float:
                 self.column_types[column] = "REAL"
+
 
         if isinstance(element, User):
             return UserTable(self.database, self.column_types)
         elif isinstance(element, Gender):
             return GenderTable(self.database, self.column_types)
+        elif isinstance(element, Garment):
+            return GarmentTable(self.database, self.column_types)
