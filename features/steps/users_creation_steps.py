@@ -26,14 +26,15 @@ def clear_users_table(context):
 def users_table_contains_certain_user(context, gender, username):
     clear_users_table(context)
     create_new_user(context, gender=gender, username=username)
-    gender_id = GenderID(context.gender_table.get_primary_key(gender))
-    user_data = context.user_table.get_matching_elements(gender_id, username)
+    context.gender_id = GenderID(context.gender_table.get_primary_key(gender))
+    user_data = context.user_table.get_matching_elements(context.gender_id,
+                                                         username)
     assert len(user_data) == 1, "Requested user does not exist!"
 
     context.username = username
-    context.gender_id = gender_id
+    # context.gender_id = gender_id
     context.user_id = UserID(context.user_table.get_primary_key(
-        User(username, gender_id)))
+        User(username, context.gender_id)))
     # TODO: Fix this method call
     # Problem: GenderID object must receive an integer value, but previously
     # received a dictionary
@@ -44,7 +45,7 @@ def users_table_contains_certain_user(context, gender, username):
 # FOR REMOVING & ADDING NEW ENTRIES
 
 @when(u'the {gender:Gender} user named {username:Username} is deleted')
-def delete_user(context, username, gender):
+def delete_user(context, gender, username):
     gender_id = context.gender_table.get_primary_key(gender)
     context.user_table.delete_element(
         User(username=username, gender_id=GenderID(gender_id)))
@@ -56,14 +57,17 @@ def delete_user(context, username, gender):
 @when(u'a new {gender:Gender} user named {username:Username} is created')
 def create_new_user(context, gender, username):
     gender_id = context.gender_table.get_primary_key(gender)
-    added = context.user_table.add_element(
+    # added = context.user_table.add_element(
+    #     User(username=username, gender_id=GenderID(gender_id)))
+    context.user_id = context.user_table.add_element(
         User(username=username, gender_id=GenderID(gender_id)))
 
     user_data = context.user_table.get_matching_elements(
         username, GenderID(gender_id))
-    if added is True:
-        assert len(
-            user_data) == 1, "User was supposed to be added, but wasn't."
+    # if added is True:
+    #     assert len(
+    #         user_data) == 1, "User was supposed to be added, but wasn't."
+    assert len(user_data) == 1, "User was supposed to be added, but wasn't."
 
 
 @when(u'{amount:d} individual new users are created')

@@ -79,8 +79,8 @@ class Table:
                     self.id,
                     element))
                 self.id += 1
-                return True
-                # return self.id
+                # return True
+                return self.id
 
         except ElementAlreadyExistsError as error:
             self.raised_errors.append(error)
@@ -223,12 +223,14 @@ class GenderTable(Table):
     table_name = "Gender"
     primary_key_column_name = "GenderID"
 
+    MaleID, FemaleID = 0, 0
+
     def __init__(self, database, column_types):
         self.db = database
         super(GenderTable, self).__init__(self.primary_key_column_name,
                                           column_types)
-        super(GenderTable, self).add_element(Male())
-        super(GenderTable, self).add_element(Female())
+        self.MaleID = super(GenderTable, self).add_element(Male())
+        self.FemaleID = super(GenderTable, self).add_element(Female())
 
 
 class TripTable(Table):
