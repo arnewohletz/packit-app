@@ -92,7 +92,7 @@ class UserTripGarmentAmount(TableDataElement):
 
 class UserGarmentSetting(TableDataElement):
 
-    def __init__(self, user_id="", garment_id=1):
+    def __init__(self, user_id=1, garment_id=1):
         super(UserGarmentSetting, self).__init__()
         self.column_types[UserID.column_name] = user_id
         self.column_types[GarmentID.column_name] = garment_id

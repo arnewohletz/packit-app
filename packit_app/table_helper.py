@@ -29,7 +29,7 @@ class TableHelper:
         :param cursor:
         :return: dict
         """
-        field_names = [d[0].lower() for d in cursor.description]
+        field_names = [d[0] for d in cursor.description]
         while True:
             row = cursor.fetchone()
             if row is None:

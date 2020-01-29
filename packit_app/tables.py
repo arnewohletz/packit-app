@@ -111,6 +111,27 @@ class Table:
         self.db.cur.execute(command)
         self.db.connection.commit()
 
+    def get_matching_element(self, element: TableDataElement):
+        """
+        Returns matching TableDataElement data as dictionary
+
+        Since a table only contains unique elements, only one element that will
+        be searched for is allowed to be passed.
+
+        Example:
+        ```Table.get_matching_element(User(Username("Freddy"), Male())``
+
+        :param element: A single object of type TableDataElement
+        :rtype: single dictionary, containing all field data for this element.
+            An empty dictionary is returned in case no match is found
+        """
+
+        command = Cmd.get_return_matching_elements_command(
+            self.table_name, element.get_as_dict())
+
+        return self.helper.get_row_content_as_dictionary(
+                      self.db.cur.execute(command))
+
     def get_matching_elements(self, *field_values: TableField):
         """
         Returns all matching table elements as a list dictionaries.
@@ -118,8 +139,8 @@ class Table:
         `TableField`
         Zero, one or more dictionaries of type :class:`~packit_app.field_values.TableField`
         can to be passed as ``field_values``. If none are passed, all table
-        elements are returned. Any passed ``field_value`` functions as a
-        filter, where only elements fulfilling all filter conditions are
+        elements are returned. Any passed ``field_value`` argument functions as
+        a filter, where only elements fulfilling all filter conditions are
         returned.
 
         Example:
@@ -129,7 +150,7 @@ class Table:
 
         :param field_values: Zero, one or more `TableField` objects
         :rtype: list of dictionaries, if one or more elements are found. Each
-            dictionary contains the complete data of each found
+            dictionary contains the complete data of each matching
             `TableDataElement`. An empty list is returned in case no match is
             found.
         """
@@ -249,7 +270,8 @@ class UserGarmentSettingsTable(Table):
     table_name = "UserGarmentSettings"
     primary_key_column_name = "UserGarmentSettingsID"
 
-    def __init__(self, columns: collections.OrderedDict):
+    def __init__(self, database, columns: collections.OrderedDict):
+        self.db = database
         super(UserGarmentSettingsTable, self).__init__(
             self.primary_key_column_name, columns)
 
@@ -339,3 +361,5 @@ class TableFactoryImpl(TableFactory):
             return GenderTable(self.database, self.column_types)
         elif isinstance(element, Garment):
             return GarmentTable(self.database, self.column_types)
+        elif isinstance(element, UserGarmentSetting):
+            return UserGarmentSettingsTable(self.database, self.column_types)
