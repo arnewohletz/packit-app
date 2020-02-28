@@ -5,10 +5,16 @@ root = true
 [*]
 indent_style = space
 indent_size = 4
-trim_trailing_whitespace = true
+# trim_trailing_whitespace = true
 insert_final_newline = true
 charset = utf-8
 end_of_line = lf
+tab_width = 2
+
+[*.py]
+ij_continuation_indent_size = 8
+ij_any_align_multiline_parameters = true
+
 
 [*.bat]
 indent_style = tab

@@ -10,7 +10,8 @@ class UserTableHelper:
         user_id = 0
         helper = TableHelper()
         generator = SQLCommandGenerator()
-        command = generator.get_return_element_command(table_name=user_table, element=User)
+        command = generator.get_return_element_command(table_name=user_table,
+                                                       element=User)
         helper.get_row_content_as_dictionary()
 
         return user_id

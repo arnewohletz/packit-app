@@ -9,7 +9,7 @@ class SQLCommandGenerator:
                                          element: TableDataElement) -> str:
 
         command = "INSERT INTO " + table_name + ' VALUES(' + str(
-            element_id) + ","
+                element_id) + ","
 
         for key in element.column_types:
             command += "'" + str(element.column_types[key]) + "',"
@@ -49,17 +49,19 @@ class SQLCommandGenerator:
         return command
 
     @staticmethod
-    def get_return_matching_elements_command(table_name: str,
-                                             query_items: collections.OrderedDict = None):
+    def get_return_matching_elements_command(
+            table_name: str, query_items: collections.OrderedDict = None):
         """
         Returns a proper SQL command for selecting matching items of the given
         :param:table_name that are defined by :param:query_items.
         :param: query_items must be of type list where the list items itself
-        are dictionaries, containing the column and value of a :param:QueryItem.
+        are dictionaries, containing the column and value of a
+        :param:QueryItem.
 
         Example:
 
-        get_return_matching_elements_command(table_name="foo", [{foo:bar}, {bar:foo}]
+        get_return_matching_elements_command(table_name="foo", [{foo:bar},
+        {bar:foo}]
 
         :param table_name: str
         :param query_items: list of dictionaries
@@ -67,7 +69,7 @@ class SQLCommandGenerator:
         """
 
         command = "SELECT * FROM " + table_name
-        counter = {}
+        counter: dict = {}
 
         if query_items:
             for column, value in query_items.items():

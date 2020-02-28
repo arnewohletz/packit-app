@@ -1,22 +1,15 @@
-from .table_elements import *
-from .sql_command_generator import SQLCommandGenerator as Cmd
-from .table_helper import TableHelper
-from .errors import *
-import collections
+from collections import OrderedDict
 from abc import ABC, abstractmethod
 from sqlite3 import Error
 
-
-# TODO: Is this class really needed?
-
-# class TableManager:
-#     gender_table = None
-#     user_table = None
-#
-#     def __init__(self):
-#         table_factory = TableFactoryImpl()
-#         self.gender_table = table_factory.create_table(Gender())
-#         self.user_table = table_factory.create_table(User())
+from packit_app.errors import AmbiguousElementError, \
+    ElementAlreadyExistsError, ElementNotFoundError, TableNotFoundError
+from packit_app.sql_command_generator import SQLCommandGenerator as Cmd
+from packit_app.table_elements import TableDataElement, Gender, Male, Female, \
+    User, Garment, UserGarmentSetting
+from packit_app.table_fields import TableField, UserGarmentSettingsID, \
+    UserID
+from packit_app.table_helper import TableHelper
 
 
 class Table:
@@ -36,16 +29,16 @@ class Table:
         , where the key holds the column name and the value contains the type
         information.
     """
-    db = None
     helper = TableHelper()
     table_name = ""
     primary_key_column_name = ""
     id = 1
-    raised_errors = []
+    raised_errors: list = []
 
-    def __init__(self, primary_key_column_name: str, column_types) -> None:
+    def __init__(self, db, primary_key_column_name: str, column_types) -> None:
+        self.db = db
         column_types.update(
-            {primary_key_column_name: "INTEGER NOT NULL PRIMARY KEY ASC"})
+                {primary_key_column_name: "INTEGER NOT NULL PRIMARY KEY ASC"})
         column_types.move_to_end(primary_key_column_name, last=False)
         self.db.execute_command(Cmd.get_create_table_command(self.table_name,
                                                              column_types))
@@ -56,7 +49,7 @@ class Table:
         exists."""
 
         self.db.execute_command(Cmd.get_return_matching_elements_command(
-            self.table_name, element.get_as_dict()))
+                self.table_name, element.get_as_dict()))
 
         data = self.db.cur.fetchall()
         if len(data) == 0:
@@ -75,16 +68,14 @@ class Table:
         try:
             if not self._element_already_exists(element):
                 self.db.execute_command(Cmd.get_add_element_to_table_command(
-                    self.table_name,
-                    self.id,
-                    element))
+                        self.table_name,
+                        self.id,
+                        element))
                 self.id += 1
-                # return True
                 return self.id
 
         except ElementAlreadyExistsError as error:
             self.raised_errors.append(error)
-            # return self.get_primary_key(element.get_as_dict())
             # TODO: Handle error with warning pop-up message
 
     def clean_all_content(self):
@@ -107,7 +98,7 @@ class Table:
         """
 
         command = Cmd.get_remove_element_command(
-            self.table_name, element)
+                self.table_name, element)
         self.db.cur.execute(command)
         self.db.connection.commit()
 
@@ -127,21 +118,21 @@ class Table:
         """
 
         command = Cmd.get_return_matching_elements_command(
-            self.table_name, element.get_as_dict())
+                self.table_name, element.get_as_dict())
 
         return self.helper.get_row_content_as_dictionary(
-                      self.db.cur.execute(command))
+                self.db.cur.execute(command))
 
     def get_matching_elements(self, *field_values: TableField):
         """
         Returns all matching table elements as a list dictionaries.
 
         `TableField`
-        Zero, one or more dictionaries of type :class:`~packit_app.field_values.TableField`
-        can to be passed as ``field_values``. If none are passed, all table
-        elements are returned. Any passed ``field_value`` argument functions as
-        a filter, where only elements fulfilling all filter conditions are
-        returned.
+        Zero, one or more dictionaries of type
+        :class:`~packit_app.field_values.TableField` can to be passed as
+        ``field_values``. If none are passed, all table elements are returned.
+        Any passed ``field_value`` argument functions as a filter, where only
+        elements fulfilling all filter conditions are returned.
 
         Example:
         ``Table.get_matching_elements(Username('Freddy')), Male()`` returns all
@@ -155,18 +146,16 @@ class Table:
             found.
         """
 
-        all_queries_dict = OrderedDict()
+        all_queries_dict: OrderedDict = OrderedDict()
         for field_value in field_values:
-            # field_value.get_as_dict()
-            # all_queries_dict[field_value.key]
             all_queries_dict.update(field_value.get_as_dict())
 
         command = Cmd.get_return_matching_elements_command(
-            self.table_name, all_queries_dict)
+                self.table_name, all_queries_dict)
 
         result = [r for r in
                   self.helper.get_cursor_data_as_dictionary_generator(
-                      self.db.cur.execute(command))]
+                          self.db.cur.execute(command))]
 
         return result
 
@@ -209,8 +198,6 @@ class Table:
         result = self.get_matching_elements(*fields)
 
         if len(result) == 1:
-            # return {self.primary_key_column_name: result[0][
-            #     self.primary_key_column_name]}
             return result[0][self.primary_key_column_name]
         elif len(result) > 1:
             raise Error("Query matches multiple elements")
@@ -234,9 +221,10 @@ class GarmentTable(Table):
     table_name = "Garment"
     primary_key_column_name = "GarmentID"
 
-    def __init__(self, database, column_types: collections.OrderedDict):
-        self.db = database
-        super(GarmentTable, self).__init__(self.primary_key_column_name,
+    def __init__(self, database, column_types: OrderedDict):
+        # self.db = database
+        super(GarmentTable, self).__init__(database,
+                                           self.primary_key_column_name,
                                            column_types)
 
 
@@ -247,8 +235,8 @@ class GenderTable(Table):
     MaleID, FemaleID = 0, 0
 
     def __init__(self, database, column_types):
-        self.db = database
-        super(GenderTable, self).__init__(self.primary_key_column_name,
+        super(GenderTable, self).__init__(database,
+                                          self.primary_key_column_name,
                                           column_types)
         self.MaleID = super(GenderTable, self).add_element(Male())
         self.FemaleID = super(GenderTable, self).add_element(Female())
@@ -258,8 +246,9 @@ class TripTable(Table):
     table_name = "Trip"
     primary_key_column_name = "TripID"
 
-    def __init__(self, columns: collections.OrderedDict):
-        super(TripTable, self).__init__(self.primary_key_column_name, columns)
+    def __init__(self, database, columns: OrderedDict):
+        super(TripTable, self).__init__(database, self.primary_key_column_name,
+                                        columns)
 
 
 class UserGarmentSettingsTable(Table):
@@ -268,18 +257,13 @@ class UserGarmentSettingsTable(Table):
     implements the TableStrategy interface.
     """
     table_name = "UserGarmentSettings"
-    primary_key_column_name = "UserGarmentSettingsID"
+    primary_key_column_name = UserGarmentSettingsID.column_name
 
-    def __init__(self, database, columns: collections.OrderedDict):
-        self.db = database
+    def __init__(self, database, columns: OrderedDict):
         super(UserGarmentSettingsTable, self).__init__(
-            self.primary_key_column_name, columns)
-
-    # def add_element(self, element: TableDataElement):
-    #     try:
-    #
-    #     # check, if Garment Table already has an entry for the Garment -> add it if not
-    #     # call super method
+                database,
+                self.primary_key_column_name,
+                columns)
 
 
 class UserTable(Table):
@@ -289,35 +273,29 @@ class UserTable(Table):
     """
 
     table_name = 'User'
-    primary_key_column_name = "UserID"
+    primary_key_column_name = UserID.column_name
 
     def __init__(self, database, column_types):
-        self.db = database
-        super(UserTable, self).__init__(self.primary_key_column_name,
+        super(UserTable, self).__init__(database, self.primary_key_column_name,
                                         column_types)
-
-    # def get_matching_elements(self, *field_values):
-    #     for field_value in field_values:
-    #         if isinstance(field_value, Gender):
-    #             field_value =
-    #
-    #     super(UserTable, self).get_matching_elements()
 
 
 class UserTripGarmentAmountTable(Table):
     table_name = "UserTripGarmentAmount"
     primary_key_column_name = "UserTripGarmentAmountID"
 
-    def __init__(self, columns: collections.OrderedDict):
+    def __init__(self, database, columns: OrderedDict):
         super(UserTripGarmentAmountTable, self).__init__(
-            self.primary_key_column_name, columns)
+                database,
+                self.primary_key_column_name,
+                columns)
 
 
 class TableFactory(ABC):
     """Abstract class that all table factory classes must implement"""
 
     def __init__(self):
-        self.column_types = collections.OrderedDict()
+        self.column_types = OrderedDict()
 
     @abstractmethod
     def create_table(self, element: TableDataElement):
@@ -354,7 +332,6 @@ class TableFactoryImpl(TableFactory):
             elif type(element.column_types[column]) == float:
                 self.column_types[column] = "REAL"
 
-
         if isinstance(element, User):
             return UserTable(self.database, self.column_types)
         elif isinstance(element, Gender):
@@ -363,3 +340,5 @@ class TableFactoryImpl(TableFactory):
             return GarmentTable(self.database, self.column_types)
         elif isinstance(element, UserGarmentSetting):
             return UserGarmentSettingsTable(self.database, self.column_types)
+        else:
+            raise TableNotFoundError

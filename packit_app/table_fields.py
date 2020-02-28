@@ -10,10 +10,8 @@ class TableField(abc.ABC):
     """
 
     column_name = ""
-    # value = None
 
     def __init__(self):
-        # super(TableField, self).__init__()
         self.field = {}
 
     def get_as_dict(self):
@@ -22,7 +20,6 @@ class TableField(abc.ABC):
         :return: dict
         """
         return self.field
-        # return dict({self.column_name: self.field})
 
     def get_value(self):
         """
@@ -54,8 +51,6 @@ class GenderID(TableField):
     def __init__(self, gender_id: int):
         super(GenderID, self).__init__()
         self.field[self.column_name] = gender_id
-
-    # def __init__(self, gender_id: str):
 
 
 class GenderName(TableField):
@@ -115,6 +110,14 @@ class TripDateEnd(TableField):
 
 class TripDateStart(TableField):
     column_name = "StartDate"
+
+
+class UserGarmentSettingsID(TableField):
+    column_name = "GarmentSettings"
+
+    def __init__(self, user_garment_settings_id: int):
+        super(UserGarmentSettingsID, self).__init__()
+        self.field[self.column_name] = user_garment_settings_id
 
 
 class UserID(TableField):

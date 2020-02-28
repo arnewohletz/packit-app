@@ -1,19 +1,21 @@
-from collections import OrderedDict
 from abc import ABC
-from .table_fields import *
+from collections import OrderedDict
+
+from packit_app.table_fields import GarmentID, GarmentIsDefault, GarmentName, \
+    GenderID, GenderName, TripDateEnd, TripDateStart, TripDaysInTransit, \
+    TripDaysWithSports, TripDaysWithoutSports, TripDestination, \
+    TripTemperatureDayAverage, TripTemperatureDayMax, TripTemperatureDayMin, \
+    TripTemperatureNightIndoorAverage, UserID, Username
 
 
 class TableDataElement(ABC):
-    column_types = None
 
     def __init__(self) -> None:
-        self.column_types = OrderedDict()
+        self.column_types: OrderedDict = OrderedDict()
+        pass
 
     def get_as_dict(self) -> OrderedDict:
         return self.column_types
-
-    # def get_id(self, *args, **kwargs) -> int:
-    #     pass
 
 
 class Gender(TableDataElement):
@@ -22,8 +24,6 @@ class Gender(TableDataElement):
         super(Gender, self).__init__()
         self.column_types[GenderName.column_name] = gender.field[
             GenderName.column_name]
-
-    # def get_id(self, gender_name: str) -> int:
 
 
 class Male(Gender):
@@ -72,7 +72,8 @@ class Trip(TableDataElement):
         self.column_types[TripTemperatureDayMax.column_name] = day_max_temp
         self.column_types[TripTemperatureDayMin.column_name] = day_min_temp
         self.column_types[
-            TripTemperatureNightIndoorAverage.column_name] = night_average_indoor_temp
+            TripTemperatureNightIndoorAverage.column_name] = \
+            night_average_indoor_temp
         self.column_types[TripDaysWithSports.column_name] = sport_days
         self.column_types[TripDaysWithoutSports.column_name] = no_sport_days
         self.column_types[TripDaysInTransit.column_name] = transit_days
@@ -96,4 +97,3 @@ class UserGarmentSetting(TableDataElement):
         super(UserGarmentSetting, self).__init__()
         self.column_types[UserID.column_name] = user_id
         self.column_types[GarmentID.column_name] = garment_id
-

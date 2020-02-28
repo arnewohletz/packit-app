@@ -17,3 +17,9 @@ class ElementNotFoundError(DatabaseError):
     """Element does not exist in the specified table"""
     def __init__(self, *args, **kwargs):
         pass
+
+
+class TableNotFoundError(DatabaseError):
+    """Required table does not exist"""
+    def __init__(self, *args, **kwargs):
+        pass

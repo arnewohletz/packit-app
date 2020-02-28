@@ -9,4 +9,3 @@ def user_already_exists_error_thrown(context):
         pass
     else:
         raise AssertionError("User has been created although already existing")
-

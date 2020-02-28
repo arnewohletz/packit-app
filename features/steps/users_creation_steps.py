@@ -2,7 +2,7 @@ import random
 import string
 
 from behave import given, when, then, register_type
-from features.support import database as database_helper
+from features.support import database_helper as database_helper
 from features.support import custom_type_parser
 from packit_app.table_elements import User, Username, GenderID, UserID
 
