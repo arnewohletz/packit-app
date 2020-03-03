@@ -32,6 +32,10 @@ class TableField(abc.ABC):
 class GarmentID(TableField):
     column_name = "GarmentID"
 
+    def __init__(self, garment_id: int = 1):
+        super(GarmentID, self).__init__()
+        self.field[self.column_name] = garment_id
+
 
 class GarmentIsDefault(TableField):
     column_name = "IsDefault"
@@ -40,7 +44,7 @@ class GarmentIsDefault(TableField):
 class GarmentName(TableField):
     column_name = "Name"
 
-    def __init__(self, garment_name: str):
+    def __init__(self, garment_name: str = ""):
         super(GarmentName, self).__init__()
         self.field[self.column_name] = garment_name
 
@@ -48,7 +52,7 @@ class GarmentName(TableField):
 class GenderID(TableField):
     column_name = "GenderID"
 
-    def __init__(self, gender_id: int):
+    def __init__(self, gender_id: int = 1):
         super(GenderID, self).__init__()
         self.field[self.column_name] = gender_id
 
@@ -123,6 +127,6 @@ class UserGarmentSettingsID(TableField):
 class UserID(TableField):
     column_name = "UserID"
 
-    def __init__(self, user_id: int):
+    def __init__(self, user_id: int = 1):
         super(UserID, self).__init__()
         self.field[self.column_name] = user_id

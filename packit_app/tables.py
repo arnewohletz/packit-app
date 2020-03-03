@@ -72,7 +72,7 @@ class Table:
                         self.id,
                         element))
                 self.id += 1
-                return self.id
+                return self.id - 1
 
         except ElementAlreadyExistsError as error:
             self.raised_errors.append(error)

@@ -1,4 +1,5 @@
-from .table_elements import TableDataElement
+from packit_app.table_elements import TableDataElement
+from packit_app.table_fields import TableField
 import collections
 
 
@@ -11,8 +12,10 @@ class SQLCommandGenerator:
         command = "INSERT INTO " + table_name + ' VALUES(' + str(
                 element_id) + ","
 
-        for key in element.column_types:
-            command += "'" + str(element.column_types[key]) + "',"
+        for key, value in element.column_types.items():
+            if isinstance(key, TableField):
+                value = value.get_value()
+            command += "'" + str(value) + "',"
 
         command = command[:-1] + ")"
 
