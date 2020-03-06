@@ -11,8 +11,8 @@ class TableField(abc.ABC):
 
     column_name = ""
 
-    def __init__(self):
-        self.field = {}
+    def __init__(self, value):
+        self.field = {self.column_name: value}
 
     def get_as_dict(self):
         """
@@ -28,49 +28,134 @@ class TableField(abc.ABC):
         """
         return self.field[self.column_name]
 
+    def set_value(self, value):
+        """
+        Sets the value of the table field
+        :rtype None
+        """
+        self.field[self.column_name] = value
 
-class GarmentID(TableField):
+
+# class ConditionalQuantityFactory(abc.ABC):
+#
+#     @abstractmethod
+#     def create_conditional_quantity(self, value: int, condition: Condition):
+#         pass
+#
+#
+#
+class Condition:
+    pass
+
+
+class Day0To10(Condition):
+    pass
+
+
+class Day10To20(Condition):
+    pass
+
+
+class ConditionalQuantity(TableField):
+    pass
+
+
+class ConditionalQuantityFactory:
+
+    def create_conditional_quantity(self, value: int, condition: Condition):
+        if isinstance(condition, Day10To20):
+            return QuantityDay10To20(value)
+        elif isinstance(condition, Day0To10):
+            return QuantityDay0To10(value)
+
+
+class TableDataField(TableField):
+
+    def __init__(self, value):
+        super(TableDataField, self).__init__(value)
+
+
+class TableIdentifierField(TableField):
+
+    def __init__(self, value):
+        super(TableIdentifierField, self).__init__(value)
+
+
+class GarmentID(TableIdentifierField):
     column_name = "GarmentID"
 
     def __init__(self, garment_id: int = 1):
-        super(GarmentID, self).__init__()
-        self.field[self.column_name] = garment_id
+        super(GarmentID, self).__init__(garment_id)
 
 
-class GarmentIsDefault(TableField):
+class GarmentIsDefault(TableDataField):
     column_name = "IsDefault"
 
+    def __init__(self, is_default: bool = False):
+        super(GarmentIsDefault, self).__init__(is_default)
 
-class GarmentName(TableField):
+
+class GarmentName(TableIdentifierField):
     column_name = "Name"
 
     def __init__(self, garment_name: str = ""):
-        super(GarmentName, self).__init__()
-        self.field[self.column_name] = garment_name
+        super(GarmentName, self).__init__(garment_name)
 
 
-class GenderID(TableField):
+class GenderID(TableIdentifierField):
     column_name = "GenderID"
 
     def __init__(self, gender_id: int = 1):
-        super(GenderID, self).__init__()
-        self.field[self.column_name] = gender_id
+        super(GenderID, self).__init__(gender_id)
 
 
-class GenderName(TableField):
+class GenderName(TableIdentifierField):
     column_name = "Name"
 
     def __init__(self, gender_name):
-        super(GenderName, self).__init__()
-        self.field[self.column_name] = gender_name
+        super(GenderName, self).__init__(gender_name)
 
 
-class Username(TableField):
-    column_name = "Username"
+class Quantity(TableDataField):
 
-    def __init__(self, username: str):
-        super(Username, self).__init__()
-        self.field[self.column_name] = username
+    def __init__(self, quantity=0.0):
+        super(Quantity, self).__init__(quantity)
+
+
+class QuantityDay0To10(Quantity):
+    column_name = "QuantityDay0To10"
+
+
+class QuantityDay10To20(Quantity):
+    column_name = "QuantityDay10To20"
+
+
+class QuantityDayBelow0(Quantity):
+    column_name = "QuantityDayBelow0"
+
+
+class QuantityDayAbove20(Quantity):
+    column_name = "QuantityDayAbove20"
+
+
+class QuantitySportsDay(Quantity):
+    column_name = "QuantitySportsDay"
+
+
+class QuantityNoSportsDay(Quantity):
+    column_name = "QuantityNoSportsDay"
+
+
+class QuantityTransitDay(Quantity):
+    column_name = "QuantityTransitDay"
+
+
+class QuantityNightBelow20(Quantity):
+    column_name = "QuantityNightBelow20"
+
+
+class QuantityNightAbove20(Quantity):
+    column_name = "QuantityNightAbove20"
 
 
 class TripTemperatureDayAverage(TableField):
@@ -87,9 +172,6 @@ class TripTemperatureDayMin(TableField):
 
 class TripDestination(TableField):
     column_name = "Destination"
-
-    def __init__(self, value):
-        super(TripDestination, self).__init__()
 
 
 class TripTemperatureNightIndoorAverage(TableField):
@@ -116,17 +198,22 @@ class TripDateStart(TableField):
     column_name = "StartDate"
 
 
-class UserGarmentSettingsID(TableField):
-    column_name = "GarmentSettings"
+class UserGarmentSettingsID(TableIdentifierField):
+    column_name = "GarmentSettingsID"
 
     def __init__(self, user_garment_settings_id: int):
-        super(UserGarmentSettingsID, self).__init__()
-        self.field[self.column_name] = user_garment_settings_id
+        super(UserGarmentSettingsID, self).__init__(user_garment_settings_id)
 
 
-class UserID(TableField):
+class UserID(TableIdentifierField):
     column_name = "UserID"
 
     def __init__(self, user_id: int = 1):
-        super(UserID, self).__init__()
-        self.field[self.column_name] = user_id
+        super(UserID, self).__init__(user_id)
+
+
+class Username(TableIdentifierField):
+    column_name = "Username"
+
+    def __init__(self, username: str):
+        super(Username, self).__init__(username)

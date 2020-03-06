@@ -1,6 +1,8 @@
 from packit_app.table_elements import TableDataElement
 from packit_app.table_fields import TableField
+
 import collections
+from typing import Union
 
 
 class SQLCommandGenerator:
@@ -95,3 +97,15 @@ class SQLCommandGenerator:
         command = command[:-5] + ")"
 
         return command
+
+    @staticmethod
+    def get_update_single_value_command(table,
+                                        element_id: int,
+                                        field: str,
+                                        value: Union[int, float]):
+
+        command = f"UPDATE {table.table_name} SET {field} = {value} WHERE " \
+                  f"{table.primary_key_column_name} = {element_id}"
+
+        return command
+

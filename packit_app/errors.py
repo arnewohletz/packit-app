@@ -23,3 +23,9 @@ class TableNotFoundError(DatabaseError):
     """Required table does not exist"""
     def __init__(self, *args, **kwargs):
         pass
+
+
+class UnavailableConditionError(Exception):
+    """Quantity condition is not available"""
+    def __init__(self,  *args, **kwargs):
+        pass

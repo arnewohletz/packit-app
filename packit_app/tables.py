@@ -1,6 +1,7 @@
 from collections import OrderedDict
 from abc import ABC, abstractmethod
 from sqlite3 import Error
+from typing import Union
 
 from packit_app.errors import AmbiguousElementError, \
     ElementAlreadyExistsError, ElementNotFoundError, TableNotFoundError
@@ -8,7 +9,7 @@ from packit_app.sql_command_generator import SQLCommandGenerator as Cmd
 from packit_app.table_elements import TableDataElement, Gender, Male, Female, \
     User, Garment, UserGarmentSetting
 from packit_app.table_fields import TableField, UserGarmentSettingsID, \
-    UserID
+    UserID, TableIdentifierField, TableDataField
 from packit_app.table_helper import TableHelper
 
 
@@ -204,6 +205,30 @@ class Table:
         else:
             return
 
+    def set_data(self, element_id: TableIdentifierField,
+                 data_field: TableDataField,
+                 value: Union[int, float]) -> None:
+        """
+        Sets a `value` for a `data_field` for the table entry with the
+        specified `primary_key`. Returns a `DatabaseError` if either the
+        `primary_key` or the `data_field` does not exists. Returns a
+        `TypeError` if the `value` is not of the correct type.
+        :param element_id: `TableIdentifierField` which contains the/a unique
+        identifying value for this element (best: use primary key field)
+        :param data_field: `TableDataField` object representing the data field
+        that is updated
+        :param value: New value (either of type `int` or `float`)
+        :return: None
+        """
+
+        command = Cmd.get_update_single_value_command(self,
+                                                      element_id.column_name,
+                                                      data_field.column_name,
+                                                      value)
+        self.db.cur.execute(command)
+        self.db.connection.commit()
+
+
     # def get_primary_key(self, element: TableDataElement):
     #     result = self.get_matching_elements(element.column_types)
     #
@@ -222,7 +247,6 @@ class GarmentTable(Table):
     primary_key_column_name = "GarmentID"
 
     def __init__(self, database, column_types: OrderedDict):
-        # self.db = database
         super(GarmentTable, self).__init__(database,
                                            self.primary_key_column_name,
                                            column_types)

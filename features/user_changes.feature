@@ -22,5 +22,5 @@ Feature: Management of clothing settings for an existing user
 
     Examples:
       | name  | gender | clothing_type | quantity | condition  | quantity |
-      | Harry | male   | scarf         | 0.5      | day_0to10  | 1        |
-      | Susan | female | bolero        | 1        | day_10to20 | 2        |
+      | Harry | male   | scarf         | 0.5      | day0to10   | 1        |
+      | Susan | female | bolero        | 1.0      | day10to20  | 2        |

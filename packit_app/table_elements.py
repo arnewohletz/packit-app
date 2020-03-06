@@ -1,11 +1,17 @@
 from abc import ABC
 from collections import OrderedDict
 
-from packit_app.table_fields import GarmentID, GarmentIsDefault, GarmentName, \
-    GenderID, GenderName, TripDateEnd, TripDateStart, TripDaysInTransit, \
-    TripDaysWithSports, TripDaysWithoutSports, TripDestination, \
-    TripTemperatureDayAverage, TripTemperatureDayMax, TripTemperatureDayMin, \
-    TripTemperatureNightIndoorAverage, UserID, Username
+from packit_app import table_fields as tf
+
+
+# import packit_app
+
+# from packit_app.table_fields import GarmentID, GarmentIsDefault, GarmentName, \
+#     GenderID, GenderName, TripDateEnd, TripDateStart, TripDaysInTransit, \
+#     TripDaysWithSports, TripDaysWithoutSports, TripDestination, \
+#     TripTemperatureDayAverage, TripTemperatureDayMax, TripTemperatureDayMin, \
+#     TripTemperatureNightIndoorAverage, UserID, Username, QuantityDay0To10, \
+#     QuantityDay10To20, QuantityDayBelow0, QuantityDayAbove20, QuantityNightBelow20
 
 
 class TableDataElement(ABC):
@@ -20,35 +26,35 @@ class TableDataElement(ABC):
 
 class Gender(TableDataElement):
 
-    def __init__(self, gender: GenderName = GenderName("male")) -> None:
+    def __init__(self, gender: tf.GenderName = tf.GenderName("male")) -> None:
         super(Gender, self).__init__()
-        self.column_types[GenderName.column_name] = gender.field[
-            GenderName.column_name]
+        self.column_types[tf.GenderName.column_name] = gender.field[
+            tf.GenderName.column_name]
 
 
 class Male(Gender):
 
     def __init__(self):
-        super(Male, self).__init__(GenderName("male"))
+        super(Male, self).__init__(tf.GenderName("male"))
 
 
 class Female(Gender):
 
     def __init__(self):
-        super(Female, self).__init__(GenderName("female"))
+        super(Female, self).__init__(tf.GenderName("female"))
 
 
 class User(TableDataElement):
     name = ""
     gender = None
 
-    def __init__(self, username: Username = Username(""),
-                 gender_id: GenderID = GenderID(1)) -> None:
+    def __init__(self, username: tf.Username = tf.Username(""),
+                 gender_id: tf.GenderID = tf.GenderID(1)) -> None:
         super(User, self).__init__()
-        self.column_types[Username.column_name] = username.field[
-            Username.column_name]
-        self.column_types[GenderID.column_name] = gender_id.field[
-            GenderID.column_name]
+        self.column_types[tf.Username.column_name] = username.field[
+            tf.Username.column_name]
+        self.column_types[tf.GenderID.column_name] = gender_id.field[
+            tf.GenderID.column_name]
 
 
 # TODO: Update column_types
@@ -64,28 +70,28 @@ class Trip(TableDataElement):
                  day_max_temp, day_min_temp, night_average_indoor_temp,
                  sport_days, no_sport_days, transit_days):
         super(Trip, self).__init__()
-        self.column_types[TripDestination.column_name] = destination
-        self.column_types[TripDateStart.column_name] = start_date
-        self.column_types[TripDateEnd.column_name] = end_date
+        self.column_types[tf.TripDestination.column_name] = destination
+        self.column_types[tf.TripDateStart.column_name] = start_date
+        self.column_types[tf.TripDateEnd.column_name] = end_date
         self.column_types[
-            TripTemperatureDayAverage.column_name] = day_average_temp
-        self.column_types[TripTemperatureDayMax.column_name] = day_max_temp
-        self.column_types[TripTemperatureDayMin.column_name] = day_min_temp
+            tf.TripTemperatureDayAverage.column_name] = day_average_temp
+        self.column_types[tf.TripTemperatureDayMax.column_name] = day_max_temp
+        self.column_types[tf.TripTemperatureDayMin.column_name] = day_min_temp
         self.column_types[
-            TripTemperatureNightIndoorAverage.column_name] = \
+            tf.TripTemperatureNightIndoorAverage.column_name] = \
             night_average_indoor_temp
-        self.column_types[TripDaysWithSports.column_name] = sport_days
-        self.column_types[TripDaysWithoutSports.column_name] = no_sport_days
-        self.column_types[TripDaysInTransit.column_name] = transit_days
+        self.column_types[tf.TripDaysWithSports.column_name] = sport_days
+        self.column_types[tf.TripDaysWithoutSports.column_name] = no_sport_days
+        self.column_types[tf.TripDaysInTransit.column_name] = transit_days
 
 
 class Garment(TableDataElement):
-    def __init__(self, gender_id: GenderID = GenderID(),
-                 name: GarmentName = GarmentName(), is_default=False):
+    def __init__(self, gender_id: tf.GenderID = tf.GenderID(),
+                 name: tf.GarmentName = tf.GarmentName(), is_default=False):
         super(Garment, self).__init__()
-        self.column_types[GenderID.column_name] = gender_id.get_value()
-        self.column_types[GarmentName.column_name] = name.get_value()
-        self.column_types[GarmentIsDefault.column_name] = is_default
+        self.column_types[tf.GenderID.column_name] = gender_id.get_value()
+        self.column_types[tf.GarmentName.column_name] = name.get_value()
+        self.column_types[tf.GarmentIsDefault.column_name] = is_default
 
 
 class UserTripGarmentAmount(TableDataElement):
@@ -94,8 +100,18 @@ class UserTripGarmentAmount(TableDataElement):
 
 class UserGarmentSetting(TableDataElement):
 
-    def __init__(self, user_id: UserID = UserID(),
-                 garment_id: GarmentID = GarmentID()):
+    def __init__(self, user_id: tf.UserID = tf.UserID(),
+                 garment_id: tf.GarmentID = tf.GarmentID()):
         super(UserGarmentSetting, self).__init__()
-        self.column_types[UserID.column_name] = user_id.get_value()
-        self.column_types[GarmentID.column_name] = garment_id.get_value()
+        self.column_types[tf.UserID.column_name] = user_id.get_value()
+        self.column_types[tf.GarmentID.column_name] = garment_id.get_value()
+
+        self.column_types[tf.QuantityDayBelow0.column_name] = 0.0
+        self.column_types[tf.QuantityDay0To10.column_name] = 0.0
+        self.column_types[tf.QuantityDay10To20.column_name] = 0.0
+        self.column_types[tf.QuantityDayAbove20.column_name] = 0.0
+        self.column_types[tf.QuantityNightBelow20.column_name] = 0.0
+        self.column_types[tf.QuantityNightAbove20.column_name] = 0.0
+        self.column_types[tf.QuantityNoSportsDay.column_name] = 0.0
+        self.column_types[tf.QuantitySportsDay.column_name] = 0.0
+        self.column_types[tf.QuantityTransitDay.column_name] = 0.0
