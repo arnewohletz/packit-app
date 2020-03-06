@@ -1,4 +1,4 @@
-from behave import register_type, given, when, then
+from behave import given
 
 
 @given(u'the application contains no users')

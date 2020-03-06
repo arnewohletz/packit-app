@@ -3,7 +3,7 @@ from behave import given, when, then, register_type
 from features.support import custom_type_parser
 from packit_app.table_elements import User, UserGarmentSetting, Garment
 from packit_app.table_fields import UserID, UserGarmentSettingsID, GarmentID, \
-    Username, GarmentName, GenderID
+    Username, GarmentName
 
 users = []
 

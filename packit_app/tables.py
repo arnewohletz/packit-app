@@ -229,19 +229,6 @@ class Table:
         self.db.connection.commit()
 
 
-    # def get_primary_key(self, element: TableDataElement):
-    #     result = self.get_matching_elements(element.column_types)
-    #
-    #     if len(result) == 1:
-    #         # return {self.primary_key_column_name: result[0][
-    #         #     self.primary_key_column_name]}
-    #         return result[0][self.primary_key_column_name]
-    #     elif len(result) > 1:
-    #         raise Error("Query matches multiple elements")
-    #     else:
-    #         return
-
-
 class GarmentTable(Table):
     table_name = "Garment"
     primary_key_column_name = "GarmentID"

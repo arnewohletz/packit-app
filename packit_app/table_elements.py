@@ -4,16 +4,6 @@ from collections import OrderedDict
 from packit_app import table_fields as tf
 
 
-# import packit_app
-
-# from packit_app.table_fields import GarmentID, GarmentIsDefault, GarmentName, \
-#     GenderID, GenderName, TripDateEnd, TripDateStart, TripDaysInTransit, \
-#     TripDaysWithSports, TripDaysWithoutSports, TripDestination, \
-#     TripTemperatureDayAverage, TripTemperatureDayMax, TripTemperatureDayMin, \
-#     TripTemperatureNightIndoorAverage, UserID, Username, QuantityDay0To10, \
-#     QuantityDay10To20, QuantityDayBelow0, QuantityDayAbove20, QuantityNightBelow20
-
-
 class TableDataElement(ABC):
 
     def __init__(self) -> None:

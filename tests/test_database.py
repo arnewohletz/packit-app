@@ -19,5 +19,5 @@ def test_database_connection():
 def test_database_disconnects():
     db = Database()
     db.close_connection()
-    with pytest.raises(sqlite3.ProgrammingError) as error:
+    with pytest.raises(sqlite3.ProgrammingError):
         db.cur.execute("CREATE TABLE cannot_not_be_created")

@@ -108,4 +108,3 @@ class SQLCommandGenerator:
                   f"{table.primary_key_column_name} = {element_id}"
 
         return command
-
