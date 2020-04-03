@@ -36,14 +36,6 @@ class TableField(abc.ABC):
         self.field[self.column_name] = value
 
 
-# class ConditionalQuantityFactory(abc.ABC):
-#
-#     @abstractmethod
-#     def create_conditional_quantity(self, value: int, condition: Condition):
-#         pass
-#
-#
-#
 class Condition:
     pass
 
@@ -158,44 +150,70 @@ class QuantityNightAbove20(Quantity):
     column_name = "QuantityNightAbove20"
 
 
-class TripTemperatureDayAverage(TableField):
-    column_name = "DayAverageTemp"
-
-
-class TripTemperatureDayMax(TableField):
-    column_name = "DayMaxTemp"
-
-
-class TripTemperatureDayMin(TableField):
-    column_name = "DayMinTemp"
-
-
-class TripDestination(TableField):
-    column_name = "Destination"
-
-
-class TripTemperatureNightIndoorAverage(TableField):
-    column_name = "NightAverageIndoorTemp"
-
-
-class TripDaysInTransit(TableField):
-    column_name = "DaysInTransit"
-
-
-class TripDaysWithSports(TableField):
-    column_name = "DaysWithoutSports"
-
-
-class TripDaysWithoutSports(TableField):
-    column_name = "DaysWithSports"
-
-
 class TripDateEnd(TableField):
     column_name = "EndDate"
 
 
 class TripDateStart(TableField):
     column_name = "StartDate"
+
+
+class TripDays(TableDataField):
+
+    def __init__(self, days: int = 0):
+        super(TripDays, self).__init__(days)
+
+
+class TripDaysInTransit(TripDays):
+    column_name = "DaysInTransit"
+
+
+class TripDaysWithSports(TripDays):
+    column_name = "DaysWithoutSports"
+
+
+class TripDaysWithoutSports(TripDays):
+    column_name = "DaysWithSports"
+
+
+class TripDestination(TripDays):
+    column_name = "Destination"
+
+
+class TripGarmentTotalQuantity(TableDataField):
+    column_name = "TotalQuantity"
+
+    def __init__(self, quantity=0.0):
+        super(TripGarmentTotalQuantity, self).__init__(quantity)
+
+
+class TripID(TableIdentifierField):
+    column_name = "TripID"
+
+    def __init__(self, trip_id: int = 1):
+        super(TripID, self).__init__(trip_id)
+
+
+class TripTemperature(TableDataField):
+
+    def __init__(self, temperature: int = 0):
+        super(TripTemperature, self).__init__(temperature)
+
+
+class TripTemperatureDayAverage(TripTemperature):
+    column_name = "DayAverageTemp"
+
+
+class TripTemperatureDayMax(TripTemperature):
+    column_name = "DayMaxTemp"
+
+
+class TripTemperatureDayMin(TripTemperature):
+    column_name = "DayMinTemp"
+
+
+class TripTemperatureNightIndoorAverage(TripTemperature):
+    column_name = "NightAverageIndoorTemp"
 
 
 class UserGarmentSettingsID(TableIdentifierField):

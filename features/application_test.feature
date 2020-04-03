@@ -1,4 +1,4 @@
-@run
+#@run
 Feature: Test new application class structure
 
     Scenario Outline: Create user

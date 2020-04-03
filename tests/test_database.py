@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""Tests for `database` package."""
+"""Tests for `database` module."""
 
 import pytest
 import os

@@ -19,7 +19,7 @@ class ElementNotFoundError(DatabaseError):
         pass
 
 
-class TableNotFoundError(DatabaseError):
+class UnkownTableTypeError(DatabaseError):
     """Required table does not exist"""
     def __init__(self, *args, **kwargs):
         pass

@@ -85,7 +85,15 @@ class Garment(TableDataElement):
 
 
 class UserTripGarmentAmount(TableDataElement):
-    pass
+    def __init__(self, user_id: tf.UserID = tf.UserID(),
+                 trip_id: tf.TripID = tf.TripID(),
+                 garment_id: tf.GarmentID = tf.GarmentID()):
+        super(UserTripGarmentAmount, self).__init__()
+        self.column_types[tf.UserID.column_name] = user_id.get_value()
+        self.column_types[tf.TripID.column_name] = trip_id.get_value()
+        self.column_types[tf.GarmentID.column_name] = garment_id.get_value()
+
+        self.column_types[tf.TripGarmentTotalQuantity.column_name] = 0.0
 
 
 class UserGarmentSetting(TableDataElement):

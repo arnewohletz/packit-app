@@ -20,3 +20,4 @@ parse_default_clothes = TypeBuilder.with_one_or_more(parse_clothes,
                                                      listsep=",")
 type_dict = {"DefaultClothes+": parse_default_clothes}
 register_type(**type_dict)
+

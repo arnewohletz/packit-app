@@ -1,5 +1,5 @@
 #@clothes
-@run
+#@run
 Feature: Management of clothing settings for an existing user
 
 #  Scenario Outline: Adding new piece of clothing for a user

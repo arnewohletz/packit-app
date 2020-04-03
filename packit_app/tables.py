@@ -4,10 +4,10 @@ from sqlite3 import Error
 from typing import Union
 
 from packit_app.errors import AmbiguousElementError, \
-    ElementAlreadyExistsError, ElementNotFoundError, TableNotFoundError
+    ElementAlreadyExistsError, ElementNotFoundError, UnkownTableTypeError
 from packit_app.sql_command_generator import SQLCommandGenerator as Cmd
 from packit_app.table_elements import TableDataElement, Gender, Male, Female, \
-    User, Garment, UserGarmentSetting
+    User, Garment, UserGarmentSetting, Trip, UserTripGarmentAmount
 from packit_app.table_fields import TableField, UserGarmentSettingsID, \
     UserID, TableIdentifierField, TableDataField
 from packit_app.table_helper import TableHelper
@@ -24,8 +24,8 @@ class Table:
     Each table requires a `primary_key` column, which saves an integer value
     for each `TableDataElement` that is added to the table.
 
-    :param primary_key: string name that the primary key column is supposed to
-        have.
+    :param primary_key_column_name: string name that the primary key column
+        is supposed to have.
     :param column_types: dictionary that holds a key-value pair for each column
         , where the key holds the column name and the value contains the type
         information.
@@ -184,16 +184,6 @@ class Table:
         """
         return self.raised_errors
 
-    # # TODO: Empty function of table specific content
-    # def get_primary_key_as_dict(self, element: TableDataElement):
-    #     result = self.get_matching_elements(element.column_types)
-    #
-    #     if len(result) > 0:
-    #         return {self.primary_key_column_name: result[0][
-    #             self.primary_key_column_name]}
-    #     else:
-    #         return
-
     def get_primary_key(self, *fields: TableField):
 
         result = self.get_matching_elements(*fields)
@@ -351,5 +341,9 @@ class TableFactoryImpl(TableFactory):
             return GarmentTable(self.database, self.column_types)
         elif isinstance(element, UserGarmentSetting):
             return UserGarmentSettingsTable(self.database, self.column_types)
+        elif isinstance(element, Trip):
+            return TripTable(self.database, self.column_types)
+        elif isinstance(element, UserTripGarmentAmount):
+            return UserTripGarmentAmountTable(self.database, self.column_types)
         else:
-            raise TableNotFoundError
+            raise UnkownTableTypeError
