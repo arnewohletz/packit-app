@@ -1,4 +1,4 @@
-#@run
+@run
 Feature: Different users are supposed to use a single software installation to
     calculate the amount of clothes required for a trip. For this purpose the
     application needs to support the creation and management of multiple users.
