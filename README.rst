@@ -2,18 +2,15 @@
 packit-app
 ==========
 
-
-.. image:: https://img.shields.io/pypi/v/packit_app.svg
-        :target: https://pypi.python.org/pypi/packit_app
-
 .. image:: https://img.shields.io/travis/horsewithnoname1985/packit_app.svg
-        :target: https://travis-ci.org/horsewithnoname1985/packit_app
+        :target: https://travis-ci.org/github/horsewithnoname1985/packit-app
 
 .. image:: https://readthedocs.org/projects/packit-app/badge/?version=latest
         :target: https://packit-app.readthedocs.io/en/latest/?badge=latest
         :alt: Documentation Status
 
-
+.. image:: https://img.shields.io/github/license/horsewithnoname1985/packit-app
+        :target: https://choosealicense.com/licenses/mit/
 
 
 Pack-it is a lightweight packing list for clothes using
@@ -23,7 +20,7 @@ conditions.
 
 
 * Free software: MIT license
-* Documentation: https://packit-app.readthedocs.io.
+* Documentation: https://packit-app.readthedocs.io
 
 
 Features

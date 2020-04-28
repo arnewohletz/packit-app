@@ -1,4 +1,5 @@
 import itertools
+from typing import Iterator
 
 
 class TableHelper:
@@ -6,32 +7,35 @@ class TableHelper:
     def __init__(self):
         pass
 
-    def get_cursor_data_as_dictionary_generator(self, curs) -> dict:
+    @staticmethod
+    def get_cursor_data_as_dictionary_generator(cursor) -> Iterator:
         """
         Converts cursor data of a table into dictionaries
         (From Python Essential Reference by David Beazley)
-        :param curs: Cursor
+        :param cursor: Cursor
         :return: dict
         """
-        field_names = [d[0].lower() for d in curs.description]
+
+        field_names = [d[0] for d in cursor.description]
         while True:
-            rows = curs.fetchmany()
+            rows = cursor.fetchmany()
             if not rows:
-                return
+                return iter([])
             for row in rows:
                 yield dict(itertools.zip_longest(field_names, row))
 
     # TODO: Check if function is still required
-    def get_row_content_as_dictionary(self, curs) -> dict:
+    @staticmethod
+    def get_row_content_as_dictionary(cursor) -> dict:
         """
         Converts cursor data of a single row into a dictionary
-        :param curs:
+        :param cursor:
         :return: dict
         """
-        field_names = [d[0].lower() for d in curs.description]
+        field_names = [d[0] for d in cursor.description]
         while True:
-            row = curs.fetchone()
+            row = cursor.fetchone()
             if row is None:
-                result = {}
+                result: dict = {}
                 return result
             return dict(itertools.zip_longest(field_names, row))
